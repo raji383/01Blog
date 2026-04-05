@@ -20,4 +20,4 @@ public class AuthController {
         user.setRole(Role.USER);
         return userService.save(user);
     }
-}
+}   
