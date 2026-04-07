@@ -1,11 +1,88 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Document</title>
-</head>
-<body>
-  
-</body>
-</html>
+<main class="page-shell">
+  <section class="hero">
+    <p class="eyebrow">Blog Auth Starter</p>
+    <h1>Register and test login from one screen.</h1>
+    <p class="intro">
+      Angular frontend connected to the Spring Boot auth API at
+      <code>/api/auth</code>.
+    </p>
+  </section>
+
+  <section class="card">
+    <div class="mode-switch">
+      <button
+        type="button"
+        [class.active]="mode() === 'register'"
+        (click)="setMode('register')"
+      >
+        Register
+      </button>
+      <button
+        type="button"
+        [class.active]="mode() === 'login'"
+        (click)="setMode('login')"
+      >
+        Login
+      </button>
+    </div>
+
+    <form class="auth-form" (ngSubmit)="submit()">
+      @if (mode() === 'register') {
+        <label>
+          <span>Username</span>
+          <input
+            type="text"
+            name="username"
+            [(ngModel)]="form.username"
+            required
+            placeholder="azraji"
+          />
+        </label>
+      }
+
+      <label>
+        <span>Email</span>
+        <input
+          type="email"
+          name="email"
+          [(ngModel)]="form.email"
+          required
+          placeholder="you@example.com"
+        />
+      </label>
+
+      <label>
+        <span>Password</span>
+        <input
+          type="password"
+          name="password"
+          [(ngModel)]="form.password"
+          required
+          placeholder="Minimum 6 characters"
+        />
+      </label>
+
+      <button class="submit" type="submit" [disabled]="loading()">
+        {{ loading() ? 'Please wait...' : (mode() === 'register' ? 'Create account' : 'Login') }}
+      </button>
+    </form>
+
+    @if (error()) {
+      <p class="message error">{{ error() }}</p>
+    }
+
+    @if (success()) {
+      <p class="message success">{{ success() }}</p>
+    }
+
+    @if (authResult(); as result) {
+      <div class="result">
+        <h2>User response</h2>
+        <p><strong>ID:</strong> {{ result.id }}</p>
+        <p><strong>Username:</strong> {{ result.username }}</p>
+        <p><strong>Email:</strong> {{ result.email }}</p>
+        <p><strong>Role:</strong> {{ result.role }}</p>
+      </div>
+    }
+  </section>
+</main>

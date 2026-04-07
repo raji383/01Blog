@@ -1,0 +1,144 @@
+.page-shell {
+  min-height: 100vh;
+  display: grid;
+  gap: 2rem;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  align-items: center;
+  padding: 3rem 1.5rem;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+.hero h1 {
+  font-size: clamp(2.4rem, 5vw, 4.8rem);
+  line-height: 0.95;
+  margin: 0 0 1rem;
+}
+
+.eyebrow {
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  font-size: 0.78rem;
+  color: #b45309;
+  margin-bottom: 1rem;
+}
+
+.intro {
+  max-width: 40ch;
+  color: #3f3f46;
+  font-size: 1.05rem;
+}
+
+.card {
+  background: rgba(255, 255, 255, 0.88);
+  backdrop-filter: blur(14px);
+  border: 1px solid rgba(255, 255, 255, 0.65);
+  border-radius: 28px;
+  padding: 1.5rem;
+  box-shadow: 0 28px 80px rgba(120, 53, 15, 0.16);
+}
+
+.mode-switch {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.75rem;
+  margin-bottom: 1.25rem;
+}
+
+.mode-switch button,
+.submit {
+  border: 0;
+  border-radius: 999px;
+  padding: 0.9rem 1rem;
+  font: inherit;
+}
+
+.mode-switch button {
+  background: #f5f5f4;
+  color: #44403c;
+}
+
+.mode-switch button.active,
+.submit {
+  background: linear-gradient(135deg, #ea580c, #f59e0b);
+  color: white;
+  font-weight: 600;
+}
+
+.auth-form {
+  display: grid;
+  gap: 1rem;
+}
+
+.auth-form label {
+  display: grid;
+  gap: 0.45rem;
+}
+
+.auth-form span {
+  font-size: 0.9rem;
+  color: #57534e;
+}
+
+.auth-form input {
+  width: 100%;
+  border: 1px solid #fed7aa;
+  border-radius: 16px;
+  padding: 0.95rem 1rem;
+  font: inherit;
+  background: rgba(255, 247, 237, 0.9);
+}
+
+.auth-form input:focus {
+  outline: 2px solid #fb923c;
+  outline-offset: 2px;
+}
+
+.submit:disabled {
+  opacity: 0.7;
+}
+
+.message {
+  margin: 1rem 0 0;
+  padding: 0.85rem 1rem;
+  border-radius: 16px;
+}
+
+.message.error {
+  background: #fee2e2;
+  color: #b91c1c;
+}
+
+.message.success {
+  background: #dcfce7;
+  color: #15803d;
+}
+
+.result {
+  margin-top: 1rem;
+  padding: 1rem;
+  background: #1c1917;
+  color: #fafaf9;
+  border-radius: 18px;
+}
+
+.result h2 {
+  margin-top: 0;
+  font-size: 1rem;
+}
+
+code {
+  background: rgba(28, 25, 23, 0.08);
+  border-radius: 6px;
+  padding: 0.1rem 0.35rem;
+}
+
+@media (max-width: 700px) {
+  .page-shell {
+    padding: 2rem 1rem;
+  }
+
+  .card {
+    padding: 1.25rem;
+  }
+}
