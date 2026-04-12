@@ -1,88 +1,47 @@
-<main class="page-shell">
-  <section class="hero">
-    <p class="eyebrow">Blog Auth Starter</p>
-    <h1>Register and test login from one screen.</h1>
-    <p class="intro">
-      Angular frontend connected to the Spring Boot auth API at
-      <code>/api/auth</code>.
-    </p>
-  </section>
-
-  <section class="card">
-    <div class="mode-switch">
-      <button
-        type="button"
-        [class.active]="mode() === 'register'"
-        (click)="setMode('register')"
-      >
-        Register
-      </button>
-      <button
-        type="button"
-        [class.active]="mode() === 'login'"
-        (click)="setMode('login')"
-      >
-        Login
-      </button>
+<nav class="navbar">
+  <div class="nav-container">
+    <a routerLink="/feed" class="nav-brand">📚 StudentBlog</a>
+    <div class="nav-links">
+      <a routerLink="/feed" routerLinkActive="active">Feed</a>
+      <a routerLink="/profile" routerLinkActive="active">My Profile</a>
+      <a routerLink="/create-post" routerLinkActive="active">Create Post</a>
+      <a *ngIf="authService.isAdmin()" routerLink="/admin" routerLinkActive="active">Admin</a>
+      <button (click)="logout()" class="logout-btn">Logout</button>
     </div>
+  </div>
+</nav>
 
-    <form class="auth-form" (ngSubmit)="submit()">
-      @if (mode() === 'register') {
-        <label>
-          <span>Username</span>
-          <input
-            type="text"
-            name="username"
-            [(ngModel)]="form.username"
-            required
-            placeholder="azraji"
-          />
-        </label>
-      }
+<main class="main-content">
+  <aside class="sidebar">
+    <h3>Menu</h3>
+    <a routerLink="/feed" routerLinkActive="active" class="sidebar-item">
+      <span class="sidebar-icon">🏠</span>
+      <span>Home</span>
+    </a>
+    <a routerLink="/profile" routerLinkActive="active" class="sidebar-item">
+      <span class="sidebar-icon">👤</span>
+      <span>Profile</span>
+    </a>
+    <a routerLink="/create-post" routerLinkActive="active" class="sidebar-item">
+      <span class="sidebar-icon">✍️</span>
+      <span>Create Post</span>
+    </a>
+    <a *ngIf="authService.isAdmin()" routerLink="/admin" routerLinkActive="active" class="sidebar-item">
+      <span class="sidebar-icon">⚙️</span>
+      <span>Admin</span>
+    </a>
+  </aside>
 
-      <label>
-        <span>Email</span>
-        <input
-          type="email"
-          name="email"
-          [(ngModel)]="form.email"
-          required
-          placeholder="you@example.com"
-        />
-      </label>
+  <div class="feed">
+    <router-outlet></router-outlet>
+  </div>
 
-      <label>
-        <span>Password</span>
-        <input
-          type="password"
-          name="password"
-          [(ngModel)]="form.password"
-          required
-          placeholder="Minimum 6 characters"
-        />
-      </label>
-
-      <button class="submit" type="submit" [disabled]="loading()">
-        {{ loading() ? 'Please wait...' : (mode() === 'register' ? 'Create account' : 'Login') }}
-      </button>
-    </form>
-
-    @if (error()) {
-      <p class="message error">{{ error() }}</p>
-    }
-
-    @if (success()) {
-      <p class="message success">{{ success() }}</p>
-    }
-
-    @if (authResult(); as result) {
-      <div class="result">
-        <h2>User response</h2>
-        <p><strong>ID:</strong> {{ result.id }}</p>
-        <p><strong>Username:</strong> {{ result.username }}</p>
-        <p><strong>Email:</strong> {{ result.email }}</p>
-        <p><strong>Role:</strong> {{ result.role }}</p>
-      </div>
-    }
-  </section>
+  <aside class="right-sidebar">
+    <div class="suggestions-card">
+      <h3>Coming Soon</h3>
+      <p style="font-size: 12px; color: #65676b; margin: 0;">
+        Suggestions and recommendations will appear here
+      </p>
+    </div>
+  </aside>
 </main>
