@@ -41,14 +41,14 @@ A fullstack blogging platform for students to document their learning journey. F
 ```bash
 # Start MySQL container
 docker run --name blog-mysql \
-  -e MYSQL_ROOT_PASSWORD=123 \
-  -e MYSQL_DATABASE=blog_db \
+  -e MYSQL_ROOT_PASSWORD=1234 \
+  -e MYSQL_DATABASE=01blog_db \
   -v ${PWD}/mysql-data:/var/lib/mysql \
   -p 3306:3306 \
   -d mysql:latest
 
 # Connect to MySQL
-docker exec -it blog-mysql mysql -u root -p123 blog_db
+docker exec -it blog-mysql mysql -u root -p123 01blog_db
 ```
 
 #### Option B: Local MySQL
