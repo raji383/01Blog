@@ -3,6 +3,7 @@ package com.example.demo.controler;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import com.example.demo.dto.LoginRequest;
 import com.example.demo.dto.RegisterRequest;
 import com.example.demo.dto.RegisterResponse;
 import com.example.demo.service.UserService;
@@ -22,7 +23,12 @@ public class UserController {
     @PostMapping("/register")
     public ResponseEntity<RegisterResponse> register(@Valid @RequestBody RegisterRequest request) {
         RegisterResponse res = userService.register(request);
-        System.out.println(res);
+        return ResponseEntity.ok(res);
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<RegisterResponse> login(@Valid @RequestBody LoginRequest request) {
+        RegisterResponse res = userService.login(request);
         return ResponseEntity.ok(res);
     }
 }

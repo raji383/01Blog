@@ -1,8 +1,11 @@
 package com.example.demo.service;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.web.server.ResponseStatusException;
 
+import com.example.demo.dto.LoginRequest;
 import com.example.demo.dto.RegisterRequest;
 import com.example.demo.dto.RegisterResponse;
 import com.example.demo.entities.User;
@@ -36,6 +39,23 @@ public class UserService {
         RegisterResponse res = new RegisterResponse();
         res.setId(saved.getId());
         res.setUsername(saved.getUsername());
+        res.setJwt(token);
+        return res;
+    }
+
+    public RegisterResponse login(LoginRequest request) {
+        User user = userRepository.findByUsername(request.getUsername())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid credentials"));
+
+        if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid credentials");
+        }
+
+        String token = jwtUtil.generateToken(user);
+
+        RegisterResponse res = new RegisterResponse();
+        res.setId(user.getId());
+        res.setUsername(user.getUsername());
         res.setJwt(token);
         return res;
     }
