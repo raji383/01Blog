@@ -184,3 +184,21 @@ cd frontend && npm run build
 ## License
 
 This project is licensed under the MIT License.
+
+
+
+Client
+  ↓
+Security Filter Chain 🔐
+  ↓
+Custom Filters (JWT)
+  ↓
+DispatcherServlet
+  ↓
+Controller
+  ↓
+Service
+  ↓
+Repository (DB)
+  ↓
+Response ↑
