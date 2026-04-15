@@ -71,6 +71,19 @@ export class AuthCard {
         this.storeSession(response);
         this.successMessage.set(`Signed in as ${response.username}.`);
         this.isSubmitting.set(false);
+        // navigate to admin route after successful login
+        try {
+          const router = (await import('@angular/router')).injectRouter?.() as any;
+          if (router && typeof router.navigate === 'function') {
+            router.navigate(['/admin']);
+            return;
+          }
+        } catch {
+          // fallback to location change
+        }
+        if (typeof window !== 'undefined') {
+          window.location.href = '/admin';
+        }
       },
       error: (error: HttpErrorResponse) => {
         this.errorMessage.set(this.getErrorMessage(error, 'Login failed.'));
