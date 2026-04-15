@@ -23,6 +23,6 @@ export class Home implements OnInit {
       return;
     }
 
-    console.log('✅ JWT exists:', token);
+    console.log('JWT exists:', token);
   }
 }
