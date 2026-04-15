@@ -8,8 +8,12 @@ import org.springframework.web.server.ResponseStatusException;
 
 import com.example.demo.dto.PostRequest;
 import com.example.demo.dto.PostResponse;
+import com.example.demo.dto.ToggleLikeRequest;
+import com.example.demo.dto.ToggleLikeResponse;
 import com.example.demo.entities.Post;
+import com.example.demo.entities.PostLike;
 import com.example.demo.entities.User;
+import com.example.demo.repository.PostLikeRepository;
 import com.example.demo.repository.PostRepository;
 import com.example.demo.repository.UserRepository;
 
@@ -17,10 +21,12 @@ import com.example.demo.repository.UserRepository;
 public class PostService {
 
     private final PostRepository postRepository;
+    private final PostLikeRepository postLikeRepository;
     private final UserRepository userRepository;
 
-    public PostService(PostRepository postRepository, UserRepository userRepository) {
+    public PostService(PostRepository postRepository, PostLikeRepository postLikeRepository, UserRepository userRepository) {
         this.postRepository = postRepository;
+        this.postLikeRepository = postLikeRepository;
         this.userRepository = userRepository;
     }
 
@@ -67,6 +73,32 @@ public class PostService {
         postRepository.delete(post);
     }
 
+    public ToggleLikeResponse toggleLike(Long postId, ToggleLikeRequest request) {
+        Post post = getPost(postId);
+        User user = getAuthor(request.getUsername());
+
+        boolean liked;
+        PostLike existingLike = postLikeRepository.findByPostIdAndUserId(postId, user.getId()).orElse(null);
+        if (existingLike != null) {
+            postLikeRepository.delete(existingLike);
+            liked = false;
+        } else {
+            PostLike postLike = new PostLike();
+            postLike.setPost(post);
+            postLike.setUser(user);
+            postLikeRepository.save(postLike);
+            liked = true;
+        }
+
+        ToggleLikeResponse response = new ToggleLikeResponse();
+        response.setPostId(postId);
+        response.setUserId(user.getId());
+        response.setUsername(user.getUsername());
+        response.setLiked(liked);
+        response.setLikeCount(postLikeRepository.countByPostId(postId));
+        return response;
+    }
+
     private User getAuthor(String username) {
         return userRepository.findByUsername(username)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Author not found"));
@@ -85,6 +117,7 @@ public class PostService {
         response.setMediaUrl(post.getMediaUrl());
         response.setAuthorId(post.getAuthor().getId());
         response.setAuthorUsername(post.getAuthor().getUsername());
+        response.setLikeCount(postLikeRepository.countByPostId(post.getId()));
         response.setCreatedAt(post.getCreatedAt());
         response.setUpdatedAt(post.getUpdatedAt());
         return response;

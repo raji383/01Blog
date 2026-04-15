@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.demo.dto.PostRequest;
 import com.example.demo.dto.PostResponse;
+import com.example.demo.dto.ToggleLikeRequest;
+import com.example.demo.dto.ToggleLikeResponse;
 import com.example.demo.service.PostService;
 
 import jakarta.validation.Valid;
@@ -52,6 +54,11 @@ public class PostController {
     public ResponseEntity<Void> deletePost(@PathVariable Long postId) {
         postService.delete(postId);
         return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping("/{postId}/like")
+    public ResponseEntity<ToggleLikeResponse> toggleLike(@PathVariable Long postId, @Valid @RequestBody ToggleLikeRequest request) {
+        return ResponseEntity.ok(postService.toggleLike(postId, request));
     }
 
     @GetMapping("/admin")

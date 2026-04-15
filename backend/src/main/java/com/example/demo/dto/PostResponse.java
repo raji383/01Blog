@@ -12,6 +12,7 @@ public class PostResponse {
     private String mediaUrl;
     private Long authorId;
     private String authorUsername;
+    private long likeCount;
     private Instant createdAt;
     private Instant updatedAt;
 }
