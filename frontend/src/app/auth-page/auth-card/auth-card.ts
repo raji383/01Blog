@@ -1,5 +1,6 @@
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Component, inject, signal } from '@angular/core';
+import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 
 type AuthMode = 'login' | 'register';
@@ -29,6 +30,7 @@ interface AuthResponse {
 })
 export class AuthCard {
   private readonly http = inject(HttpClient);
+  private readonly router = inject(Router);
   private readonly apiBaseUrl = 'http://localhost:8080';
   private readonly storage = typeof window !== 'undefined' ? window.localStorage : null;
 
@@ -73,13 +75,10 @@ export class AuthCard {
         this.isSubmitting.set(false);
         // navigate to admin route after successful login
         try {
-          const router = (await import('@angular/router')).injectRouter?.() as any;
-          if (router && typeof router.navigate === 'function') {
-            router.navigate(['/admin']);
-            return;
-          }
+          this.router.navigate(['/admin']);
+          return;
         } catch {
-          // fallback to location change
+          // fallback to hard navigation
         }
         if (typeof window !== 'undefined') {
           window.location.href = '/admin';
@@ -125,6 +124,13 @@ export class AuthCard {
     this.hasSession.set(false);
     this.currentUsername.set('');
     this.successMessage.set('Signed out.');
+    try {
+      this.router.navigate(['/login']);
+    } catch {
+      if (typeof window !== 'undefined') {
+        window.location.href = '/login';
+      }
+    }
   }
 
   private storeSession(response: AuthResponse): void {

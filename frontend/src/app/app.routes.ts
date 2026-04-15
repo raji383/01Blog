@@ -1,10 +1,13 @@
 import { Routes } from '@angular/router';
 import { Navbar } from './navbar/navbar';
 import { AuthPage } from './auth-page/auth-page';
+import { Home } from './home/home';
+import { AuthGuard } from './security/auth.guard';
 
 export const routes: Routes = [
-    { path: '', component: AuthPage },
+    { path: '', component: Home },
+    { path: 'home', component: Home },
     { path: 'login', component: AuthPage },
-    { path: 'admin', component: Navbar },
+    { path: 'admin', component: Navbar, canActivate: [AuthGuard] },
     { path: '**', redirectTo: '' }
 ];
