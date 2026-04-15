@@ -24,6 +24,7 @@ public class DataSeeder {
             admin.setEmail("admin@blog.com");
             admin.setPassword(passwordEncoder.encode("admin123"));
             admin.setRole(Role.ADMIN);
+            admin.setBanned(false);
             userRepository.save(admin);
         };
     }

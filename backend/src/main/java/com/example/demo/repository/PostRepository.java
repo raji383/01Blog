@@ -9,4 +9,5 @@ import com.example.demo.entities.Post;
 public interface PostRepository extends JpaRepository<Post, Long> {
     List<Post> findAllByOrderByCreatedAtDesc();
     List<Post> findByAuthorUsernameOrderByCreatedAtDesc(String username);
+    List<Post> findByAuthorId(Long authorId);
 }

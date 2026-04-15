@@ -1,14 +1,24 @@
 package com.example.demo.service;
 
+import java.util.List;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
+import com.example.demo.dto.BanUserRequest;
 import com.example.demo.dto.LoginRequest;
 import com.example.demo.dto.RegisterRequest;
 import com.example.demo.dto.RegisterResponse;
+import com.example.demo.dto.UserAdminResponse;
+import com.example.demo.entities.Post;
+import com.example.demo.entities.Role;
 import com.example.demo.entities.User;
+import com.example.demo.repository.CommentRepository;
+import com.example.demo.repository.PostLikeRepository;
+import com.example.demo.repository.PostRepository;
 import com.example.demo.repository.UserRepository;
 import com.example.demo.security.JwtUtil;
 
@@ -18,11 +28,23 @@ public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtUtil jwtUtil;
+    private final PostRepository postRepository;
+    private final PostLikeRepository postLikeRepository;
+    private final CommentRepository commentRepository;
 
-    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, JwtUtil jwtUtil) {
+    public UserService(
+            UserRepository userRepository,
+            PasswordEncoder passwordEncoder,
+            JwtUtil jwtUtil,
+            PostRepository postRepository,
+            PostLikeRepository postLikeRepository,
+            CommentRepository commentRepository) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.jwtUtil = jwtUtil;
+        this.postRepository = postRepository;
+        this.postLikeRepository = postLikeRepository;
+        this.commentRepository = commentRepository;
     }
 
     public RegisterResponse register(RegisterRequest request) {
@@ -31,6 +53,7 @@ public class UserService {
         user.setEmail(request.getEmail());
         user.setPassword(passwordEncoder.encode(request.getPassword()));
         user.setRole(com.example.demo.entities.Role.USER);
+        user.setBanned(false);
 
         User saved = userRepository.save(user);
 
@@ -51,6 +74,10 @@ public class UserService {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid credentials");
         }
 
+        if (user.isBanned()) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "User is banned");
+        }
+
         String token = jwtUtil.generateToken(user);
 
         RegisterResponse res = new RegisterResponse();
@@ -58,5 +85,80 @@ public class UserService {
         res.setUsername(user.getUsername());
         res.setJwt(token);
         return res;
+    }
+
+    public List<UserAdminResponse> getAllUsersForAdmin(String adminUsername) {
+        requireAdmin(adminUsername);
+        return userRepository.findAllByOrderByUsernameAsc()
+                .stream()
+                .map(this::toAdminResponse)
+                .toList();
+    }
+
+    public UserAdminResponse updateBanStatus(Long userId, BanUserRequest request) {
+        User admin = requireAdmin(request.getAdminUsername());
+        User targetUser = getUser(userId);
+        validateModerationTarget(admin, targetUser);
+
+        targetUser.setBanned(request.getBanned());
+        return toAdminResponse(userRepository.save(targetUser));
+    }
+
+    @Transactional
+    public void deleteUserAsAdmin(Long userId, String adminUsername) {
+        User admin = requireAdmin(adminUsername);
+        User targetUser = getUser(userId);
+        validateModerationTarget(admin, targetUser);
+
+        List<Post> posts = postRepository.findByAuthorId(targetUser.getId());
+        for (Post post : posts) {
+            commentRepository.deleteByPostId(post.getId());
+            postLikeRepository.deleteByPostId(post.getId());
+            postRepository.delete(post);
+        }
+
+        commentRepository.deleteByAuthorId(targetUser.getId());
+        postLikeRepository.deleteByUserId(targetUser.getId());
+        userRepository.delete(targetUser);
+    }
+
+    private User requireAdmin(String adminUsername) {
+        User admin = userRepository.findByUsername(adminUsername)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Admin user not found"));
+
+        if (admin.getRole() != Role.ADMIN) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Admin access required");
+        }
+
+        if (admin.isBanned()) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Banned admin cannot perform this action");
+        }
+
+        return admin;
+    }
+
+    private User getUser(Long userId) {
+        return userRepository.findById(userId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
+    }
+
+    private void validateModerationTarget(User admin, User targetUser) {
+        if (admin.getId().equals(targetUser.getId())) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Admin cannot moderate their own account");
+        }
+
+        if (targetUser.getRole() == Role.ADMIN) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Cannot moderate another admin account");
+        }
+    }
+
+    private UserAdminResponse toAdminResponse(User user) {
+        UserAdminResponse response = new UserAdminResponse();
+        response.setId(user.getId());
+        response.setUsername(user.getUsername());
+        response.setEmail(user.getEmail());
+        response.setRole(user.getRole());
+        response.setBanned(user.isBanned());
+        return response;
     }
 }
