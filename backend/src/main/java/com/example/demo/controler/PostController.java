@@ -1,0 +1,67 @@
+package com.example.demo.controler;
+
+import java.util.List;
+
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.example.demo.dto.PostRequest;
+import com.example.demo.dto.PostResponse;
+import com.example.demo.service.PostService;
+
+import jakarta.validation.Valid;
+
+@RestController
+@RequestMapping("/api/posts")
+public class PostController {
+
+    private final PostService postService;
+
+    public PostController(PostService postService) {
+        this.postService = postService;
+    }
+
+    @PostMapping
+    public ResponseEntity<PostResponse> createPost(@Valid @RequestBody PostRequest request) {
+        return ResponseEntity.ok(postService.create(request));
+    }
+
+    @GetMapping("/feed")
+    public ResponseEntity<List<PostResponse>> getFeed() {
+        return ResponseEntity.ok(postService.getFeed());
+    }
+
+    @GetMapping("/user/{username}")
+    public ResponseEntity<List<PostResponse>> getUserPosts(@PathVariable String username) {
+        return ResponseEntity.ok(postService.getPostsByUsername(username));
+    }
+
+    @PutMapping("/{postId}")
+    public ResponseEntity<PostResponse> updatePost(@PathVariable Long postId, @Valid @RequestBody PostRequest request) {
+        return ResponseEntity.ok(postService.update(postId, request));
+    }
+
+    @DeleteMapping("/{postId}")
+    public ResponseEntity<Void> deletePost(@PathVariable Long postId) {
+        postService.delete(postId);
+        return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/admin")
+    public ResponseEntity<List<PostResponse>> getAllPostsForAdmin() {
+        return ResponseEntity.ok(postService.getFeed());
+    }
+
+    @DeleteMapping("/admin/{postId}")
+    public ResponseEntity<Void> deletePostAsAdmin(@PathVariable Long postId) {
+        postService.delete(postId);
+        return ResponseEntity.noContent().build();
+    }
+}

@@ -48,7 +48,7 @@ docker run --name blog-mysql \
   -d mysql:latest
 
 # Connect to MySQL
-docker exec -it blog-mysql mysql -u root -p123 01blog_db
+docker exec -it blog-mysql mysql -u root -p1234 01blog_db
 ```
 
 #### Option B: Local MySQL
