@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.demo.dto.CommentRequest;
+import com.example.demo.dto.CommentResponse;
 import com.example.demo.dto.PostRequest;
 import com.example.demo.dto.PostResponse;
 import com.example.demo.dto.ToggleLikeRequest;
@@ -59,6 +61,22 @@ public class PostController {
     @PostMapping("/{postId}/like")
     public ResponseEntity<ToggleLikeResponse> toggleLike(@PathVariable Long postId, @Valid @RequestBody ToggleLikeRequest request) {
         return ResponseEntity.ok(postService.toggleLike(postId, request));
+    }
+
+    @GetMapping("/{postId}/comments")
+    public ResponseEntity<List<CommentResponse>> getComments(@PathVariable Long postId) {
+        return ResponseEntity.ok(postService.getComments(postId));
+    }
+
+    @PostMapping("/{postId}/comments")
+    public ResponseEntity<CommentResponse> addComment(@PathVariable Long postId, @Valid @RequestBody CommentRequest request) {
+        return ResponseEntity.ok(postService.addComment(postId, request));
+    }
+
+    @DeleteMapping("/comments/{commentId}")
+    public ResponseEntity<Void> deleteComment(@PathVariable Long commentId) {
+        postService.deleteComment(commentId);
+        return ResponseEntity.noContent().build();
     }
 
     @GetMapping("/admin")
