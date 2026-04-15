@@ -11,13 +11,17 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.example.demo.dto.CommentRequest;
 import com.example.demo.dto.CommentResponse;
+import com.example.demo.dto.MediaUploadResponse;
 import com.example.demo.dto.PostRequest;
 import com.example.demo.dto.PostResponse;
 import com.example.demo.dto.ToggleLikeRequest;
 import com.example.demo.dto.ToggleLikeResponse;
+import com.example.demo.service.MediaStorageService;
 import com.example.demo.service.PostService;
 
 import jakarta.validation.Valid;
@@ -27,14 +31,21 @@ import jakarta.validation.Valid;
 public class PostController {
 
     private final PostService postService;
+    private final MediaStorageService mediaStorageService;
 
-    public PostController(PostService postService) {
+    public PostController(PostService postService, MediaStorageService mediaStorageService) {
         this.postService = postService;
+        this.mediaStorageService = mediaStorageService;
     }
 
     @PostMapping
     public ResponseEntity<PostResponse> createPost(@Valid @RequestBody PostRequest request) {
         return ResponseEntity.ok(postService.create(request));
+    }
+
+    @PostMapping("/upload")
+    public ResponseEntity<MediaUploadResponse> uploadMedia(@RequestParam("file") MultipartFile file) {
+        return ResponseEntity.ok(mediaStorageService.store(file));
     }
 
     @GetMapping("/feed")
