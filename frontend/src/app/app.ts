@@ -1,14 +1,11 @@
-import { Component, signal } from '@angular/core';
+import { Component } from '@angular/core';
+
+import { AuthPage } from './auth-page/auth-page';
 
 @Component({
   selector: 'app-root',
+  imports: [AuthPage],
   templateUrl: './app.html',
   styleUrl: './app.css'
 })
-export class App {
-  protected readonly mode = signal<'login' | 'register'>('login');
-
-  protected setMode(mode: 'login' | 'register'): void {
-    this.mode.set(mode);
-  }
-}
+export class App {}
