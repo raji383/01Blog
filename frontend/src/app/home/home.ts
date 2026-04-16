@@ -1,11 +1,12 @@
 import { Component, inject } from '@angular/core';
-import { Router } from 'express';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-home',
+  standalone: true,
   imports: [],
   templateUrl: './home.html',
-  styleUrl: './home.css',
+  styleUrls: ['./home.css'],
 })
 export class Home {
   private readonly router = inject(Router);

@@ -1,0 +1,89 @@
+<main class="auth-shell">
+    <section class="auth-panel">
+        <div class="auth-card">
+
+            <div class="auth-switch" role="tablist" aria-label="Authentication mode">
+                <button type="button" class="switch-button" [class.switch-button--active]="mode() === 'login'"
+                    (click)="setMode('login')">
+                    Sign in
+                </button>
+                <button type="button" class="switch-button" [class.switch-button--active]="mode() === 'register'"
+                    (click)="setMode('register')">
+                    Join now
+                </button>
+            </div>
+
+            @if (mode() === 'login') {
+            <div class="auth-copy">
+                <h2>Welcome back</h2>
+                <p>Sign in to continue building your professional student profile.</p>
+            </div>
+
+            <form class="auth-form" (ngSubmit)="submitLogin()">
+                <label class="field">
+                    <span>Email or username</span>
+                    <input type="text" name="loginUsername" [(ngModel)]="loginForm.username"
+                        placeholder="Enter your email or username" />
+                </label>
+
+                <label class="field">
+                    <span>Password</span>
+                    <input type="password" name="loginPassword" [(ngModel)]="loginForm.password"
+                        placeholder="Enter your password" />
+                </label>
+
+                <a class="inline-link" href="#careers">Forgot password?</a>
+
+                <button type="submit" class="primary-action" [disabled]="isSubmitting()">
+                    {{ isSubmitting() ? 'Signing in...' : 'Sign in' }}
+                </button>
+            </form>
+            } @else {
+            <div class="auth-copy">
+                <h2>Create your account</h2>
+                <p>Start posting projects, class notes, and milestones in minutes.</p>
+            </div>
+
+            <form class="auth-form" (ngSubmit)="submitRegister()">
+                <label class="field">
+                    <span>Username</span>
+                    <input type="text" name="registerUsername" [(ngModel)]="registerForm.username"
+                        placeholder="Choose a username" />
+                </label>
+
+                <label class="field">
+                    <span>Email</span>
+                    <input type="email" name="registerEmail" [(ngModel)]="registerForm.email"
+                        placeholder="Enter your email" />
+                </label>
+
+                <label class="field">
+                    <span>Password</span>
+                    <input type="password" name="registerPassword" [(ngModel)]="registerForm.password"
+                        placeholder="Create a password" />
+                </label>
+
+                <button type="submit" class="primary-action" [disabled]="isSubmitting()">
+                    {{ isSubmitting() ? 'Creating account...' : 'Create account' }}
+                </button>
+            </form>
+            }
+
+
+            @if (errorMessage()) {
+            <p class="feedback feedback--error">{{ errorMessage() }}</p>
+            }
+
+            @if (successMessage()) {
+            <p class="feedback feedback--success">{{ successMessage() }}</p>
+            }
+
+            <div class="auth-footer">
+                <p>
+                    By continuing, you agree to the platform terms and student community
+                    guidelines.
+                </p>
+            </div>
+        </div>
+    </section>
+</main>
