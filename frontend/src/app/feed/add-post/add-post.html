@@ -1,0 +1,47 @@
+<div class="add-post-container">
+  <div *ngIf="error()" class="error-message">{{ error() }}</div>
+
+  <div class="add-post-box">
+    <div class="post-creator-header">
+      <div class="avatar">Y</div>
+      <input
+        class="post-input"
+        placeholder="What's on your mind?"
+        [ngModel]="postContent()"
+        (ngModelChange)="postContent.set($event)"
+      />
+    </div>
+
+    <div *ngIf="previewUrl()" class="image-preview">
+      <img [src]="previewUrl()" alt="Preview" />
+      <button class="remove-image" (click)="removeImage()" type="button">✕</button>
+    </div>
+
+    <div class="post-actions">
+      <div class="action-buttons">
+        <label class="action-btn image-btn">
+          <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z" />
+          </svg>
+          <span>Photo</span>
+          <input type="file" accept="image/*" (change)="onFileSelected($event)" hidden />
+        </label>
+
+        <button class="action-btn emoji-btn" type="button"> 
+          <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="12" cy="12" r="10" />
+            <circle cx="9" cy="10" r="1.5" />
+            <circle cx="15" cy="10" r="1.5" />
+            <path d="M9 15c0 1.66 1.34 3 3 3s3-1.34 3-3" />
+          </svg>
+          <span>Feeling</span>
+        </button>
+      </div>
+
+      <button class="publish-btn" (click)="publishPost()" [disabled]="isPosting() || !postContent().trim()" type="button">
+        <span *ngIf="!isPosting()">Post</span>
+        <span *ngIf="isPosting()">Publishing...</span>
+      </button>
+    </div>
+  </div>
+</div>
