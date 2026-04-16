@@ -2,9 +2,7 @@
   <div class="feed">
     <app-add-post (postCreated)="onPostCreated()"></app-add-post>
 
-    <!-- Loading state -->
-    <div *ngIf="isLoading" class="loading">Loading posts...</div>
-
+    
     <!-- Error state -->
     <div *ngIf="error && !isLoading" class="error">{{ error }}</div>
 
