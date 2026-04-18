@@ -28,6 +28,10 @@ public class AdminUserController {
     public AdminUserController(UserService userService) {
         this.userService = userService;
     }
+    @GetMapping("/me")
+    public ResponseEntity<AdminActionRequest> getProfile() {
+        return ResponseEntity.ok(userService.getProfile());
+    }
 
     @GetMapping("/admin")
     public ResponseEntity<List<UserAdminResponse>> getAllUsers(@RequestParam String adminUsername) {

@@ -42,6 +42,7 @@ public class PostService {
     }
 
     public PostResponse create(PostRequest request) {
+        System.out.println("Creating post for user: " + request.getAuthorUsername());
         User author = getUser(request.getAuthorUsername());
 
         Post post = new Post();

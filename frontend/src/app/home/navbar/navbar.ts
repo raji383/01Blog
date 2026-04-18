@@ -1,4 +1,6 @@
-import { Component } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Component, inject } from '@angular/core';
+import { RegisterPayload } from '../../models/user';
 
 @Component({
   selector: 'app-navbar',
@@ -6,4 +8,13 @@ import { Component } from '@angular/core';
   templateUrl: './navbar.html',
   styleUrl: './navbar.css',
 })
-export class Navbar {}
+export class Navbar {
+  protected readonly http = inject(HttpClient);
+  ngOnInit(){
+    try {
+       this.http.get<RegisterPayload>('http://localhost:8080/api/users/me')
+    } catch (error) {
+      
+    }
+  }
+}
