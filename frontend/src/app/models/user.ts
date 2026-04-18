@@ -14,3 +14,12 @@ interface AuthResponse {
   username: string;
   jwt: string;
 }
+
+interface PostResponse {
+  title: string;
+  content: string;
+  mediaUrl: string;
+  authorUsername: string;
+}
+
+export type { RegisterPayload, LoginPayload, AuthResponse, PostResponse };
