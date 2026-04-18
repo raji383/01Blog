@@ -25,4 +25,12 @@ interface PostResponse {
   createdAt: string;
 }
 
-export type { RegisterPayload, LoginPayload, AuthResponse, PostResponse };
+interface UserProfileResponse {
+  id: number;
+  username: string;
+  email: string;
+  role: string;
+  banned: boolean;
+}
+
+export type { RegisterPayload, LoginPayload, AuthResponse, PostResponse, UserProfileResponse };

@@ -13,6 +13,8 @@ import com.example.demo.dto.LoginRequest;
 import com.example.demo.dto.RegisterRequest;
 import com.example.demo.dto.RegisterResponse;
 import com.example.demo.dto.UserAdminResponse;
+import com.example.demo.dto.UserProfileResponse;
+import org.springframework.security.core.context.SecurityContextHolder;
 import com.example.demo.entities.Post;
 import com.example.demo.entities.Role;
 import com.example.demo.entities.User;
@@ -87,6 +89,20 @@ public class UserService {
         return res;
     }
 
+    public UserProfileResponse getProfile() {
+
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        
+        if (username == null ) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "User not authenticated");
+        }
+
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
+
+        return toProfileResponse(user);
+    }
+
     public List<UserAdminResponse> getAllUsersForAdmin(String adminUsername) {
         requireAdmin(adminUsername);
         return userRepository.findAllByOrderByUsernameAsc()
@@ -154,6 +170,16 @@ public class UserService {
 
     private UserAdminResponse toAdminResponse(User user) {
         UserAdminResponse response = new UserAdminResponse();
+        response.setId(user.getId());
+        response.setUsername(user.getUsername());
+        response.setEmail(user.getEmail());
+        response.setRole(user.getRole());
+        response.setBanned(user.isBanned());
+        return response;
+    }
+
+    private UserProfileResponse toProfileResponse(User user) {
+        UserProfileResponse response = new UserProfileResponse();
         response.setId(user.getId());
         response.setUsername(user.getUsername());
         response.setEmail(user.getEmail());
