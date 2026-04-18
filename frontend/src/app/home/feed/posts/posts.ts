@@ -1,31 +1,32 @@
-import { HttpClient } from '@angular/common/http';
-import { Component, inject } from '@angular/core';
+import { Component, Input } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import type { PostResponse } from '../../../models/user';
 
 @Component({
   selector: 'app-posts',
-  imports: [],
+  imports: [CommonModule],
   templateUrl: './posts.html',
   styleUrl: './posts.css',
 })
 export class Posts {
-  private readonly http = inject(HttpClient);
-  private getposts : PostResponse[] = [];
+  @Input() post: PostResponse | undefined;
 
-  ngOnInit() {
-    try {
-      this.http.get<PostResponse[]>('http://localhost:8080/api/posts/feed').subscribe({
-        next: (res) => {
-          console.log(res);
-          if (res) {
-            console.log(res);
-            this.getposts = res;
+  getRelativeTime(dateString: string): string {
+    const date = new Date(dateString);
+    const now = new Date();
+    const diffMs = now.getTime() - date.getTime();
+    const diffMins = Math.floor(diffMs / 60000);
+    const diffHours = Math.floor(diffMs / 3600000);
+    const diffDays = Math.floor(diffMs / 86400000);
 
-          }
-        }
-      })
-    } catch (error) {
+    if (diffMins < 1) return 'now';
+    if (diffMins < 60) return `${diffMins}m ago`;
+    if (diffHours < 24) return `${diffHours}h ago`;
+    if (diffDays < 7) return `${diffDays}d ago`;
 
-    }
+    return date.toLocaleDateString('en-US', {
+      month: 'short',
+      day: 'numeric'
+    });
   }
 }

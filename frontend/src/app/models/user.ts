@@ -20,6 +20,9 @@ interface PostResponse {
   content: string;
   mediaUrl: string;
   authorUsername: string;
+  likeCount: number;
+  commentCount: number;
+  createdAt: string;
 }
 
 export type { RegisterPayload, LoginPayload, AuthResponse, PostResponse };

@@ -1,0 +1,133 @@
+/* Add Post styles (Facebook-like) */
+.add-post-container {
+    margin-bottom: 16px;
+}
+
+.error-message {
+    background: #fff5f5;
+    border: 1px solid #fc8181;
+    color: #c53030;
+    padding: 8px 12px;
+    border-radius: 6px;
+    margin-bottom: 8px;
+}
+
+.add-post-box {
+    background: #fff;
+    border-radius: 8px;
+    border: 1px solid rgba(0, 0, 0, 0.06);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+    overflow: hidden;
+}
+
+.post-creator-header {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    padding: 12px 16px;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+.avatar {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #e6f0ff, #cfe3ff);
+    color: #0a66c2;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+}
+
+.post-input {
+    flex: 1;
+    border: none;
+    background: #f0f2f5;
+    padding: 10px 12px;
+    border-radius: 20px;
+    font-size: 14px;
+    outline: none;
+}
+
+.image-preview {
+    position: relative;
+    padding: 8px 16px;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+.image-preview img {
+    width: 100%;
+    max-height: 320px;
+    object-fit: cover;
+    border-radius: 8px;
+}
+
+.remove-image {
+    position: absolute;
+    top: 12px;
+    right: 20px;
+    background: rgba(0, 0, 0, 0.6);
+    border: none;
+    color: white;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    cursor: pointer;
+}
+
+.post-actions {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 16px;
+    gap: 12px;
+}
+
+.action-buttons {
+    display: flex;
+    gap: 8px;
+    flex: 1;
+}
+
+.action-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+    background: transparent;
+    border: none;
+    border-radius: 6px;
+    color: #6b6b6b;
+    font-weight: 500;
+    cursor: pointer;
+}
+
+.publish-btn {
+    background: #0a66c2;
+    color: white;
+    border: none;
+    padding: 8px 18px;
+    border-radius: 20px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.publish-btn:disabled {
+    background: #ccc;
+    cursor: not-allowed;
+}
+
+@media(max-width:640px) {
+    .post-creator-header {
+        padding: 10px;
+    }
+
+    .post-input {
+        padding: 8px;
+    }
+
+    .publish-btn {
+        width: 100%;
+    }
+}

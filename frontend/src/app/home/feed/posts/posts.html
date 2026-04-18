@@ -1,1 +1,34 @@
-<div 
+<div class="post-card" *ngIf="post">
+    <!-- Post Header -->
+    <div class="post-header">
+        <div class="author-info">
+            <div class="author-avatar">{{ post.authorUsername.charAt(0).toUpperCase() }}</div>
+            <div class="author-details">
+                <div class="author-name">{{ post.authorUsername }}</div>
+                <div class="post-time">{{ getRelativeTime(post.createdAt) }}</div>
+            </div>
+        </div>
+        <div class="post-options">•••</div>
+    </div>
+
+    <!-- Post Content -->
+    <div class="post-content">
+        <h3 class="post-title">{{ post.title }}</h3>
+        <p class="post-text">{{ post.content }}</p>
+    </div>
+
+    <!-- Post Media -->
+    <div class="post-media" *ngIf="post.mediaUrl">
+        <img [src]="post.mediaUrl" alt="Post media" />
+    </div>
+
+    <!-- Post Stats -->
+    <div class="post-stats">
+        <span>👍 {{ post.likeCount }}</span>
+        <span>💬 {{ post.commentCount }} Comments</span>
+       <!--  <span>↗️ {{ post.shares }} Shares</span> -->
+    </div>
+
+    <!-- Post Actions -->
+    
+</div>

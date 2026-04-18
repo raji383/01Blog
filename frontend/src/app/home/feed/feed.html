@@ -1,2 +1,4 @@
-<p>feed works!</p>
-<app-posts *ngFor="let post of posts" [post]="post"></app-posts>
+<section id="postcontainer">
+    <app-addpost></app-addpost>
+    <app-posts *ngFor="let post of posts()" [post]="post"></app-posts>
+</section>
