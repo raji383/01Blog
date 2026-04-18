@@ -1,7 +1,8 @@
 import { Component, inject, signal, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-addpost',
@@ -18,6 +19,7 @@ export class Addpost {
   protected error = signal<string | null>(null);
   protected isPosting = signal(false);
   private selectedFile: File | null = null;
+  private readonly router = inject(Router);
 
   onFileSelected(event: Event): void {
     const input = event.target as HTMLInputElement;
@@ -41,6 +43,14 @@ export class Addpost {
   publishPost(): void {
     const content = this.postContent().trim();
     const authorUsername = 'admin'; // Replace with actual username from auth context
+    const token = typeof window !== 'undefined'
+      ? window.localStorage.getItem('auth_token')
+      : null;
+
+    if (!token) {
+      this.router.navigate(['/login']);
+      return;
+    }
 
     if (!content) {
       this.error.set('Please write something before posting!');
@@ -58,7 +68,9 @@ export class Addpost {
     if (this.selectedFile) {
       formData.append('mediaFile', this.selectedFile);
     }
-    this.http.post('http://localhost:8080/api/posts', formData).subscribe({
+    const headers = new HttpHeaders({ Authorization: `Bearer ${token}` });
+
+    this.http.post('http://localhost:8080/api/posts', formData, { headers }).subscribe({
       next: () => {
         this.postContent.set('');
         this.removeImage();

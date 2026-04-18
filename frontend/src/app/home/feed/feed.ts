@@ -1,6 +1,6 @@
 import { Component, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Posts } from './posts/posts';
 import type { PostResponse } from '../../models/user';
 import { Addpost } from './addpost/addpost';
@@ -16,8 +16,14 @@ export class Feed {
   protected posts = signal<PostResponse[]>([]);
 
   ngOnInit() {
+    const token = typeof window !== 'undefined'
+      ? window.localStorage.getItem('auth_token') || window.localStorage.getItem('token')
+      : null;
+
+    const headers = token ? new HttpHeaders({ Authorization: `Bearer ${token}` }) : undefined;
+
     try {
-      this.http.get<PostResponse[]>('http://localhost:8080/api/posts/feed').subscribe({
+      this.http.get<PostResponse[]>('http://localhost:8080/api/posts/feed', { headers }).subscribe({
         next: (res) => {
           if (res) {
             console.log(res);
@@ -31,8 +37,15 @@ export class Feed {
     }
   }
   protected addPost(newPost: PostResponse) {
+     const token = typeof window !== 'undefined'
+       ? window.localStorage.getItem('auth_token') || window.localStorage.getItem('token')
+       : null;
+    if (!token) {
+      return;
+    }
+    const headers = new HttpHeaders({ Authorization: `Bearer ${token}` });
     try {
-      this.http.post<PostResponse>('http://localhost:8080/api/posts', newPost).subscribe({
+      this.http.post<PostResponse>('http://localhost:8080/api/posts', newPost, { headers }).subscribe({
         next: (res) => {
           console.log(res);
           this.posts.update(posts => [newPost, ...posts]);

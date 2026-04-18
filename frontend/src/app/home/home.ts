@@ -6,7 +6,7 @@ import { Feed } from './feed/feed';
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [Navbar,Feed],
+  imports: [Navbar, Feed],
   templateUrl: './home.html',
   styleUrls: ['./home.css'],
 })
@@ -14,6 +14,7 @@ export class Home {
   private readonly router = inject(Router);
 
   ngOnInit() {
+  
     const token = typeof window !== 'undefined'
       ? window.localStorage.getItem('auth_token')
       : null;

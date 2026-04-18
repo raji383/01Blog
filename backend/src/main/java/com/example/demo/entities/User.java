@@ -55,7 +55,6 @@ public class User implements UserDetails {
         return username;
     }
 
-    // هادو كاملين ترجعهم true فالأول
     @Override
     public boolean isAccountNonExpired() {
         return true;

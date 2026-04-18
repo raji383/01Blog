@@ -3,8 +3,6 @@ package com.example.demo.controler;
 import java.util.List;
 
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -17,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.example.demo.dto.AdminActionRequest;
 import com.example.demo.dto.BanUserRequest;
 import com.example.demo.dto.UserAdminResponse;
+import com.example.demo.dto.UserProfileResponse;
 import com.example.demo.service.UserService;
 
 import jakarta.validation.Valid;
@@ -32,8 +31,8 @@ public class AdminUserController {
     }
 
     @GetMapping("/me")
-    public String getCurrentUser(@AuthenticationPrincipal UserDetails userDetails) {
-        return userDetails.getUsername();
+    public ResponseEntity<UserProfileResponse> me() {
+        return ResponseEntity.ok(userService.getProfile());
     }
 
     @GetMapping("/admin")
