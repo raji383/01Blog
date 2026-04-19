@@ -1,9 +1,9 @@
 import { Component, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Router } from '@angular/router';
-import type { AuthResponse } from '../models/user';
+import type { AuthResponse, PostResponse } from '../models/user';
 
 @Component({
   selector: 'app-auth',
@@ -28,9 +28,23 @@ export class Auth {
     const token = typeof window !== 'undefined'
       ? window.localStorage.getItem('auth_token')
       : null;
+    const headers = token ? new HttpHeaders({ Authorization: `Bearer ${token}` }) : undefined;
 
     if (token) {
-      this.router.navigate(['/']);
+      this.http.get<PostResponse[]>('http://localhost:8080/api/posts/feed', { headers }).subscribe({
+        next: (res) => {
+          this.router.navigate(['/']);
+
+        },
+        error: (err) => {
+          if (err.status === 401) {
+            this.router.navigate(['/login']);
+
+          } else {
+            console.error('Error fetching posts:', err);
+          }
+        }
+      });
       return;
     }
   }

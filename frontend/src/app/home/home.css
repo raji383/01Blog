@@ -1,0 +1,9 @@
+.home-layout {
+  display: flex;
+  justify-content: center;
+  gap: 24px;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 24px 20px;
+  align-items: flex-start;
+}

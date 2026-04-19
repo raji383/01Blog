@@ -1,0 +1,126 @@
+.rightbar {
+  width: 280px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.card {
+  background: #fff;
+  border: 0.5px solid #dde3ef;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.profile-card {
+  border-top: 3px solid #1a3a6b;
+}
+
+.profile-header {
+  padding: 20px 18px;
+}
+
+.profile-top {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: #1a3a6b;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 500;
+  font-size: 18px;
+  flex-shrink: 0;
+  border: 2px solid #e8edf5;
+}
+
+.avatar.small {
+  width: 35px;
+  height: 35px;
+  font-size: 14px;
+}
+
+.profile-header h4 {
+  font-size: 14px;
+  font-weight: 500;
+  color: #1a1a2e;
+  margin-bottom: 2px;
+}
+
+.profile-header p {
+  font-size: 12px;
+  color: #6b7280;
+}
+
+.profile-divider {
+  height: 0.5px;
+  background: #dde3ef;
+  margin-bottom: 14px;
+}
+
+.logout-btn {
+  width: 100%;
+  padding: 9px;
+  background: transparent;
+  border: 0.5px solid #1a3a6b;
+  border-radius: 8px;
+  color: #1a3a6b;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  transition: background 0.15s, color 0.15s;
+}
+
+.logout-btn:hover {
+  background: #1a3a6b;
+  color: #fff;
+}
+
+.card-title {
+  padding: 14px 18px 0;
+  font-size: 11px;
+  font-weight: 500;
+  color: #9ca3af;
+  letter-spacing: 0.6px;
+  text-transform: uppercase;
+  margin-bottom: 0;
+}
+
+.news-list {
+  list-style: none;
+  padding: 10px 0 4px;
+  margin: 0;
+}
+
+.news-list li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 9px 18px;
+  border-bottom: 0.5px solid #dde3ef;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 500;
+  color: #1a3a6b;
+  transition: background 0.12s;
+}
+
+.news-list li:last-child {
+  border-bottom: none;
+}
+
+.news-list li:hover {
+  background: #f0f4fa;
+}

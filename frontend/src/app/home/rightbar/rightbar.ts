@@ -1,14 +1,14 @@
-import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Component, inject, signal } from '@angular/core';
-import type { UserProfileResponse } from '../../models/user';
+import { UserProfileResponse } from '../../models/user';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 
 @Component({
-  selector: 'app-navbar',
+  selector: 'app-rightbar',
   imports: [],
-  templateUrl: './navbar.html',
-  styleUrl: './navbar.css',
+  templateUrl: './rightbar.html',
+  styleUrl: './rightbar.css',
 })
-export class Navbar {
+export class Rightbar {
   private readonly http = inject(HttpClient);
   protected userProfile = signal<UserProfileResponse | null>(null);
   protected error = signal<string | null>(null);
@@ -38,5 +38,11 @@ export class Navbar {
       console.error('Error:', error);
     }
   }
- 
+  protected logout() {
+    if (typeof window !== 'undefined') {
+      window.localStorage.removeItem('auth_token');
+      window.localStorage.removeItem('token');
+      window.location.href = '/login';
+    }
+  }
 }

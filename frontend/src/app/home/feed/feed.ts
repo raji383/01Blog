@@ -4,6 +4,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Posts } from './posts/posts';
 import type { PostResponse } from '../../models/user';
 import { Addpost } from './addpost/addpost';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-feed',
@@ -14,6 +15,8 @@ import { Addpost } from './addpost/addpost';
 export class Feed {
   private readonly http = inject(HttpClient);
   protected posts = signal<PostResponse[]>([]);
+  private readonly router = inject(Router);
+
 
   ngOnInit() {
     const token = typeof window !== 'undefined'
@@ -30,16 +33,23 @@ export class Feed {
             this.posts.set(res);
           }
         },
-        error: (err) => console.error('Error fetching posts:', err)
+        error: (err) => {
+          if (err.status === 401) {
+            this.router.navigate(['/login']);
+
+          } else {
+            console.error('Error fetching posts:', err);
+          }
+        }
       });
     } catch (error) {
       console.error('Error:', error);
     }
   }
   protected addPost(newPost: PostResponse) {
-     const token = typeof window !== 'undefined'
-       ? window.localStorage.getItem('auth_token') || window.localStorage.getItem('token')
-       : null;
+    const token = typeof window !== 'undefined'
+      ? window.localStorage.getItem('auth_token') || window.localStorage.getItem('token')
+      : null;
     if (!token) {
       return;
     }

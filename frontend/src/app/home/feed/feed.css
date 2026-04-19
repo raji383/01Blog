@@ -1,16 +1,11 @@
 :host {
-    display: flex;
-    justify-content: center;
-    align-items: flex-start;
-    min-height: 100vh;
-    padding: 20px;
-    background: #f0f2f5;
+  display: block;
+  flex: 1;
+  max-width: 600px;
 }
 
 #postcontainer {
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-    width: 100%;
-    max-width: 600px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
 }

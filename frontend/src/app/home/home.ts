@@ -2,11 +2,12 @@ import { Component, inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { Navbar } from './navbar/navbar';
 import { Feed } from './feed/feed';
+import { Rightbar } from './rightbar/rightbar';
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [Navbar, Feed],
+  imports: [Navbar, Feed,Rightbar],
   templateUrl: './home.html',
   styleUrls: ['./home.css'],
 })
