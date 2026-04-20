@@ -5,6 +5,7 @@ import { Posts } from './posts/posts';
 import type { PostResponse } from '../../models/user';
 import { Addpost } from './addpost/addpost';
 import { Router } from '@angular/router';
+import e from 'express';
 
 @Component({
   selector: 'app-feed',
@@ -17,8 +18,7 @@ export class Feed {
   protected posts = signal<PostResponse[]>([]);
   private readonly router = inject(Router);
 
-
-  ngOnInit() {
+  fetchPosts() {
     const token = typeof window !== 'undefined'
       ? window.localStorage.getItem('auth_token') || window.localStorage.getItem('token')
       : null;
@@ -37,6 +37,8 @@ export class Feed {
           if (err.status === 401) {
             this.router.navigate(['/login']);
 
+          } else if (err.status === 403) {
+            this.router.navigate(['/login']);
           } else {
             console.error('Error fetching posts:', err);
           }
@@ -46,24 +48,11 @@ export class Feed {
       console.error('Error:', error);
     }
   }
-  protected addPost(newPost: PostResponse) {
-    const token = typeof window !== 'undefined'
-      ? window.localStorage.getItem('auth_token') || window.localStorage.getItem('token')
-      : null;
-    if (!token) {
-      return;
-    }
-    const headers = new HttpHeaders({ Authorization: `Bearer ${token}` });
-    try {
-      this.http.post<PostResponse>('http://localhost:8080/api/posts', newPost, { headers }).subscribe({
-        next: (res) => {
-          console.log(res);
-          this.posts.update(posts => [newPost, ...posts]);
-        }
-      });
-    } catch (error) {
-      console.error('Error adding post:', error);
-    }
+  ngOnInit() {
+    this.fetchPosts();
+  }
+  protected addPost(res: PostResponse) {
+    this.posts.update(posts => [res, ...posts]);
   }
 }
 

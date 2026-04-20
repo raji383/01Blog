@@ -1,6 +1,7 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Component, inject, signal } from '@angular/core';
 import type { UserProfileResponse } from '../../models/user';
+import { UserService } from '../../Service/UserService';
 
 @Component({
   selector: 'app-navbar',
@@ -12,7 +13,7 @@ export class Navbar {
   private readonly http = inject(HttpClient);
   protected userProfile = signal<UserProfileResponse | null>(null);
   protected error = signal<string | null>(null);
-
+  private userService = inject(UserService);
   ngOnInit() {
     const token = typeof window !== 'undefined'
       ? window.localStorage.getItem('auth_token') || window.localStorage.getItem('token')
@@ -28,6 +29,7 @@ export class Navbar {
         next: (user) => {
           console.log('User profile loaded:', user);
           this.userProfile.set(user);
+          this.userService.setUser(user);
         },
         error: (err) => {
           this.error.set('Failed to load user profile');
@@ -38,5 +40,5 @@ export class Navbar {
       console.error('Error:', error);
     }
   }
- 
+
 }

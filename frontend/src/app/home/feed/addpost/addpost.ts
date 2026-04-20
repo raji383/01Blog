@@ -3,6 +3,8 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Router } from '@angular/router';
+import { UserService } from '../../../Service/UserService';
+import { PostResponse } from '../../../models/user';
 
 @Component({
   selector: 'app-addpost',
@@ -12,14 +14,14 @@ import { Router } from '@angular/router';
 })
 export class Addpost {
   private readonly http = inject(HttpClient);
-  @Output() postPublished = new EventEmitter<void>();
-
+@Output() postPublished = new EventEmitter<PostResponse>();
   protected postContent = signal('');
   protected previewUrl = signal<string | null>(null);
   protected error = signal<string | null>(null);
   protected isPosting = signal(false);
   private selectedFile: File | null = null;
   private readonly router = inject(Router);
+  private userService = inject(UserService);
 
   onFileSelected(event: Event): void {
     const input = event.target as HTMLInputElement;
@@ -42,7 +44,8 @@ export class Addpost {
 
   publishPost(): void {
     const content = this.postContent().trim();
-    const authorUsername = 'admin'; // Replace with actual username from auth context
+    const user = this.userService.getUser()();
+    const authorUsername = user?.username || 'admin';
     const token = typeof window !== 'undefined'
       ? window.localStorage.getItem('auth_token')
       : null;
@@ -71,11 +74,12 @@ export class Addpost {
     const headers = new HttpHeaders({ Authorization: `Bearer ${token}` });
 
     this.http.post('http://localhost:8080/api/posts', formData, { headers }).subscribe({
-      next: () => {
+      next: (res: any) => {
         this.postContent.set('');
         this.removeImage();
         this.isPosting.set(false);
-        this.postPublished.emit();
+
+        this.postPublished.emit(res); 
       },
       error: (err) => {
         this.error.set('Failed to publish post. Please try again.');
