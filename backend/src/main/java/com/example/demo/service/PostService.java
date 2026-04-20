@@ -90,7 +90,6 @@ public class PostService {
 
     public ToggleLikeResponse toggleLike(Long postId, ToggleLikeRequest request) {
         Post post = getPost(postId);
-        System.out.println(request.getUsername());
         User user = getUser(request.getUsername());
 
 

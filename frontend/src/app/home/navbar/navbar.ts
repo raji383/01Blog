@@ -27,7 +27,6 @@ export class Navbar {
     try {
       this.http.get<UserProfileResponse>('http://localhost:8080/api/users/me', { headers }).subscribe({
         next: (user) => {
-          console.log('User profile loaded:', user);
           this.userProfile.set(user);
           this.userService.setUser(user);
         },

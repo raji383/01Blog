@@ -72,6 +72,7 @@ public class PostController {
 
     @PostMapping("/{postId}/like")
     public ResponseEntity<ToggleLikeResponse> toggleLike(@PathVariable Long postId, @Valid @RequestBody ToggleLikeRequest request) {
+        System.out.println("Toggling like for postId: " + postId );
         return ResponseEntity.ok(postService.toggleLike(postId, request));
     }
 

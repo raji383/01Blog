@@ -1,0 +1,27 @@
+<div class="comments-section">
+    <div class="comments-count">{{ comments()?.length }} comments</div>
+    <div class="comments-list">
+
+        @for (comment of comments(); track comment.id) {
+        <div class="comment-card">
+            <div class="comment-author-avatar">
+                {{ comment.authorUsername.charAt(0).toUpperCase() }}
+            </div>
+            <div class="comment-bubble">
+                <div class="comment-author-details">
+                    <div class="comment-author-name">{{ comment.authorUsername }}</div>
+                    <div class="comment-time">{{ getRelativeTime(comment.createdAt) }}</div>
+                </div>
+                <p class="comment-text">{{ comment.content }}</p>
+            </div>
+        </div>
+        }
+    </div>
+
+
+    <div class="comment-input-row">
+        <div class="comment-author-avatar">{{ currentUser?.username?.charAt(0)?.toUpperCase() }}</div>
+        <input type="text" placeholder="Write a comment..." class="comment-input" [(ngModel)]="commentContent"
+            (keyup.enter)="submitComment()" />
+    </div>
+</div>

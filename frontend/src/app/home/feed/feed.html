@@ -1,4 +1,4 @@
 <section id="postcontainer">
-    <app-addpost (postPublished)="addPost($event)"></app-addpost> <app-posts *ngFor="let post of posts()"
-        [post]="post"></app-posts>
+    <app-addpost (postPublished)="addPost($event)"></app-addpost>
+    <app-posts *ngFor="let post of posts()" [post]="post" (liked)="onLiked($event)"></app-posts>
 </section>

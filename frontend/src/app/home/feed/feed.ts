@@ -29,7 +29,6 @@ export class Feed {
       this.http.get<PostResponse[]>('http://localhost:8080/api/posts/feed', { headers }).subscribe({
         next: (res) => {
           if (res) {
-            console.log(res);
             this.posts.set(res);
           }
         },
@@ -54,6 +53,22 @@ export class Feed {
   protected addPost(res: PostResponse) {
     this.posts.update(posts => [res, ...posts]);
   }
+  onLiked(event: { postId: number; liked: boolean }) {
+    this.posts.update(posts =>
+      posts.map(p =>
+        p.id === event.postId
+          ? {
+            ...p,
+            likeCount: Math.max(
+              0,
+              p.likeCount + (event.liked ? 1 : -1)
+            )
+          }
+          : p
+      )
+    );
+  }
+
 }
 
 

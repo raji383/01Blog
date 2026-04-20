@@ -66,7 +66,6 @@ export class Addpost {
     const formData = new FormData();
     formData.append('title', content.split('\n')[0]);
     formData.append('content', content);
-    console.log(content, formData);
     formData.append('authorUsername', authorUsername);
     if (this.selectedFile) {
       formData.append('mediaFile', this.selectedFile);

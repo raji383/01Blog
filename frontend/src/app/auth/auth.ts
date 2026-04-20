@@ -60,7 +60,6 @@ export class Auth {
     try {
       this.http.post<AuthResponse>('http://localhost:8080/api/auth/login', this.loginForm).subscribe({
         next: (res) => {
-          console.log(res);
           if (res.jwt) {
             if (typeof window !== 'undefined') {
               window.localStorage.setItem('auth_token', res.jwt);
@@ -80,7 +79,6 @@ export class Auth {
     try {
       this.http.post<AuthResponse>('http://localhost:8080/api/auth/register', this.registerForm).subscribe({
         next: (res) => {
-          console.log(res);
           if (res.jwt) {
             if (typeof window !== 'undefined') {
               window.localStorage.setItem('auth_token', res.jwt);

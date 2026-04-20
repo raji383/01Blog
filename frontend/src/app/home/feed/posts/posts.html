@@ -24,11 +24,13 @@
 
     <!-- Post Stats -->
     <div class="post-stats">
-        <span>👍 {{ post.likeCount }}</span>
-        <span>💬 {{ post.commentCount }} Comments</span>
-       <!--  <span>↗️ {{ post.shares }} Shares</span> -->
+        <span (click)="addLike(post)">👍 {{ post.likeCount }}</span>
+        <span (click)="showComments()">💬 {{ post.commentCount }} Comments</span>
+        <!--  <span>↗️ {{ post.shares }} Shares</span> -->
     </div>
-
+    <div class="postcomment" *ngIf="seemore">
+        <app-comments [post]="post"></app-comments>
+    </div>
     <!-- Post Actions -->
-    
+
 </div>

@@ -23,6 +23,7 @@ interface PostResponse {
   likeCount: number;
   commentCount: number;
   createdAt: string;
+  id: number;
 }
 
 interface UserProfileResponse {
@@ -32,5 +33,11 @@ interface UserProfileResponse {
   role: string;
   banned: boolean;
 }
-
-export type { RegisterPayload, LoginPayload, AuthResponse, PostResponse, UserProfileResponse };
+interface LikeResponse {
+  likeCount: number;
+  liked: boolean;
+  postId: number;
+  userId: number;
+  username: string;
+}
+export type { RegisterPayload, LoginPayload, AuthResponse, PostResponse, UserProfileResponse, LikeResponse };
