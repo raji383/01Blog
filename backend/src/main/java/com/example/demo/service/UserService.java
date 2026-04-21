@@ -164,6 +164,7 @@ public class UserService {
         }
 
         if (targetUser.getRole() == Role.ADMIN) {
+
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Cannot moderate another admin account");
         }
     }

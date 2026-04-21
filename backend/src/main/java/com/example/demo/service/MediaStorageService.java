@@ -17,7 +17,6 @@ import com.example.demo.dto.MediaUploadResponse;
 
 @Service
 public class MediaStorageService {
-
     private static final List<String> ALLOWED_TYPES = List.of(
             "image/jpeg",
             "image/png",
@@ -46,7 +45,6 @@ public class MediaStorageService {
         String originalFilename = file.getOriginalFilename();
         String extension = getExtension(originalFilename);
         String storedFilename = UUID.randomUUID() + extension;
-
         try {
             Files.createDirectories(uploadRoot);
             Path target = uploadRoot.resolve(storedFilename);
@@ -62,6 +60,7 @@ public class MediaStorageService {
         }
     }
 
+   
     private String getExtension(String filename) {
         if (filename == null || filename.isBlank()) {
             return "";

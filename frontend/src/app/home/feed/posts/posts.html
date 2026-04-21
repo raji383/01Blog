@@ -19,7 +19,7 @@
 
     <!-- Post Media -->
     <div class="post-media" *ngIf="post.mediaUrl">
-        <img [src]="post.mediaUrl" alt="Post media" />
+        <img [src]="'http://localhost:8080' + post.mediaUrl" alt="Post media" />
     </div>
 
     <!-- Post Stats -->

@@ -34,8 +34,11 @@ public class Post {
     @Column(nullable = false, length = 5000)
     private String content;
 
-    @Column(length = 1000)
+    @Column(name = "media_url", length = 1000)
     private String mediaUrl;
+    
+    @Column(name = "media_type")
+    private String mediaType;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "author_id", nullable = false)

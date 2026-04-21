@@ -14,7 +14,7 @@ import { PostResponse } from '../../../models/user';
 })
 export class Addpost {
   private readonly http = inject(HttpClient);
-@Output() postPublished = new EventEmitter<PostResponse>();
+  @Output() postPublished = new EventEmitter<PostResponse>();
   protected postContent = signal('');
   protected previewUrl = signal<string | null>(null);
   protected error = signal<string | null>(null);
@@ -63,28 +63,30 @@ export class Addpost {
     this.isPosting.set(true);
     this.error.set(null);
 
+    const headers = new HttpHeaders({ Authorization: `Bearer ${token}` });
     const formData = new FormData();
     formData.append('title', content.split('\n')[0]);
     formData.append('content', content);
     formData.append('authorUsername', authorUsername);
+    
     if (this.selectedFile) {
+      console.log('dgf'+this.selectedFile);
       formData.append('mediaFile', this.selectedFile);
     }
-    const headers = new HttpHeaders({ Authorization: `Bearer ${token}` });
 
-    this.http.post('http://localhost:8080/api/posts', formData, { headers }).subscribe({
-      next: (res: any) => {
-        this.postContent.set('');
-        this.removeImage();
-        this.isPosting.set(false);
-
-        this.postPublished.emit(res); 
-      },
-      error: (err) => {
-        this.error.set('Failed to publish post. Please try again.');
-        this.isPosting.set(false);
-        console.error('Error publishing post:', err);
-      }
-    });
+    this.http.post('http://localhost:8080/api/posts', formData, { headers })
+      .subscribe({
+        next: (res: any) => {
+          this.postContent.set('');
+          this.removeImage();
+          this.isPosting.set(false);
+          this.postPublished.emit(res);
+        },
+        error: (err) => {
+          this.error.set('Failed to publish post. Please try again.');
+          this.isPosting.set(false);
+          console.error(err);
+        }
+      });
   }
 }

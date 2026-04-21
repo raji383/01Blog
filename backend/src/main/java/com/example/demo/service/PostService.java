@@ -9,6 +9,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import com.example.demo.dto.CommentRequest;
 import com.example.demo.dto.CommentResponse;
+import com.example.demo.dto.MediaUploadResponse;
 import com.example.demo.dto.PostRequest;
 import com.example.demo.dto.PostResponse;
 import com.example.demo.dto.ToggleLikeRequest;
@@ -29,16 +30,19 @@ public class PostService {
     private final PostLikeRepository postLikeRepository;
     private final CommentRepository commentRepository;
     private final UserRepository userRepository;
+    private final MediaStorageService mediaStorageService;
 
     public PostService(
             PostRepository postRepository,
             PostLikeRepository postLikeRepository,
             CommentRepository commentRepository,
-            UserRepository userRepository) {
+            UserRepository userRepository,
+            MediaStorageService mediaStorageService) {
         this.postRepository = postRepository;
         this.postLikeRepository = postLikeRepository;
         this.commentRepository = commentRepository;
         this.userRepository = userRepository;
+        this.mediaStorageService = mediaStorageService;
     }
 
     public PostResponse create(PostRequest request) {
@@ -48,7 +52,12 @@ public class PostService {
         Post post = new Post();
         post.setTitle(request.getTitle());
         post.setContent(request.getContent());
-        post.setMediaUrl(request.getMediaUrl());
+        if (request.getMediaFile() != null && !request.getMediaFile().isEmpty()) {
+            MediaUploadResponse mediaUrl = mediaStorageService.store(request.getMediaFile());
+            System.out.println("Stored media for post: " + mediaUrl.getMediaUrl());
+            post.setMediaUrl(mediaUrl.getMediaUrl());
+            
+        }
         post.setAuthor(author);
 
         return toResponse(postRepository.save(post));
@@ -91,7 +100,6 @@ public class PostService {
     public ToggleLikeResponse toggleLike(Long postId, ToggleLikeRequest request) {
         Post post = getPost(postId);
         User user = getUser(request.getUsername());
-
 
         boolean liked;
         PostLike existingLike = postLikeRepository.findByPostIdAndUserId(postId, user.getId()).orElse(null);

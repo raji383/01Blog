@@ -1,5 +1,7 @@
 package com.example.demo.dto;
 
+import org.springframework.web.multipart.MultipartFile;
+
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
@@ -18,6 +20,8 @@ public class PostRequest {
     @Size(max = 1000, message = "Media URL must be at most 1000 characters")
     private String mediaUrl;
 
+    private MultipartFile mediaFile;
     @NotBlank
     private String authorUsername;
+    
 }

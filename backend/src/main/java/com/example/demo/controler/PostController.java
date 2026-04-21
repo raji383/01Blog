@@ -12,12 +12,9 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.multipart.MultipartFile;
 
 import com.example.demo.dto.CommentRequest;
 import com.example.demo.dto.CommentResponse;
-import com.example.demo.dto.MediaUploadResponse;
 import com.example.demo.dto.PostRequest;
 import com.example.demo.dto.PostResponse;
 import com.example.demo.dto.ToggleLikeRequest;
@@ -41,13 +38,11 @@ public class PostController {
 
     @PostMapping
     public ResponseEntity<PostResponse> createPost(@Valid @ModelAttribute PostRequest request) {
+        System.out.println("Received post creation request: " + request);
         return ResponseEntity.ok(postService.create(request));
     }
 
-    @PostMapping("/upload")
-    public ResponseEntity<MediaUploadResponse> uploadMedia(@RequestParam("file") MultipartFile file) {
-        return ResponseEntity.ok(mediaStorageService.store(file));
-    }
+   
 
     @GetMapping("/feed")
     public ResponseEntity<List<PostResponse>> getFeed() {

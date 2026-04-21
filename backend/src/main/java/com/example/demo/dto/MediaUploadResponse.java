@@ -7,4 +7,8 @@ public class MediaUploadResponse {
     private String mediaUrl;
     private String mediaType;
     private String originalFilename;
+     public String getUrl() {
+        return "/uploads/" + originalFilename;
+    }
+
 }
