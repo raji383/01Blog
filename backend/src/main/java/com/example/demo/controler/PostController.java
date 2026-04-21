@@ -29,11 +29,9 @@ import jakarta.validation.Valid;
 public class PostController {
 
     private final PostService postService;
-    private final MediaStorageService mediaStorageService;
 
     public PostController(PostService postService, MediaStorageService mediaStorageService) {
         this.postService = postService;
-        this.mediaStorageService = mediaStorageService;
     }
 
     @PostMapping
