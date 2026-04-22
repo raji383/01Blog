@@ -80,6 +80,10 @@ public class PostService {
     public PostResponse update(Long postId, PostRequest request) {
         Post post = getPost(postId);
         User author = getUser(request.getAuthorUsername());
+        User postAuthor = post.getAuthor();
+        if (!postAuthor.getId().equals(author.getId())) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You can only update your own posts");
+        }
 
         post.setTitle(request.getTitle());
         post.setContent(request.getContent());
