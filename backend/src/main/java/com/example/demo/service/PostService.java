@@ -83,7 +83,12 @@ public class PostService {
 
         post.setTitle(request.getTitle());
         post.setContent(request.getContent());
-        post.setMediaUrl(request.getMediaUrl());
+        if (request.getMediaFile() != null && !request.getMediaFile().isEmpty()) {
+            MediaUploadResponse mediaUrl = mediaStorageService.store(request.getMediaFile());
+            post.setMediaUrl(mediaUrl.getMediaUrl());
+        } else {
+            post.setMediaUrl(request.getMediaUrl());
+        }
         post.setAuthor(author);
 
         return toResponse(postRepository.save(post));

@@ -1,0 +1,62 @@
+<div class="edit-post-backdrop" (click)="close()">
+  <div class="edit-post-modal" (click)="$event.stopPropagation()">
+    <div class="edit-post-header">
+      <div>
+        <h3>Edit post</h3>
+        <p>Update the title or content before saving.</p>
+      </div>
+      <button type="button" class="close-btn" (click)="close()">✕</button>
+    </div>
+
+    <div class="edit-post-body">
+      <label class="field">
+        <span>Title</span>
+        <input
+          type="text"
+          [ngModel]="title()"
+          (ngModelChange)="title.set($event)"
+          placeholder="Post title" />
+      </label>
+
+      <label class="field">
+        <span>Content</span>
+        <textarea
+          rows="6"
+          [ngModel]="content()"
+          (ngModelChange)="content.set($event)"
+          placeholder="Post content"></textarea>
+      </label>
+
+      <label class="field">
+        <span>Current media path</span>
+        <input
+          type="text"
+          [ngModel]="mediaUrl()"
+          readonly
+          placeholder="Stored media path" />
+      </label>
+
+      <label class="field">
+        <span>Replace media from local file</span>
+        <input
+          type="file"
+          accept="image/*,video/*"
+          (change)="onFileSelected($event)" />
+      </label>
+
+      <p *ngIf="selectedFileName()">Selected file: {{ selectedFileName() }}</p>
+      <button *ngIf="selectedFileName()" type="button" class="ghost-btn" (click)="clearSelectedFile()">Remove selected file</button>
+    </div>
+
+    <div class="edit-post-actions">
+      <button type="button" class="ghost-btn" (click)="close()">Cancel</button>
+      <button
+        type="button"
+        class="save-btn"
+        [disabled]="!title().trim() || !content().trim()"
+        (click)="submit()">
+        Save changes
+      </button>
+    </div>
+  </div>
+</div>

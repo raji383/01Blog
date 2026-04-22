@@ -1,5 +1,5 @@
 <div class="comments-section">
-    <div class="comments-count">{{ comments()?.length }} comments</div>
+    <div class="comments-count">{{ comments().length }} comments</div>
     <div class="comments-list">
 
         @for (comment of comments(); track comment.id) {

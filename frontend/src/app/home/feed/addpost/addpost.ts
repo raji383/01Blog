@@ -17,6 +17,7 @@ export class Addpost {
   @Output() postPublished = new EventEmitter<PostResponse>();
   protected postContent = signal('');
   protected previewUrl = signal<string | null>(null);
+  protected previewType = signal<'image' | 'video' | null>(null);
   protected error = signal<string | null>(null);
   protected isPosting = signal(false);
   private selectedFile: File | null = null;
@@ -29,6 +30,7 @@ export class Addpost {
 
     if (file) {
       this.selectedFile = file;
+      this.previewType.set(file.type.startsWith('video/') ? 'video' : 'image');
       const reader = new FileReader();
       reader.onload = (e) => {
         this.previewUrl.set(e.target?.result as string);
@@ -39,6 +41,7 @@ export class Addpost {
 
   removeImage(): void {
     this.previewUrl.set(null);
+    this.previewType.set(null);
     this.selectedFile = null;
   }
 

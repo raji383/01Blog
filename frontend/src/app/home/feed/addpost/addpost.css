@@ -63,6 +63,14 @@
     border-radius: 8px;
 }
 
+.image-preview video {
+    width: 100%;
+    max-height: 320px;
+    border-radius: 8px;
+    background: #000;
+    display: block;
+}
+
 .remove-image {
     position: absolute;
     top: 12px;

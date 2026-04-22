@@ -1,0 +1,63 @@
+:host {
+  display: block;
+}
+
+.show-options-menu {
+  min-width: 180px;
+  padding: 8px;
+  border: 1px solid #e5e7eb;
+  border-radius: 14px;
+  background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+  box-shadow: 0 18px 36px rgba(15, 23, 42, 0.16);
+  backdrop-filter: blur(10px);
+}
+
+.menu-action {
+  width: 100%;
+  border: 0;
+  border-radius: 10px;
+  background: transparent;
+  color: #1f2937;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 11px 12px;
+  font-size: 14px;
+  font-weight: 600;
+  text-align: left;
+  transition: background-color 0.18s ease, color 0.18s ease, transform 0.18s ease;
+}
+
+.menu-action + .menu-action {
+  margin-top: 4px;
+}
+
+.menu-action:hover {
+  background: #eef2ff;
+  color: #4338ca;
+  transform: translateX(2px);
+}
+
+.menu-action:focus-visible {
+  outline: 2px solid #667eea;
+  outline-offset: 2px;
+}
+
+.menu-action.danger {
+  color: #b91c1c;
+}
+
+.menu-action.danger:hover {
+  background: #fef2f2;
+  color: #991b1b;
+}
+
+.menu-action.muted {
+  color: #6b7280;
+}
+
+.menu-action.muted:hover {
+  background: #f3f4f6;
+  color: #111827;
+}

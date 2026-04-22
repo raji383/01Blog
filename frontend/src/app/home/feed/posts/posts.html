@@ -8,7 +8,17 @@
                 <div class="post-time">{{ getRelativeTime(post.createdAt) }}</div>
             </div>
         </div>
-        <div class="post-options">•••</div>
+        <div class="post-options-wrapper">
+            <div class="post-options" (click)="showOptionsMenu()">•••</div>
+            <div class="post-options-menu" *ngIf="showOptions">
+                <app-show-options
+                    [post]="post"
+                    (closeMenu)="closeOptionsMenu()"
+                    (edit)="openEditModal($event)"
+                    (delete)="deletePost($event)"></app-show-options>
+            </div>
+        </div>
+
     </div>
 
     <!-- Post Content -->
@@ -19,7 +29,8 @@
 
     <!-- Post Media -->
     <div class="post-media" *ngIf="post.mediaUrl">
-        <img [src]="'http://localhost:8080' + post.mediaUrl" alt="Post media" />
+        <img *ngIf="!isVideoMedia(post.mediaUrl)" [src]="'http://localhost:8080' + post.mediaUrl" alt="Post media" />
+        <video *ngIf="isVideoMedia(post.mediaUrl)" [src]="'http://localhost:8080' + post.mediaUrl" controls playsinline preload="metadata"></video>
     </div>
 
     <!-- Post Stats -->
@@ -34,3 +45,9 @@
     <!-- Post Actions -->
 
 </div>
+
+<app-edit-post
+    *ngIf="editingPost"
+    [post]="editingPost"
+    (cancel)="closeEditModal()"
+    (save)="saveEditedPost(editingPost, $event)"></app-edit-post>

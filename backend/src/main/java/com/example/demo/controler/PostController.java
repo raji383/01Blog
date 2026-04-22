@@ -2,6 +2,7 @@ package com.example.demo.controler;
 
 import java.util.List;
 
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -52,8 +53,8 @@ public class PostController {
         return ResponseEntity.ok(postService.getPostsByUsername(username));
     }
 
-    @PutMapping("/{postId}")
-    public ResponseEntity<PostResponse> updatePost(@PathVariable Long postId, @Valid @RequestBody PostRequest request) {
+    @PutMapping(value = "/{postId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<PostResponse> updatePost(@PathVariable Long postId, @Valid @ModelAttribute PostRequest request) {
         return ResponseEntity.ok(postService.update(postId, request));
     }
 

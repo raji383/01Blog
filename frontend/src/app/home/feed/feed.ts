@@ -5,7 +5,6 @@ import { Posts } from './posts/posts';
 import type { PostResponse } from '../../models/user';
 import { Addpost } from './addpost/addpost';
 import { Router } from '@angular/router';
-import e from 'express';
 
 @Component({
   selector: 'app-feed',
@@ -69,6 +68,15 @@ export class Feed {
     );
   }
 
-}
+  onEdited(updatedPost: PostResponse) {
+    this.posts.update(posts =>
+      posts.map(post => post.id === updatedPost.id ? updatedPost : post)
+    );
+  }
 
+  onDeleted(postId: number) {
+    this.posts.update(posts => posts.filter(post => post.id !== postId));
+  }
+
+}
 
