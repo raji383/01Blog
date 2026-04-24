@@ -49,11 +49,10 @@ export class Profile {
     });
   }
   banUser() {
-    const token = this.getToken();
     const currentUser = this.user();
     const adminUsername = this.getTokenPayload()?.sub;
 
-    if (!token || !currentUser || !adminUsername) {
+    if (!currentUser || !adminUsername) {
       return;
     }
 
@@ -83,9 +82,30 @@ export class Profile {
       }
     });
 
+
   }
   deleteUser() {
+    const adminUsername = this.getTokenPayload()?.sub;
+    if (!this.user() || !adminUsername) {
+      return;
+    }
+    const requestBody = {
+      adminUsername,
+    };
 
+    if (!confirm('Are you sure you want to delete this user? This action cannot be undone.')) {
+      return;
+    }
+    this.http.delete(`http://localhost:8080/api/users/admin/${this.user()?.id}`, { body: requestBody }).subscribe({
+      next: () => {
+        alert('User has been deleted');
+        window.location.href = '/';
+      },
+      error: (err) => {
+        console.error('Error deleting user:', err);
+        alert('Failed to delete user');
+      }
+    });
   }
   myProfile(): boolean {
     const payload = this.getTokenPayload();
