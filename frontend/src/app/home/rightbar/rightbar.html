@@ -1,46 +1,58 @@
 <div class="rightbar">
-
-    <!-- 🔥 Profile Card -->
     <div class="card profile-card">
         <div class="profile-header">
-            <div class="avatar">
-                {{ userProfile()?.username?.charAt(0)?.toUpperCase() }}
+            <div class="profile-top">
+                <div class="avatar">
+                    {{ userProfile()?.username?.charAt(0)?.toUpperCase() || "?" }}
+                </div>
+                <div class="profile-copy">
+                    <h4>{{ userProfile()?.username || "Guest" }}</h4>
+                    <p>{{ userProfile()?.email || "Signed in user" }}</p>
+                </div>
             </div>
-            <div>
-                <h4>{{ userProfile()?.username }}</h4>
-                <p>Web Developer</p>
-            </div>
-            <button class="logout-btn" (click)="logout()">
-                Logout
+            <div class="profile-divider"></div>
+            <button class="logout-btn" type="button" (click)="logout()">
+                Log out
             </button>
+            <p class="state-message error" *ngIf="profileError()">
+                {{ profileError() }}
+            </p>
         </div>
     </div>
 
-    <!-- 🔥 Suggestions -->
-    <!-- <div class="card">
-        <h4 class="card-title">People you may know</h4>
-
-        <div class="suggestion" *ngFor="let user of users">
-            <div class="avatar small">
-                {{ user.username?.charAt(0)?.toUpperCase() }}
-            </div>
-            <div class="info">
-                <span class="name">{{ user.username }}</span>
-                <button class="connect-btn">Connect</button>
+    <div class="card suggestions-card">
+        <div class="suggestions-header">
+            <div>
+                <h4 class="card-title">People you may know</h4>
+                <p class="card-subtitle">Fresh profiles picked for you</p>
             </div>
         </div>
-    </div> -->
-
-    <!-- 🔥 News -->
-    <div class="card">
-        <h4 class="card-title">Trending</h4>
 
         <ul class="news-list">
-            <li>#Angular</li>
-            <li>#SpringBoot</li>
-            <li>#WebDevelopment</li>
-            <li>#AI</li>
+            <li class="suggestion" *ngFor="let user of users()">
+                <div class="avatar small">
+                    {{ user.username.charAt(0).toUpperCase() }}
+                </div>
+                <div class="info">
+                    <span class="name">{{ user.username }}</span>
+                    <span class="meta">{{ user.email }}</span>
+                </div>
+                <div class="suggestion-actions">
+                    <a class="connect-btn" [routerLink]="['/profile', user.id]">View profile</a>
+                </div>
+            </li>
         </ul>
-    </div>
 
+        <div class="state-message" *ngIf="isLoadingUsers()">
+            Loading suggestions...
+        </div>
+
+        <div class="state-message error" *ngIf="suggestionsError()">
+            {{ suggestionsError() }}
+        </div>
+
+        <div class="state-message" *ngIf="!isLoadingUsers() && !suggestionsError() && !hasSuggestions()">
+            No suggestions available right now.
+        </div>
+    </div>
 </div>

@@ -1,1 +1,86 @@
-<p>profile works!</p>
+<div class="profile-page">
+    <app-navbar></app-navbar>
+
+    <div class="profile-shell">
+        <div class="profile-layout">
+            <section class="profile-main card">
+                <div class="profile-banner"></div>
+
+                <div class="profile-body" *ngIf="user() as profile">
+                    <div class="identity-row">
+                        <div class="profile-avatar">{{ userInitial() }}</div>
+
+                        <div class="identity-copy">
+                            <span class="eyebrow">Member profile</span>
+                            <h1>{{ profile.username }}</h1>
+                            <p class="identity-meta">{{ profile.email }}</p>
+                        </div>
+
+                        <a class="secondary-btn" routerLink="/">Back home</a>
+                    </div>
+
+                    <div class="stats-grid">
+                        <article class="stat-card">
+                            <span class="stat-label">Role</span>
+                            <strong>{{ profile.role }}</strong>
+                        </article>
+
+                        <article class="stat-card">
+                            <span class="stat-label">Status</span>
+                            <strong [class.is-banned]="profile.banned">
+                                {{ profile.banned ? 'Restricted' : 'Active' }}
+                            </strong>
+                        </article>
+
+                        <article class="stat-card">
+                            <span class="stat-label">Contact</span>
+                            <strong>{{ profile.email }}</strong>
+                        </article>
+                    </div>
+
+                    <div class="about-card">
+                        <h2>About this profile</h2>
+                        <p>
+                            This profile page keeps the same clean card layout as the home screen and shows the basic
+                            account information available from the API.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="state-block" *ngIf="isLoading()">
+                    <div class="state-avatar shimmer"></div>
+                    <div class="state-line shimmer"></div>
+                    <div class="state-line short shimmer"></div>
+                </div>
+
+                <div class="state-block error" *ngIf="!isLoading() && error()">
+                    <h2>Unable to load profile</h2>
+                    <p>{{ error() }}</p>
+                    <a class="secondary-btn" routerLink="/">Return home</a>
+                </div>
+            </section>
+
+            <aside class="profile-side">
+                <div class="card side-card">
+                    <h3>Profile summary</h3>
+                    <p>Compact details styled to stay visually consistent with the home page sidebar cards.</p>
+
+                    <div class="summary-list" *ngIf="user() as profile">
+                        <div class="summary-item">
+                            <span>Username</span>
+                            <strong>{{ profile.username }}</strong>
+                        </div>
+                        <div class="summary-item">
+                            <span>Email</span>
+                            <strong>{{ profile.email }}</strong>
+                        </div>
+                        <div class="summary-item">
+                            <span>Role</span>
+                            <strong>{{ profile.role }}</strong>
+                        </div>
+                    </div>
+                </div>
+            </aside>
+        </div>
+    </div>
+</div>

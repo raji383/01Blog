@@ -1,5 +1,7 @@
 package com.example.demo.service;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.springframework.http.HttpStatus;
@@ -92,8 +94,8 @@ public class UserService {
     public UserProfileResponse getProfile() {
 
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
-        
-        if (username == null ) {
+
+        if (username == null) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "User not authenticated");
         }
 
@@ -101,6 +103,10 @@ public class UserService {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
 
         return toProfileResponse(user);
+    }
+
+    public UserProfileResponse getUser(Long userId) {
+        return toProfileResponse(getUserEntity(userId));
     }
 
     public List<UserAdminResponse> getAllUsersForAdmin(String adminUsername) {
@@ -113,7 +119,7 @@ public class UserService {
 
     public UserAdminResponse updateBanStatus(Long userId, BanUserRequest request) {
         User admin = requireAdmin(request.getAdminUsername());
-        User targetUser = getUser(userId);
+        User targetUser = getUserEntity(userId);
         validateModerationTarget(admin, targetUser);
 
         targetUser.setBanned(request.getBanned());
@@ -123,7 +129,7 @@ public class UserService {
     @Transactional
     public void deleteUserAsAdmin(Long userId, String adminUsername) {
         User admin = requireAdmin(adminUsername);
-        User targetUser = getUser(userId);
+        User targetUser = getUserEntity(userId);
         validateModerationTarget(admin, targetUser);
 
         List<Post> posts = postRepository.findByAuthorId(targetUser.getId());
@@ -153,7 +159,20 @@ public class UserService {
         return admin;
     }
 
-    private User getUser(Long userId) {
+    public List<UserProfileResponse> getUsers() {
+        String currentUsername = SecurityContextHolder.getContext().getAuthentication().getName();
+
+        List<User> users = new ArrayList<>(userRepository.findAll());
+        users.removeIf(user -> user.getUsername().equals(currentUsername));
+        Collections.shuffle(users);
+
+        return users.stream()
+                .limit(10)
+                .map(this::toProfileResponse)
+                .toList();
+    }
+
+    private User getUserEntity(Long userId) {
         return userRepository.findById(userId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
     }

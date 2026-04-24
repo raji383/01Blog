@@ -34,7 +34,10 @@ public class AdminUserController {
     public ResponseEntity<UserProfileResponse> me() {
         return ResponseEntity.ok(userService.getProfile());
     }
-
+    @GetMapping("/{userId}")
+    public ResponseEntity<UserProfileResponse> getUserProfile(@PathVariable Long userId) {
+        return ResponseEntity.ok(userService.getUser(userId));
+    }
     @GetMapping("/admin")
     public ResponseEntity<List<UserAdminResponse>> getAllUsers(@RequestParam String adminUsername) {
         return ResponseEntity.ok(userService.getAllUsersForAdmin(adminUsername));

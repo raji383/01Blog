@@ -1,9 +1,11 @@
 <nav class="navbar">
   <!-- Logo/Brand -->
   <div class="navbar-container">
-    <div class="navbar-left">
-      <div class="navbar-logo">📘 Blog</div>
-    </div>
+    <a [routerLink]="['/']">
+      <div class="navbar-left">
+        <div class="navbar-logo">📘 Blog</div>
+      </div>
+    </a>
 
     <!-- Search Bar -->
     <div class="navbar-center">
@@ -40,16 +42,18 @@
           <span class="notification-badge">3</span>
         </button>
 
-        
-        
+
+
       </div>
 
       <!-- User Profile -->
-      <div class="user-profile">
-        <div class="author-avatar">{{ userProfile()?.username?.charAt(0)?.toUpperCase() }}</div>
-        <span class="username">{{userProfile()?.username}}</span>
-       
-      </div>
+      <a [routerLink]="['/profile', userProfile()?.id]">
+        <div class="user-profile">
+          <div class="author-avatar">{{ userProfile()?.username?.charAt(0)?.toUpperCase() }}</div>
+          <span class="username">{{userProfile()?.username}} </span>
+
+        </div>
+      </a>
     </div>
   </div>
 </nav>
