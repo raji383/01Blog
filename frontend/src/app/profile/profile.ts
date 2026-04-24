@@ -1,4 +1,4 @@
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { NgIf } from '@angular/common';
 import { Component, computed, inject, signal } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
@@ -22,9 +22,6 @@ export class Profile {
 
   ngOnInit() {
     const id = this.route.snapshot.paramMap.get('id');
-    const token = typeof window !== 'undefined'
-      ? window.localStorage.getItem('auth_token') || window.localStorage.getItem('token')
-      : null;
 
     if (!id) {
       this.error.set('User id is missing');
@@ -32,15 +29,13 @@ export class Profile {
       return;
     }
 
-    if (!token) {
+    if (!this.getToken()) {
       this.error.set('No authentication token found');
       this.isLoading.set(false);
       return;
     }
 
-    const headers = new HttpHeaders({ Authorization: `Bearer ${token}` });
-
-    this.http.get<UserProfileResponse>(`http://localhost:8080/api/users/${id}`, { headers }).subscribe({
+    this.http.get<UserProfileResponse>(`http://localhost:8080/api/users/${id}`).subscribe({
       next: (user) => {
         this.user.set(user);
         this.error.set(null);
@@ -69,7 +64,6 @@ export class Profile {
       return;
     }
 
-    const headers = new HttpHeaders({ Authorization: `Bearer ${token}` });
     const requestBody = {
       adminUsername,
       banned: nextBannedState,
@@ -77,8 +71,7 @@ export class Profile {
 
     this.http.put<UserProfileResponse>(
       `http://localhost:8080/api/users/admin/${currentUser.id}/ban`,
-      requestBody,
-      { headers }
+      requestBody
     ).subscribe({
       next: (updatedUser) => {
         this.user.update(user => user ? { ...user, banned: updatedUser.banned } : user);

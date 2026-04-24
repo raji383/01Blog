@@ -1,6 +1,6 @@
 import { Component, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { Posts } from './posts/posts';
 import type { PostResponse } from '../../models/user';
 import { Addpost } from './addpost/addpost';
@@ -18,14 +18,8 @@ export class Feed {
   private readonly router = inject(Router);
 
   fetchPosts() {
-    const token = typeof window !== 'undefined'
-      ? window.localStorage.getItem('auth_token') || window.localStorage.getItem('token')
-      : null;
-
-    const headers = token ? new HttpHeaders({ Authorization: `Bearer ${token}` }) : undefined;
-
     try {
-      this.http.get<PostResponse[]>('http://localhost:8080/api/posts/feed', { headers }).subscribe({
+      this.http.get<PostResponse[]>('http://localhost:8080/api/posts/feed').subscribe({
         next: (res) => {
           if (res) {
             this.posts.set(res);
@@ -79,4 +73,3 @@ export class Feed {
   }
 
 }
-

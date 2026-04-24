@@ -1,7 +1,7 @@
 import { Component, EventEmitter, inject, Input, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import type { LikeResponse, PostResponse } from '../../../models/user';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { UserService } from '../../../Service/UserService';
 import { Comments } from './comments/comments';
@@ -44,13 +44,9 @@ export class Posts {
     });
   }
   addLike(post: PostResponse): void {
-    const token = typeof window !== 'undefined'
-      ? window.localStorage.getItem('auth_token') || window.localStorage.getItem('token')
-      : null;
     const user = this.userService.getUser()();
-    const headers = token ? new HttpHeaders({ Authorization: `Bearer ${token}` }) : undefined;
 
-    this.http.post<LikeResponse>(`http://localhost:8080/api/posts/${post.id}/like`, user, { headers }).subscribe({
+    this.http.post<LikeResponse>(`http://localhost:8080/api/posts/${post.id}/like`, user).subscribe({
       next: (res) => {
         if (res) {
           /* if (res.liked) {
@@ -113,9 +109,6 @@ export class Posts {
   }
 
   saveEditedPost(post: PostResponse, changes: { title: string; content: string; mediaUrl: string; mediaFile: File | null }): void {
-    const token = typeof window !== 'undefined'
-      ? window.localStorage.getItem('auth_token') || window.localStorage.getItem('token')
-      : null;
     const user = this.userService.getUser()();
 
     if (!user?.username) {
@@ -127,7 +120,6 @@ export class Posts {
       return;
     }
 
-    const headers = token ? new HttpHeaders({ Authorization: `Bearer ${token}` }) : undefined;
     const body = new FormData();
     body.append('title', changes.title.trim());
     body.append('content', changes.content.trim());
@@ -138,7 +130,7 @@ export class Posts {
       body.append('mediaFile', changes.mediaFile);
     }
 
-    this.http.put<PostResponse>(`http://localhost:8080/api/posts/${post.id}`, body, { headers }).subscribe({
+    this.http.put<PostResponse>(`http://localhost:8080/api/posts/${post.id}`, body).subscribe({
       next: (updatedPost) => {
         this.edited.emit(updatedPost);
         this.closeEditModal();
@@ -155,18 +147,12 @@ export class Posts {
   }
 
   deletePost(postId: number): void {
-    const token = typeof window !== 'undefined'
-      ? window.localStorage.getItem('auth_token') || window.localStorage.getItem('token')
-      : null;
-
     if (!window.confirm('Delete this post?')) {
       this.showOptions = false;
       return;
     }
 
-    const headers = token ? new HttpHeaders({ Authorization: `Bearer ${token}` }) : undefined;
-
-    this.http.delete(`http://localhost:8080/api/posts/${postId}`, { headers }).subscribe({
+    this.http.delete(`http://localhost:8080/api/posts/${postId}`).subscribe({
       next: () => {
         this.deleted.emit(postId);
         this.showOptions = false;

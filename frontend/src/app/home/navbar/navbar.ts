@@ -1,4 +1,4 @@
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { Component, inject, signal } from '@angular/core';
 import type { UserProfileResponse } from '../../models/user';
 import { UserService } from '../../Service/UserService';
@@ -16,17 +16,13 @@ export class Navbar {
   protected error = signal<string | null>(null);
   private userService = inject(UserService);
   ngOnInit() {
-    const token = typeof window !== 'undefined'
-      ? window.localStorage.getItem('auth_token') || window.localStorage.getItem('token')
-      : null;
-
-    if (!token) {
+    if (!this.hasToken()) {
       this.error.set('No authentication token found');
       return;
     }
-    const headers = new HttpHeaders({ Authorization: `Bearer ${token}` });
+
     try {
-      this.http.get<UserProfileResponse>('http://localhost:8080/api/users/me', { headers }).subscribe({
+      this.http.get<UserProfileResponse>('http://localhost:8080/api/users/me').subscribe({
         next: (user) => {
           this.userProfile.set(user);
           this.userService.setUser(user);
@@ -41,4 +37,8 @@ export class Navbar {
     }
   }
 
+  private hasToken(): boolean {
+    return typeof window !== 'undefined'
+      && !!(window.localStorage.getItem('auth_token') || window.localStorage.getItem('token'));
+  }
 }

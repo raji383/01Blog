@@ -1,7 +1,7 @@
 import { Component, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import type { AuthResponse, PostResponse } from '../models/user';
 
@@ -28,10 +28,9 @@ export class Auth {
     const token = typeof window !== 'undefined'
       ? window.localStorage.getItem('auth_token')
       : null;
-    const headers = token ? new HttpHeaders({ Authorization: `Bearer ${token}` }) : undefined;
 
     if (token) {
-      this.http.get<PostResponse[]>('http://localhost:8080/api/posts/feed', { headers }).subscribe({
+      this.http.get<PostResponse[]>('http://localhost:8080/api/posts/feed').subscribe({
         next: (res) => {
           this.router.navigate(['/']);
 

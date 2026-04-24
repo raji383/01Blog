@@ -1,7 +1,7 @@
 import { Component, inject, signal, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { UserService } from '../../../Service/UserService';
 import { PostResponse } from '../../../models/user';
@@ -49,14 +49,6 @@ export class Addpost {
     const content = this.postContent().trim();
     const user = this.userService.getUser()();
     const authorUsername = user?.username || 'admin';
-    const token = typeof window !== 'undefined'
-      ? window.localStorage.getItem('auth_token')
-      : null;
-
-    if (!token) {
-      this.router.navigate(['/login']);
-      return;
-    }
 
     if (!content) {
       this.error.set('Please write something before posting!');
@@ -66,7 +58,6 @@ export class Addpost {
     this.isPosting.set(true);
     this.error.set(null);
 
-    const headers = new HttpHeaders({ Authorization: `Bearer ${token}` });
     const formData = new FormData();
     formData.append('title', content.split('\n')[0]);
     formData.append('content', content);
@@ -77,7 +68,7 @@ export class Addpost {
       formData.append('mediaFile', this.selectedFile);
     }
 
-    this.http.post('http://localhost:8080/api/posts', formData, { headers })
+    this.http.post('http://localhost:8080/api/posts', formData)
       .subscribe({
         next: (res: any) => {
           this.postContent.set('');

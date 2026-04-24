@@ -1,4 +1,4 @@
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { Component, inject, Input, signal } from '@angular/core';
 import { UserService } from '../../../../Service/UserService';
 import { FormsModule } from '@angular/forms';
@@ -37,14 +37,9 @@ export class Comments {
   }
   getComments() {
     try {
-      const token = typeof window !== 'undefined'
-        ? window.localStorage.getItem('auth_token') || window.localStorage.getItem('token')
-        : null;
-      const headers = token ? new HttpHeaders({ Authorization: `Bearer ${token}` }) : undefined;
-      const user = this.userService.getUser()();
 
       try {
-        this.http.get<any[]>(`http://localhost:8080/api/posts/${this.post.id}/comments`, { headers }).subscribe({
+        this.http.get<any[]>(`http://localhost:8080/api/posts/${this.post.id}/comments`).subscribe({
           next: (res) => {
             console.log(res);
             this.comments.set(res);
@@ -62,14 +57,10 @@ export class Comments {
     }
   }
   submitComment() {
-    const token = typeof window !== 'undefined'
-      ? window.localStorage.getItem('auth_token') || window.localStorage.getItem('token')
-      : null;
-    const headers = token ? new HttpHeaders({ Authorization: `Bearer ${token}` }) : undefined;
     const user = this.userService.getUser()();
 
     try {
-      this.http.post(`http://localhost:8080/api/posts/${this.post.id}/comments`, { content: this.commentContent, authorUsername: user.username }, { headers }).subscribe({
+      this.http.post(`http://localhost:8080/api/posts/${this.post.id}/comments`, { content: this.commentContent, authorUsername: user.username }).subscribe({
         next: (res) => {
           // Handle successful comment submission
           console.log(res);
