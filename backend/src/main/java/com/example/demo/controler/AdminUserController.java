@@ -34,10 +34,12 @@ public class AdminUserController {
     public ResponseEntity<UserProfileResponse> me() {
         return ResponseEntity.ok(userService.getProfile());
     }
+
     @GetMapping("/{userId}")
     public ResponseEntity<UserProfileResponse> getUserProfile(@PathVariable Long userId) {
         return ResponseEntity.ok(userService.getUser(userId));
     }
+
     @GetMapping("/admin")
     public ResponseEntity<List<UserAdminResponse>> getAllUsers(@RequestParam String adminUsername) {
         return ResponseEntity.ok(userService.getAllUsersForAdmin(adminUsername));
@@ -47,6 +49,7 @@ public class AdminUserController {
     public ResponseEntity<UserAdminResponse> updateBanStatus(
             @PathVariable Long userId,
             @Valid @RequestBody BanUserRequest request) {
+        System.out.println("Admin " );
         return ResponseEntity.ok(userService.updateBanStatus(userId, request));
     }
 

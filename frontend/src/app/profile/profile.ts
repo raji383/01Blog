@@ -12,7 +12,7 @@ import { UserProfileResponse } from '../models/user';
   styleUrl: './profile.css',
 })
 export class Profile {
-  constructor(private route: ActivatedRoute) {}
+  constructor(private route: ActivatedRoute) { }
 
   private readonly http = inject(HttpClient);
   protected user = signal<UserProfileResponse | null>(null);
@@ -52,5 +52,95 @@ export class Profile {
         console.error('Error fetching user profile:', err);
       }
     });
+  }
+  banUser() {
+    const token = this.getToken();
+    const currentUser = this.user();
+    const adminUsername = this.getTokenPayload()?.sub;
+
+    if (!token || !currentUser || !adminUsername) {
+      return;
+    }
+
+    const nextBannedState = !currentUser.banned;
+    const actionLabel = nextBannedState ? 'ban' : 'unban';
+
+    if (!confirm(`Do you want to ${actionLabel} this user?`)) {
+      return;
+    }
+
+    const headers = new HttpHeaders({ Authorization: `Bearer ${token}` });
+    const requestBody = {
+      adminUsername,
+      banned: nextBannedState,
+    };
+
+    this.http.put<UserProfileResponse>(
+      `http://localhost:8080/api/users/admin/${currentUser.id}/ban`,
+      requestBody,
+      { headers }
+    ).subscribe({
+      next: (updatedUser) => {
+        this.user.update(user => user ? { ...user, banned: updatedUser.banned } : user);
+        alert(`User has been ${nextBannedState ? 'banned' : 'unbanned'}`);
+      },
+      error: (err) => {
+        console.error(`Error trying to ${actionLabel} user:`, err);
+        alert(`Failed to ${actionLabel} user`);
+      }
+    });
+
+  }
+  deleteUser() {
+
+  }
+  myProfile(): boolean {
+    const payload = this.getTokenPayload();
+
+    if (!payload) {
+      return false;
+    }
+
+    try {
+      return payload.id === this.user()?.id;
+    } catch (e) {
+      console.error('Error parsing token:', e);
+      return false;
+    }
+  }
+  isAdmin(): boolean {
+    const payload = this.getTokenPayload();
+
+    if (!payload) {
+      return false;
+    }
+
+    try {
+      return payload.role === "ADMIN";
+    } catch (e) {
+      console.error('Error parsing token:', e);
+      return false;
+    }
+  }
+
+  private getToken(): string | null {
+    return typeof window !== 'undefined'
+      ? window.localStorage.getItem('auth_token') || window.localStorage.getItem('token')
+      : null;
+  }
+
+  private getTokenPayload(): { id?: number; role?: string; sub?: string } | null {
+    const token = this.getToken();
+
+    if (!token) {
+      return null;
+    }
+
+    try {
+      return JSON.parse(atob(token.split('.')[1]));
+    } catch (e) {
+      console.error('Error parsing token:', e);
+      return null;
+    }
   }
 }

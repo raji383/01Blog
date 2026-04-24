@@ -43,6 +43,7 @@
   align-items: center;
   gap: 18px;
   margin-top: -62px;
+  flex-wrap: wrap;
 }
 
 .profile-avatar {
@@ -64,6 +65,15 @@
 .identity-copy {
   flex: 1;
   min-width: 0;
+  padding-top: 60px;
+}
+
+.identity-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-left: auto;
   padding-top: 60px;
 }
 
@@ -106,10 +116,38 @@
   transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
 }
 
+.action-link {
+  min-width: 132px;
+}
+
 .secondary-btn:hover {
   background: #1a3a6b;
   border-color: #1a3a6b;
   color: #fff;
+}
+
+.delete-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 132px;
+  padding: 10px 16px;
+  border: 1px solid #f0b4ae;
+  border-radius: 999px;
+  background: #fff4f2;
+  color: #b42318;
+  text-decoration: none;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.delete-btn:hover {
+  background: #b42318;
+  border-color: #b42318;
+  color: #fff;
+  box-shadow: 0 10px 18px rgba(180, 35, 24, 0.18);
 }
 
 .stats-grid {
@@ -268,7 +306,6 @@
   }
 
   .identity-row {
-    flex-wrap: wrap;
     gap: 14px;
   }
 
@@ -277,7 +314,16 @@
     padding-top: 0;
   }
 
-  .secondary-btn {
+  .identity-actions {
+    width: 100%;
+    margin-left: 0;
+    justify-content: stretch;
+    padding-top: 0;
+  }
+
+  .secondary-btn,
+  .delete-btn,
+  .action-link {
     width: 100%;
   }
 
