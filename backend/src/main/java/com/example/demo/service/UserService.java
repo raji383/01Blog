@@ -19,10 +19,12 @@ import com.example.demo.dto.UserProfileResponse;
 import org.springframework.security.core.context.SecurityContextHolder;
 import com.example.demo.entities.Post;
 import com.example.demo.entities.Role;
+import com.example.demo.entities.Subscription;
 import com.example.demo.entities.User;
 import com.example.demo.repository.CommentRepository;
 import com.example.demo.repository.PostLikeRepository;
 import com.example.demo.repository.PostRepository;
+import com.example.demo.repository.SubscriptionRepository;
 import com.example.demo.repository.UserRepository;
 import com.example.demo.security.JwtUtil;
 
@@ -35,6 +37,7 @@ public class UserService {
     private final PostRepository postRepository;
     private final PostLikeRepository postLikeRepository;
     private final CommentRepository commentRepository;
+    private final SubscriptionRepository subscriptionRepository;
 
     public UserService(
             UserRepository userRepository,
@@ -42,13 +45,15 @@ public class UserService {
             JwtUtil jwtUtil,
             PostRepository postRepository,
             PostLikeRepository postLikeRepository,
-            CommentRepository commentRepository) {
+            CommentRepository commentRepository,
+            SubscriptionRepository subscriptionRepository) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.jwtUtil = jwtUtil;
         this.postRepository = postRepository;
         this.postLikeRepository = postLikeRepository;
         this.commentRepository = commentRepository;
+        this.subscriptionRepository = subscriptionRepository;
     }
 
     public RegisterResponse register(RegisterRequest request) {
@@ -107,6 +112,31 @@ public class UserService {
 
     public UserProfileResponse getUser(Long userId) {
         return toProfileResponse(getUserEntity(userId));
+    }
+
+    @Transactional
+    public void subscribeToUser(Long targetUserId) {
+        String followerUsername = SecurityContextHolder.getContext().getAuthentication().getName();
+        if (followerUsername == null) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "User not authenticated");
+        }
+
+        User follower = userRepository.findByUsername(followerUsername)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
+        User targetUser = getUserEntity(targetUserId);
+
+        if (follower.getId().equals(targetUser.getId())) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "User cannot subscribe to themselves");
+        }
+
+        if (subscriptionRepository.existsByFollowerIdAndFollowingId(follower.getId(), targetUser.getId())) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Already subscribed to this user");
+        }
+
+        Subscription subscription = new Subscription();
+        subscription.setFollower(follower);
+        subscription.setFollowing(targetUser);
+        subscriptionRepository.save(subscription);
     }
 
     public List<UserAdminResponse> getAllUsersForAdmin(String adminUsername) {

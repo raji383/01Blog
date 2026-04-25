@@ -137,17 +137,12 @@ export class Profile {
   }
   subscribe() {
     const currentUser = this.user();
-    const subscriberUsername = this.getTokenPayload()?.sub;
 
-    if (!currentUser || !subscriberUsername) {
+    if (!currentUser) {
       return;
     }
 
-    const requestBody = {
-      subscriberUsername,
-    };
-
-    this.http.post(`http://localhost:8080/api/users/${currentUser.id}/subscribe`, requestBody).subscribe({
+    this.http.post(`http://localhost:8080/api/users/${currentUser.id}/subscribe`, {}).subscribe({
       next: () => {
         alert('You have subscribed to this user');
       },

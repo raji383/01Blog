@@ -40,9 +40,9 @@ public class AdminUserController {
     public ResponseEntity<UserProfileResponse> getUserProfile(@PathVariable Long userId) {
         return ResponseEntity.ok(userService.getUser(userId));
     }
-    @PostMapping("/subscribe")
-    public ResponseEntity<Void> subscribeToUser(@RequestParam String targetUsername) {
-        userService.subscribeToUser(targetUsername);
+    @PostMapping("/{userId}/subscribe")
+    public ResponseEntity<Void> subscribeToUser(@PathVariable Long userId) {
+        userService.subscribeToUser(userId);
         return ResponseEntity.ok().build();
     }
     @GetMapping("/admin")
