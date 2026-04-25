@@ -1,5 +1,6 @@
 package com.example.demo.service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.transaction.annotation.Transactional;
@@ -16,10 +17,13 @@ import com.example.demo.dto.PostResponse;
 import com.example.demo.dto.ToggleLikeRequest;
 import com.example.demo.dto.ToggleLikeResponse;
 import com.example.demo.entities.Comment;
+import com.example.demo.entities.Notification;
+import com.example.demo.entities.NotificationType;
 import com.example.demo.entities.Post;
 import com.example.demo.entities.PostLike;
 import com.example.demo.entities.User;
 import com.example.demo.repository.CommentRepository;
+import com.example.demo.repository.NotificationRepository;
 import com.example.demo.repository.PostLikeRepository;
 import com.example.demo.repository.PostRepository;
 import com.example.demo.repository.SubscriptionRepository;
@@ -33,6 +37,7 @@ public class PostService {
     private final CommentRepository commentRepository;
     private final UserRepository userRepository;
     private final SubscriptionRepository subscriptionRepository;
+    private final NotificationRepository notificationRepository;
     private final MediaStorageService mediaStorageService;
 
     public PostService(
@@ -41,15 +46,18 @@ public class PostService {
             CommentRepository commentRepository,
             UserRepository userRepository,
             SubscriptionRepository subscriptionRepository,
+            NotificationRepository notificationRepository,
             MediaStorageService mediaStorageService) {
         this.postRepository = postRepository;
         this.postLikeRepository = postLikeRepository;
         this.commentRepository = commentRepository;
         this.userRepository = userRepository;
         this.subscriptionRepository = subscriptionRepository;
+        this.notificationRepository = notificationRepository;
         this.mediaStorageService = mediaStorageService;
     }
 
+    @Transactional
     public PostResponse create(PostRequest request) {
         User author = getCurrentUser();
 
@@ -64,17 +72,20 @@ public class PostService {
         }
         post.setAuthor(author);
 
-        return toResponse(postRepository.save(post));
+        Post savedPost = postRepository.save(post);
+        createNewPostNotifications(author, savedPost);
+
+        return toResponse(savedPost);
     }
 
     public List<PostResponse> getFeed() {
         User currentUser = getCurrentUser();
-        List<Long> followingIds = subscriptionRepository.findFollowingIdsByFollowerId(currentUser.getId());
-        if (followingIds.isEmpty()) {
-            return List.of();
+        List<Long> authorIds = new ArrayList<>(subscriptionRepository.findFollowingIdsByFollowerId(currentUser.getId()));
+        if (!authorIds.contains(currentUser.getId())) {
+            authorIds.add(currentUser.getId());
         }
 
-        return postRepository.findByAuthorIdInOrderByCreatedAtDesc(followingIds)
+        return postRepository.findByAuthorIdInOrderByCreatedAtDesc(authorIds)
                 .stream()
                 .map(this::toResponse)
                 .toList();
@@ -197,6 +208,27 @@ public class PostService {
     private Post getPost(Long postId) {
         return postRepository.findById(postId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Post not found"));
+    }
+
+    private void createNewPostNotifications(User author, Post post) {
+        List<User> followers = subscriptionRepository.findFollowersByFollowingId(author.getId());
+        if (followers.isEmpty()) {
+            return;
+        }
+
+        List<Notification> notifications = followers.stream()
+                .map(follower -> {
+                    Notification notification = new Notification();
+                    notification.setSender(author);
+                    notification.setReceiver(follower);
+                    notification.setType(NotificationType.NEW_POST);
+                    notification.setMessage(author.getUsername() + " published a new post: " + post.getTitle());
+                    notification.setRead(false);
+                    return notification;
+                })
+                .toList();
+
+        notificationRepository.saveAll(notifications);
     }
 
     private PostResponse toResponse(Post post) {

@@ -2,12 +2,7 @@
 
 Backend TODO
 
-Finish subscription features.
-Add unsubscribe.
-Add “is subscribed” status on profile response.
-Add follower/following counts.
-Make feed return posts from subscribed users, not all posts.
-Files involved: UserService.java, SubscriptionRepository.java
+
 
 Implement notifications properly.
 You already have Notification.java, but there is no repository/controller/service flow yet.

@@ -22,6 +22,7 @@ import com.example.demo.entities.Role;
 import com.example.demo.entities.Subscription;
 import com.example.demo.entities.User;
 import com.example.demo.repository.CommentRepository;
+import com.example.demo.repository.NotificationRepository;
 import com.example.demo.repository.PostLikeRepository;
 import com.example.demo.repository.PostRepository;
 import com.example.demo.repository.SubscriptionRepository;
@@ -38,6 +39,7 @@ public class UserService {
     private final PostLikeRepository postLikeRepository;
     private final CommentRepository commentRepository;
     private final SubscriptionRepository subscriptionRepository;
+    private final NotificationRepository notificationRepository;
 
     public UserService(
             UserRepository userRepository,
@@ -46,7 +48,8 @@ public class UserService {
             PostRepository postRepository,
             PostLikeRepository postLikeRepository,
             CommentRepository commentRepository,
-            SubscriptionRepository subscriptionRepository) {
+            SubscriptionRepository subscriptionRepository,
+            NotificationRepository notificationRepository) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.jwtUtil = jwtUtil;
@@ -54,6 +57,7 @@ public class UserService {
         this.postLikeRepository = postLikeRepository;
         this.commentRepository = commentRepository;
         this.subscriptionRepository = subscriptionRepository;
+        this.notificationRepository = notificationRepository;
     }
 
     public RegisterResponse register(RegisterRequest request) {
@@ -163,6 +167,7 @@ public class UserService {
 
         commentRepository.deleteByAuthorId(targetUser.getId());
         postLikeRepository.deleteByUserId(targetUser.getId());
+        notificationRepository.deleteBySenderIdOrReceiverId(targetUser.getId(), targetUser.getId());
         userRepository.delete(targetUser);
     }
 
