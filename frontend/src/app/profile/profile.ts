@@ -135,7 +135,28 @@ export class Profile {
       return false;
     }
   }
+  subscribe() {
+    const currentUser = this.user();
+    const subscriberUsername = this.getTokenPayload()?.sub;
 
+    if (!currentUser || !subscriberUsername) {
+      return;
+    }
+
+    const requestBody = {
+      subscriberUsername,
+    };
+
+    this.http.post(`http://localhost:8080/api/users/${currentUser.id}/subscribe`, requestBody).subscribe({
+      next: () => {
+        alert('You have subscribed to this user');
+      },
+      error: (err) => {
+        console.error('Error subscribing to user:', err);
+        alert('Failed to subscribe to user');
+      }
+    });
+  }
   private getToken(): string | null {
     return typeof window !== 'undefined'
       ? window.localStorage.getItem('auth_token') || window.localStorage.getItem('token')

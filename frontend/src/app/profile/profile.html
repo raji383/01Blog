@@ -18,6 +18,7 @@
 
                         <div class="identity-actions">
                             <a class="secondary-btn action-link" *ngIf="myProfile()" routerLink="/">Back to Home</a>
+                            <a class="secondary-btn action-link" (click)="subscribe()" >subscribe</a>
                             <a class="secondary-btn action-link" *ngIf="isAdmin() && !myProfile()" (click)="banUser()">
                                 {{ profile.banned ? 'Unban User' : 'Ban User' }}
                             </a>

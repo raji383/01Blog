@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Component, inject, signal } from '@angular/core';
 import type { UserProfileResponse } from '../../models/user';
 import { UserService } from '../../Service/UserService';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-navbar',
@@ -14,6 +14,8 @@ export class Navbar {
   private readonly http = inject(HttpClient);
   protected userProfile = signal<UserProfileResponse | null>(null);
   protected error = signal<string | null>(null);
+  private readonly router = inject(Router);
+
   private userService = inject(UserService);
   ngOnInit() {
     if (!this.hasToken()) {
@@ -30,6 +32,8 @@ export class Navbar {
         error: (err) => {
           this.error.set('Failed to load user profile');
           console.error('Error fetching user profile:', err);
+          this.router.navigate(['/login']);
+
         }
       });
     } catch (error) {

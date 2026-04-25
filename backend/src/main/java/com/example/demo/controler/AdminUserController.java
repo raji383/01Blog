@@ -6,6 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -39,7 +40,11 @@ public class AdminUserController {
     public ResponseEntity<UserProfileResponse> getUserProfile(@PathVariable Long userId) {
         return ResponseEntity.ok(userService.getUser(userId));
     }
-
+    @PostMapping("/subscribe")
+    public ResponseEntity<Void> subscribeToUser(@RequestParam String targetUsername) {
+        userService.subscribeToUser(targetUsername);
+        return ResponseEntity.ok().build();
+    }
     @GetMapping("/admin")
     public ResponseEntity<List<UserAdminResponse>> getAllUsers(@RequestParam String adminUsername) {
         return ResponseEntity.ok(userService.getAllUsersForAdmin(adminUsername));
