@@ -33,6 +33,7 @@ interface UserProfileResponse {
   role: string;
   banned: boolean;
   subscribed: boolean;
+  notificationCount: number;
   followerCount: number;
   followingCount: number;
 }
@@ -48,6 +49,7 @@ interface NotificationResponse {
   type: string;
   message: string;
   senderUsername: string;
+  senderId: number;
   read: boolean;
   createdAt: string;
 }

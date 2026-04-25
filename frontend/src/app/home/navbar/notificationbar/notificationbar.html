@@ -4,17 +4,15 @@
         <span class="notification-count">{{ notifications.length }}</span>
     </div>
 
-    <div class="notification-empty" *ngIf="notifications.length==0">
+    <div class="notification-empty" *ngIf="notifications&&notifications.length==0">
         No notifications yet.
     </div>
 
-    <div class="notification-list" *ngIf="notifications.length!=1">
-        <button
-            type="button"
-            class="notification-item"
-            *ngFor="let notification of notifications"
-            [class.unread]="!notification.read"
-            (click)="markAsRead(notification)">
+    <div class="notification-list" *ngIf="notifications&&notifications.length!=0">
+        <button type="button" class="notification-item" *ngFor="let notification of notifications"
+            [class.unread]="!notification.read" (click)="markAsRead(notification)"
+            [routerLink]="['/profile', notification.senderId]"
+             >
             <div class="notification-avatar">
                 {{ notification.senderUsername.charAt(0).toUpperCase() }}
             </div>

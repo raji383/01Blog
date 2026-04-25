@@ -275,6 +275,7 @@ public class UserService {
         response.setEmail(user.getEmail());
         response.setRole(user.getRole());
         response.setBanned(user.isBanned());
+        response.setNotificationCount(notificationRepository.countByReceiverIdAndIsReadFalse(user.getId()));
         response.setFollowerCount(subscriptionRepository.countByFollowingId(user.getId()));
         response.setFollowingCount(subscriptionRepository.countByFollowerId(user.getId()));
         response.setSubscribed(currentUser != null

@@ -11,6 +11,7 @@ public class UserProfileResponse {
     private Role role;
     private boolean banned;
     private boolean subscribed;
+    private long notificationCount;
     private long followerCount;
     private long followingCount;
 }

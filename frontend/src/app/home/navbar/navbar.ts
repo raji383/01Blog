@@ -52,4 +52,11 @@ export class Navbar {
     return typeof window !== 'undefined'
       && !!(window.localStorage.getItem('auth_token') || window.localStorage.getItem('token'));
   }
+  getnotificationCount(): number {
+    if (!this.userProfile()) {
+      return 0;
+    }
+    // Assuming userProfile has a property 'notificationCount'
+    return this.userProfile()?.notificationCount || 0;
+  }
 }
