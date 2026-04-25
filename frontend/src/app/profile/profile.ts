@@ -1,13 +1,14 @@
 import { HttpClient } from '@angular/common/http';
-import { NgIf } from '@angular/common';
+import { NgFor, NgIf } from '@angular/common';
 import { Component, computed, inject, signal } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { Navbar } from '../home/navbar/navbar';
-import { UserProfileResponse } from '../models/user';
+import { PostResponse, UserProfileResponse } from '../models/user';
+import { Posts } from '../home/feed/posts/posts';
 
 @Component({
   selector: 'app-profile',
-  imports: [NgIf, RouterLink, Navbar],
+  imports: [NgIf, NgFor, RouterLink, Navbar, Posts],
   templateUrl: './profile.html',
   styleUrl: './profile.css',
 })
@@ -16,6 +17,7 @@ export class Profile {
 
   private readonly http = inject(HttpClient);
   protected user = signal<UserProfileResponse | null>(null);
+  protected myposts = signal<PostResponse[]>([]);
   protected error = signal<string | null>(null);
   protected isLoading = signal(true);
   protected userInitial = computed(() => this.user()?.username?.charAt(0)?.toUpperCase() ?? '?');
@@ -38,6 +40,7 @@ export class Profile {
     this.http.get<UserProfileResponse>(`http://localhost:8080/api/users/${id}`).subscribe({
       next: (user) => {
         this.user.set(user);
+        this.fetchUserPosts(user.username);
         this.error.set(null);
         this.isLoading.set(false);
       },
@@ -45,6 +48,19 @@ export class Profile {
         this.error.set('Failed to load user profile');
         this.isLoading.set(false);
         console.error('Error fetching user profile:', err);
+      }
+    });
+    
+  }
+
+  fetchUserPosts(username: string) {
+    this.http.get<PostResponse[]>(`http://localhost:8080/api/posts/user/${username}`).subscribe({
+      next: (posts) => {
+        this.myposts.set(posts ?? []);
+      },
+      error: (err) => {
+        console.error('Error fetching user posts:', err);
+        this.myposts.set([]);
       }
     });
   }
@@ -106,12 +122,8 @@ export class Profile {
       return false;
     }
 
-    try {
-      return payload.id === this.user()?.id;
-    } catch (e) {
-      console.error('Error parsing token:', e);
-      return false;
-    }
+    return payload.id === this.user()?.id;
+
   }
   isAdmin(): boolean {
     const payload = this.getTokenPayload();
@@ -119,13 +131,7 @@ export class Profile {
     if (!payload) {
       return false;
     }
-
-    try {
-      return payload.role === "ADMIN";
-    } catch (e) {
-      console.error('Error parsing token:', e);
-      return false;
-    }
+    return payload.role === "ADMIN";
   }
   subscribe() {
     const currentUser = this.user();
@@ -163,6 +169,30 @@ export class Profile {
   canManageSubscription(): boolean {
     return !this.myProfile();
   }
+
+  onLiked(event: { postId: number; liked: boolean }) {
+    this.myposts.update(posts =>
+      posts.map(post =>
+        post.id === event.postId
+          ? {
+            ...post,
+            likeCount: Math.max(0, post.likeCount + (event.liked ? 1 : -1))
+          }
+          : post
+      )
+    );
+  }
+
+  onEdited(updatedPost: PostResponse) {
+    this.myposts.update(posts =>
+      posts.map(post => post.id === updatedPost.id ? updatedPost : post)
+    );
+  }
+
+  onDeleted(postId: number) {
+    this.myposts.update(posts => posts.filter(post => post.id !== postId));
+  }
+
   private getToken(): string | null {
     return typeof window !== 'undefined'
       ? window.localStorage.getItem('auth_token') || window.localStorage.getItem('token')

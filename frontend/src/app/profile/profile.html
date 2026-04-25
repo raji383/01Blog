@@ -3,70 +3,96 @@
 
     <div class="profile-shell">
         <div class="profile-layout">
-            <section class="profile-main card">
-                <div class="profile-banner"></div>
+            <div class="profile-main-column">
+                <section class="profile-main card">
+                    <div class="profile-banner"></div>
 
-                <div class="profile-body" *ngIf="user() as profile">
-                    <div class="identity-row">
-                        <div class="profile-avatar">{{ userInitial() }}</div>
+                    <div class="profile-body" *ngIf="user() as profile">
+                        <div class="identity-row">
+                            <div class="profile-avatar">{{ userInitial() }}</div>
 
-                        <div class="identity-copy">
-                            <span class="eyebrow">Member profile</span>
-                            <h1>{{ profile.username }}</h1>
-                            <p class="identity-meta">{{ profile.email }}</p>
+                            <div class="identity-copy">
+                                <span class="eyebrow">Member profile</span>
+                                <h1>{{ profile.username }}</h1>
+                                <p class="identity-meta">{{ profile.email }}</p>
+                            </div>
+
+                            <div class="identity-actions">
+                                <a class="secondary-btn action-link" *ngIf="myProfile()" routerLink="/">Back to Home</a>
+                                <a class="secondary-btn action-link" *ngIf="canManageSubscription()" (click)="subscribe()">
+                                    {{ profile.subscribed ? 'Unsubscribe' : 'Subscribe' }}
+                                </a>
+                                <a class="secondary-btn action-link" *ngIf="isAdmin() && !myProfile()" (click)="banUser()">
+                                    {{ profile.banned ? 'Unban User' : 'Ban User' }}
+                                </a>
+                                <a class="delete-btn action-link" *ngIf="isAdmin() && !myProfile()" (click)="deleteUser()">Delete User</a>
+                            </div>
                         </div>
 
-                        <div class="identity-actions">
-                            <a class="secondary-btn action-link" *ngIf="myProfile()" routerLink="/">Back to Home</a>
-                            <a class="secondary-btn action-link" *ngIf="canManageSubscription()" (click)="subscribe()">
-                                {{ profile.subscribed ? 'Unsubscribe' : 'Subscribe' }}
-                            </a>
-                            <a class="secondary-btn action-link" *ngIf="isAdmin() && !myProfile()" (click)="banUser()">
-                                {{ profile.banned ? 'Unban User' : 'Ban User' }}
-                            </a>
-                            <a class="delete-btn action-link" *ngIf="isAdmin() && !myProfile()" (click)="deleteUser()">Delete User</a>
+                        <div class="stats-grid">
+                           <!--  <article class="stat-card">
+                                <span class="stat-label">Role</span>
+                                <strong>{{ profile.role }}</strong>
+                            </article> -->
+
+                            <article class="stat-card">
+                                <span class="stat-label">Status</span>
+                                <strong [class.is-banned]="profile.banned">
+                                    {{ profile.banned ? 'Banned' : 'Active' }}
+                                </strong>
+                            </article>
+
+                            <article class="stat-card">
+                                <span class="stat-label">Followers</span>
+                                <strong>{{ profile.followerCount }}</strong>
+                            </article>
+
+                            <article class="stat-card">
+                                <span class="stat-label">Following</span>
+                                <strong>{{ profile.followingCount }}</strong>
+                            </article>
                         </div>
                     </div>
 
-                    <div class="stats-grid">
-                       <!--  <article class="stat-card">
-                            <span class="stat-label">Role</span>
-                            <strong>{{ profile.role }}</strong>
-                        </article> -->
+                </section>
 
-                        <article class="stat-card">
-                            <span class="stat-label">Status</span>
-                            <strong [class.is-banned]="profile.banned">
-                                {{ profile.banned ? 'Banned' : 'Active' }}
-                            </strong>
-                        </article>
+                <section class="profile-posts-card card" *ngIf="user()">
+                    <div class="profile-posts">
+                        <div class="posts-header">
+                            <div>
+                                <span class="posts-eyebrow">Recent activity</span>
+                                <h2>Posts</h2>
+                            </div>
+                            <p *ngIf="myposts().length">{{ myposts().length }} post{{ myposts().length === 1 ? '' : 's' }}</p>
+                        </div>
 
-                        <article class="stat-card">
-                            <span class="stat-label">Followers</span>
-                            <strong>{{ profile.followerCount }}</strong>
-                        </article>
+                        <div class="posts-empty" *ngIf="!myposts().length">
+                            No posts yet.
+                        </div>
 
-                        <article class="stat-card">
-                            <span class="stat-label">Following</span>
-                            <strong>{{ profile.followingCount }}</strong>
-                        </article>
+                        <div class="posts-list">
+                            <app-posts
+                                *ngFor="let post of myposts()"
+                                [post]="post"
+                                (liked)="onLiked($event)"
+                                (edited)="onEdited($event)"
+                                (deleted)="onDeleted($event)"></app-posts>
+                        </div>
                     </div>
+                </section>
+            </div>
 
-                   
-                </div>
+            <div class="state-block" *ngIf="isLoading()">
+                <div class="state-avatar shimmer"></div>
+                <div class="state-line shimmer"></div>
+                <div class="state-line short shimmer"></div>
+            </div>
 
-                <div class="state-block" *ngIf="isLoading()">
-                    <div class="state-avatar shimmer"></div>
-                    <div class="state-line shimmer"></div>
-                    <div class="state-line short shimmer"></div>
-                </div>
-
-                <div class="state-block error" *ngIf="!isLoading() && error()">
-                    <h2>Unable to load profile</h2>
-                    <p>{{ error() }}</p>
-                    <a class="secondary-btn" routerLink="/">Return home</a>
-                </div>
-            </section>
+            <div class="state-block error" *ngIf="!isLoading() && error()">
+                <h2>Unable to load profile</h2>
+                <p>{{ error() }}</p>
+                <a class="secondary-btn" routerLink="/">Return home</a>
+            </div>
 
             <aside class="profile-side">
                 <div class="card side-card">
