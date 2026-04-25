@@ -21,7 +21,5 @@ public class PostRequest {
     private String mediaUrl;
 
     private MultipartFile mediaFile;
-    @NotBlank
-    private String authorUsername;
     
 }

@@ -97,17 +97,7 @@ public class UserService {
     }
 
     public UserProfileResponse getProfile() {
-
-        String username = SecurityContextHolder.getContext().getAuthentication().getName();
-
-        if (username == null) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "User not authenticated");
-        }
-
-        User user = userRepository.findByUsername(username)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
-
-        return toProfileResponse(user);
+        return toProfileResponse(getCurrentUser());
     }
 
     public UserProfileResponse getUser(Long userId) {
@@ -116,13 +106,7 @@ public class UserService {
 
     @Transactional
     public void subscribeToUser(Long targetUserId) {
-        String followerUsername = SecurityContextHolder.getContext().getAuthentication().getName();
-        if (followerUsername == null) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "User not authenticated");
-        }
-
-        User follower = userRepository.findByUsername(followerUsername)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
+        User follower = getCurrentUser();
         User targetUser = getUserEntity(targetUserId);
 
         if (follower.getId().equals(targetUser.getId())) {
@@ -139,16 +123,24 @@ public class UserService {
         subscriptionRepository.save(subscription);
     }
 
-    public List<UserAdminResponse> getAllUsersForAdmin(String adminUsername) {
-        requireAdmin(adminUsername);
-        return userRepository.findAllByOrderByUsernameAsc()
-                .stream()
-                .map(this::toAdminResponse)
-                .toList();
+    @Transactional
+    public void unsubscribeFromUser(Long targetUserId) {
+        User follower = getCurrentUser();
+        User targetUser = getUserEntity(targetUserId);
+
+        if (follower.getId().equals(targetUser.getId())) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "User cannot unsubscribe from themselves");
+        }
+
+        if (!subscriptionRepository.existsByFollowerIdAndFollowingId(follower.getId(), targetUser.getId())) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Subscription not found");
+        }
+
+        subscriptionRepository.deleteByFollowerIdAndFollowingId(follower.getId(), targetUser.getId());
     }
 
     public UserAdminResponse updateBanStatus(Long userId, BanUserRequest request) {
-        User admin = requireAdmin(request.getAdminUsername());
+        User admin = requireAdmin();
         User targetUser = getUserEntity(userId);
         validateModerationTarget(admin, targetUser);
 
@@ -157,8 +149,8 @@ public class UserService {
     }
 
     @Transactional
-    public void deleteUserAsAdmin(Long userId, String adminUsername) {
-        User admin = requireAdmin(adminUsername);
+    public void deleteUserAsAdmin(Long userId) {
+        User admin = requireAdmin();
         User targetUser = getUserEntity(userId);
         validateModerationTarget(admin, targetUser);
 
@@ -174,6 +166,14 @@ public class UserService {
         userRepository.delete(targetUser);
     }
 
+    public List<UserAdminResponse> getAllUsersForAdmin() {
+        requireAdmin();
+        return userRepository.findAllByOrderByUsernameAsc()
+                .stream()
+                .map(this::toAdminResponse)
+                .toList();
+    }
+
     private User requireAdmin(String adminUsername) {
         User admin = userRepository.findByUsername(adminUsername)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Admin user not found"));
@@ -187,6 +187,15 @@ public class UserService {
         }
 
         return admin;
+    }
+
+    private User requireAdmin() {
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        if (username == null) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "User not authenticated");
+        }
+
+        return requireAdmin(username);
     }
 
     public List<UserProfileResponse> getUsers() {
@@ -205,6 +214,31 @@ public class UserService {
     private User getUserEntity(Long userId) {
         return userRepository.findById(userId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
+    }
+
+    private User getCurrentUser() {
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+
+        if (username == null) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "User not authenticated");
+        }
+
+        return userRepository.findByUsername(username)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
+    }
+
+    private User getCurrentUserOrNull() {
+        Object principal = SecurityContextHolder.getContext().getAuthentication();
+        if (principal == null) {
+            return null;
+        }
+
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        if (username == null || "anonymousUser".equals(username)) {
+            return null;
+        }
+
+        return userRepository.findByUsername(username).orElse(null);
     }
 
     private void validateModerationTarget(User admin, User targetUser) {
@@ -229,12 +263,18 @@ public class UserService {
     }
 
     private UserProfileResponse toProfileResponse(User user) {
+        User currentUser = getCurrentUserOrNull();
         UserProfileResponse response = new UserProfileResponse();
         response.setId(user.getId());
         response.setUsername(user.getUsername());
         response.setEmail(user.getEmail());
         response.setRole(user.getRole());
         response.setBanned(user.isBanned());
+        response.setFollowerCount(subscriptionRepository.countByFollowingId(user.getId()));
+        response.setFollowingCount(subscriptionRepository.countByFollowerId(user.getId()));
+        response.setSubscribed(currentUser != null
+                && !currentUser.getId().equals(user.getId())
+                && subscriptionRepository.existsByFollowerIdAndFollowingId(currentUser.getId(), user.getId()));
         return response;
     }
 }

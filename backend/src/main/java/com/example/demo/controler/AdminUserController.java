@@ -6,14 +6,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.example.demo.dto.AdminActionRequest;
 import com.example.demo.dto.BanUserRequest;
 import com.example.demo.dto.UserAdminResponse;
 import com.example.demo.dto.UserProfileResponse;
@@ -40,14 +37,9 @@ public class AdminUserController {
     public ResponseEntity<UserProfileResponse> getUserProfile(@PathVariable Long userId) {
         return ResponseEntity.ok(userService.getUser(userId));
     }
-    @PostMapping("/{userId}/subscribe")
-    public ResponseEntity<Void> subscribeToUser(@PathVariable Long userId) {
-        userService.subscribeToUser(userId);
-        return ResponseEntity.ok().build();
-    }
     @GetMapping("/admin")
-    public ResponseEntity<List<UserAdminResponse>> getAllUsers(@RequestParam String adminUsername) {
-        return ResponseEntity.ok(userService.getAllUsersForAdmin(adminUsername));
+    public ResponseEntity<List<UserAdminResponse>> getAllUsers() {
+        return ResponseEntity.ok(userService.getAllUsersForAdmin());
     }
 
     @PutMapping("/admin/{userId}/ban")
@@ -59,10 +51,8 @@ public class AdminUserController {
     }
 
     @DeleteMapping("/admin/{userId}")
-    public ResponseEntity<Void> deleteUser(
-            @PathVariable Long userId,
-            @Valid @RequestBody AdminActionRequest request) {
-        userService.deleteUserAsAdmin(userId, request.getAdminUsername());
+    public ResponseEntity<Void> deleteUser(@PathVariable Long userId) {
+        userService.deleteUserAsAdmin(userId);
         return ResponseEntity.noContent().build();
     }
 }

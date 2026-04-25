@@ -39,4 +39,16 @@ public class UserController {
         List<UserProfileResponse> res = userService.getUsers();
         return ResponseEntity.ok(res);
     }
+
+    @PostMapping("/users/{userId}/subscribe")
+    public ResponseEntity<Void> subscribeToUser(@PathVariable Long userId) {
+        userService.subscribeToUser(userId);
+        return ResponseEntity.ok().build();
+    }
+
+    @DeleteMapping("/users/{userId}/subscribe")
+    public ResponseEntity<Void> unsubscribeFromUser(@PathVariable Long userId) {
+        userService.unsubscribeFromUser(userId);
+        return ResponseEntity.noContent().build();
+    }
 }

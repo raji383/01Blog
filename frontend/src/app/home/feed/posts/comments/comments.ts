@@ -57,10 +57,8 @@ export class Comments {
     }
   }
   submitComment() {
-    const user = this.userService.getUser()();
-
     try {
-      this.http.post(`http://localhost:8080/api/posts/${this.post.id}/comments`, { content: this.commentContent, authorUsername: user.username }).subscribe({
+      this.http.post(`http://localhost:8080/api/posts/${this.post.id}/comments`, { content: this.commentContent }).subscribe({
         next: (res) => {
           // Handle successful comment submission
           console.log(res);

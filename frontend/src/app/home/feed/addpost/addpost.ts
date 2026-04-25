@@ -3,7 +3,6 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
-import { UserService } from '../../../Service/UserService';
 import { PostResponse } from '../../../models/user';
 
 @Component({
@@ -22,7 +21,6 @@ export class Addpost {
   protected isPosting = signal(false);
   private selectedFile: File | null = null;
   private readonly router = inject(Router);
-  private userService = inject(UserService);
 
   onFileSelected(event: Event): void {
     const input = event.target as HTMLInputElement;
@@ -47,8 +45,6 @@ export class Addpost {
 
   publishPost(): void {
     const content = this.postContent().trim();
-    const user = this.userService.getUser()();
-    const authorUsername = user?.username || 'admin';
 
     if (!content) {
       this.error.set('Please write something before posting!');
@@ -61,7 +57,6 @@ export class Addpost {
     const formData = new FormData();
     formData.append('title', content.split('\n')[0]);
     formData.append('content', content);
-    formData.append('authorUsername', authorUsername);
     
     if (this.selectedFile) {
       console.log('dgf'+this.selectedFile);

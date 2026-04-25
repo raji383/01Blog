@@ -50,9 +50,8 @@ export class Profile {
   }
   banUser() {
     const currentUser = this.user();
-    const adminUsername = this.getTokenPayload()?.sub;
 
-    if (!currentUser || !adminUsername) {
+    if (!currentUser) {
       return;
     }
 
@@ -63,10 +62,7 @@ export class Profile {
       return;
     }
 
-    const requestBody = {
-      adminUsername,
-      banned: nextBannedState,
-    };
+    const requestBody = { banned: nextBannedState };
 
     this.http.put<UserProfileResponse>(
       `http://localhost:8080/api/users/admin/${currentUser.id}/ban`,
@@ -85,18 +81,14 @@ export class Profile {
 
   }
   deleteUser() {
-    const adminUsername = this.getTokenPayload()?.sub;
-    if (!this.user() || !adminUsername) {
+    if (!this.user()) {
       return;
     }
-    const requestBody = {
-      adminUsername,
-    };
 
     if (!confirm('Are you sure you want to delete this user? This action cannot be undone.')) {
       return;
     }
-    this.http.delete(`http://localhost:8080/api/users/admin/${this.user()?.id}`, { body: requestBody }).subscribe({
+    this.http.delete(`http://localhost:8080/api/users/admin/${this.user()?.id}`).subscribe({
       next: () => {
         alert('User has been deleted');
         window.location.href = '/';
@@ -142,15 +134,34 @@ export class Profile {
       return;
     }
 
-    this.http.post(`http://localhost:8080/api/users/${currentUser.id}/subscribe`, {}).subscribe({
+    const request = currentUser.subscribed
+      ? this.http.delete(`http://localhost:8080/api/users/${currentUser.id}/subscribe`)
+      : this.http.post(`http://localhost:8080/api/users/${currentUser.id}/subscribe`, {});
+
+    request.subscribe({
       next: () => {
-        alert('You have subscribed to this user');
+        this.user.update(user => {
+          if (!user) {
+            return user;
+          }
+
+          const subscribed = !user.subscribed;
+          return {
+            ...user,
+            subscribed,
+            followerCount: Math.max(0, user.followerCount + (subscribed ? 1 : -1))
+          };
+        });
       },
       error: (err) => {
-        console.error('Error subscribing to user:', err);
-        alert('Failed to subscribe to user');
+        console.error('Error updating subscription:', err);
+        alert(`Failed to ${currentUser.subscribed ? 'unsubscribe from' : 'subscribe to'} user`);
       }
     });
+  }
+
+  canManageSubscription(): boolean {
+    return !this.myProfile();
   }
   private getToken(): string | null {
     return typeof window !== 'undefined'

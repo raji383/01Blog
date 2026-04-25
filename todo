@@ -1,0 +1,92 @@
+
+
+Backend TODO
+
+Finish subscription features.
+Add unsubscribe.
+Add “is subscribed” status on profile response.
+Add follower/following counts.
+Make feed return posts from subscribed users, not all posts.
+Files involved: UserService.java, SubscriptionRepository.java
+
+Implement notifications properly.
+You already have Notification.java, but there is no repository/controller/service flow yet.
+Add:
+GET /api/notifications
+PUT /api/notifications/{id}/read
+create notifications when a subscribed user publishes a post
+
+Implement reports end-to-end.
+Report entity exists, but I do not see report APIs/services/admin handling.
+Add:
+create report with reason + timestamp
+admin list reports
+admin resolve report / ban user / delete post / dismiss report
+
+Secure post/comment/like ownership rules.
+PostService still accepts usernames from requests for create/update/like/comment. Replace that with authenticated user from SecurityContextHolder.
+Also enforce:
+only owner can edit/delete post
+only owner or admin can delete comment
+banned users cannot create content
+
+Add admin-only moderation APIs.
+Current admin post handling is weak because /api/posts/admin just returns getFeed() and delete uses normal delete logic.
+Add explicit admin service methods protected by role checks.
+
+Add missing repositories and DTOs for reports and notifications.
+
+Add tests.
+Minimum useful tests:
+auth register/login
+subscribe/unsubscribe
+cannot subscribe to self
+create/edit/delete own post
+admin ban/delete protections
+report creation and admin access control
+
+Frontend TODO
+
+Fix the homepage feed behavior.
+It should show posts from subscribed users, not every post in the system.
+
+Finish profile/block pages.
+Show user posts on their public block.
+Show subscribe/unsubscribe state.
+Show follower/following counts.
+
+Build notifications UI.
+Your navbar currently shows a fake badge.
+Replace it with real API data and read/unread state.
+Files to start with: navbar.ts
+
+Build report user UI.
+Add a modal or form on profile pages with reason input and confirmation.
+
+Build admin dashboard pages.
+You need dedicated screens for:
+users
+posts
+reports
+Current admin actions are scattered into profile views, which is not enough for the spec.
+
+Remove frontend-sent identity where possible.
+The UI should not send authorUsername, adminUsername, subscriberUsername for protected actions if the backend can infer them from JWT.
+
+Improve error handling.
+Replace alert(...) usage with proper UI messages.
+Show forbidden/conflict/not-found messages cleanly.
+
+Project Completion TODO
+
+Write a proper README.
+Include run steps, stack, env config, DB setup, media storage behavior, admin credentials, and API summary.
+
+Review route protection.
+Confirm all user/admin routes are actually protected by JWT and role checks, not just by frontend hiding buttons.
+
+Do a final schema pass.
+Add unique constraints where needed, especially subscriptions and likes.
+
+Do a final UI polish pass.
+Responsive layout, empty states, loading states, moderation UX.

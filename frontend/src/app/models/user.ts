@@ -32,6 +32,9 @@ interface UserProfileResponse {
   email: string;
   role: string;
   banned: boolean;
+  subscribed: boolean;
+  followerCount: number;
+  followingCount: number;
 }
 interface LikeResponse {
   likeCount: number;

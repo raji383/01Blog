@@ -18,7 +18,9 @@
 
                         <div class="identity-actions">
                             <a class="secondary-btn action-link" *ngIf="myProfile()" routerLink="/">Back to Home</a>
-                            <a class="secondary-btn action-link" (click)="subscribe()" >subscribe</a>
+                            <a class="secondary-btn action-link" *ngIf="canManageSubscription()" (click)="subscribe()">
+                                {{ profile.subscribed ? 'Unsubscribe' : 'Subscribe' }}
+                            </a>
                             <a class="secondary-btn action-link" *ngIf="isAdmin() && !myProfile()" (click)="banUser()">
                                 {{ profile.banned ? 'Unban User' : 'Ban User' }}
                             </a>
@@ -27,10 +29,10 @@
                     </div>
 
                     <div class="stats-grid">
-                        <article class="stat-card">
+                       <!--  <article class="stat-card">
                             <span class="stat-label">Role</span>
                             <strong>{{ profile.role }}</strong>
-                        </article>
+                        </article> -->
 
                         <article class="stat-card">
                             <span class="stat-label">Status</span>
@@ -40,18 +42,17 @@
                         </article>
 
                         <article class="stat-card">
-                            <span class="stat-label">Contact</span>
-                            <strong>{{ profile.email }}</strong>
+                            <span class="stat-label">Followers</span>
+                            <strong>{{ profile.followerCount }}</strong>
+                        </article>
+
+                        <article class="stat-card">
+                            <span class="stat-label">Following</span>
+                            <strong>{{ profile.followingCount }}</strong>
                         </article>
                     </div>
 
-                    <div class="about-card">
-                        <h2>About this profile</h2>
-                        <p>
-                            This profile page keeps the same clean card layout as the home screen and shows the basic
-                            account information available from the API.
-                        </p>
-                    </div>
+                   
                 </div>
 
                 <div class="state-block" *ngIf="isLoading()">
@@ -84,6 +85,10 @@
                         <div class="summary-item">
                             <span>Role</span>
                             <strong>{{ profile.role }}</strong>
+                        </div>
+                        <div class="summary-item">
+                            <span>Subscription</span>
+                            <strong>{{ myProfile() ? 'This is you' : (profile.subscribed ? 'Subscribed' : 'Not subscribed') }}</strong>
                         </div>
                     </div>
                 </div>

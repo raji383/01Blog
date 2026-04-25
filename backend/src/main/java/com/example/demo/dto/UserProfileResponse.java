@@ -10,4 +10,7 @@ public class UserProfileResponse {
     private String email;
     private Role role;
     private boolean banned;
+    private boolean subscribed;
+    private long followerCount;
+    private long followingCount;
 }

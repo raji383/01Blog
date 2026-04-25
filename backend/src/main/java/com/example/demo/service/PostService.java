@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -21,6 +22,7 @@ import com.example.demo.entities.User;
 import com.example.demo.repository.CommentRepository;
 import com.example.demo.repository.PostLikeRepository;
 import com.example.demo.repository.PostRepository;
+import com.example.demo.repository.SubscriptionRepository;
 import com.example.demo.repository.UserRepository;
 
 @Service
@@ -30,6 +32,7 @@ public class PostService {
     private final PostLikeRepository postLikeRepository;
     private final CommentRepository commentRepository;
     private final UserRepository userRepository;
+    private final SubscriptionRepository subscriptionRepository;
     private final MediaStorageService mediaStorageService;
 
     public PostService(
@@ -37,17 +40,18 @@ public class PostService {
             PostLikeRepository postLikeRepository,
             CommentRepository commentRepository,
             UserRepository userRepository,
+            SubscriptionRepository subscriptionRepository,
             MediaStorageService mediaStorageService) {
         this.postRepository = postRepository;
         this.postLikeRepository = postLikeRepository;
         this.commentRepository = commentRepository;
         this.userRepository = userRepository;
+        this.subscriptionRepository = subscriptionRepository;
         this.mediaStorageService = mediaStorageService;
     }
 
     public PostResponse create(PostRequest request) {
-        System.out.println("Creating post for user: " + request.getAuthorUsername());
-        User author = getUser(request.getAuthorUsername());
+        User author = getCurrentUser();
 
         Post post = new Post();
         post.setTitle(request.getTitle());
@@ -64,7 +68,13 @@ public class PostService {
     }
 
     public List<PostResponse> getFeed() {
-        return postRepository.findAllByOrderByCreatedAtDesc()
+        User currentUser = getCurrentUser();
+        List<Long> followingIds = subscriptionRepository.findFollowingIdsByFollowerId(currentUser.getId());
+        if (followingIds.isEmpty()) {
+            return List.of();
+        }
+
+        return postRepository.findByAuthorIdInOrderByCreatedAtDesc(followingIds)
                 .stream()
                 .map(this::toResponse)
                 .toList();
@@ -79,7 +89,7 @@ public class PostService {
 
     public PostResponse update(Long postId, PostRequest request) {
         Post post = getPost(postId);
-        User author = getUser(request.getAuthorUsername());
+        User author = getCurrentUser();
         User postAuthor = post.getAuthor();
         if (!postAuthor.getId().equals(author.getId())) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You can only update your own posts");
@@ -101,6 +111,12 @@ public class PostService {
     @Transactional
     public void delete(Long postId) {
         Post post = getPost(postId);
+        User currentUser = getCurrentUser();
+        boolean isAdmin = currentUser.getRole() != null && currentUser.getRole().name().equals("ADMIN");
+        if (!post.getAuthor().getId().equals(currentUser.getId()) && !isAdmin) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You can only delete your own posts");
+        }
+
         commentRepository.deleteByPostId(postId);
         postLikeRepository.deleteByPostId(postId);
         postRepository.delete(post);
@@ -108,7 +124,7 @@ public class PostService {
 
     public ToggleLikeResponse toggleLike(Long postId, ToggleLikeRequest request) {
         Post post = getPost(postId);
-        User user = getUser(request.getUsername());
+        User user = getCurrentUser();
 
         boolean liked;
         PostLike existingLike = postLikeRepository.findByPostIdAndUserId(postId, user.getId()).orElse(null);
@@ -142,7 +158,7 @@ public class PostService {
 
     public CommentResponse addComment(Long postId, CommentRequest request) {
         Post post = getPost(postId);
-        User author = getUser(request.getAuthorUsername());
+        User author = getCurrentUser();
 
         Comment comment = new Comment();
         comment.setPost(post);
@@ -155,12 +171,27 @@ public class PostService {
     public void deleteComment(Long commentId) {
         Comment comment = commentRepository.findById(commentId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Comment not found"));
+        User currentUser = getCurrentUser();
+        boolean isAdmin = currentUser.getRole() != null && currentUser.getRole().name().equals("ADMIN");
+        if (!comment.getAuthor().getId().equals(currentUser.getId()) && !isAdmin) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You can only delete your own comments");
+        }
+
         commentRepository.delete(comment);
     }
 
     private User getUser(String username) {
         return userRepository.findByUsername(username)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
+    }
+
+    private User getCurrentUser() {
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        if (username == null) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "User not authenticated");
+        }
+
+        return getUser(username);
     }
 
     private Post getPost(Long postId) {

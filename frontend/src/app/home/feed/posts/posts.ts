@@ -44,9 +44,7 @@ export class Posts {
     });
   }
   addLike(post: PostResponse): void {
-    const user = this.userService.getUser()();
-
-    this.http.post<LikeResponse>(`http://localhost:8080/api/posts/${post.id}/like`, user).subscribe({
+    this.http.post<LikeResponse>(`http://localhost:8080/api/posts/${post.id}/like`, {}).subscribe({
       next: (res) => {
         if (res) {
           /* if (res.liked) {
@@ -109,9 +107,7 @@ export class Posts {
   }
 
   saveEditedPost(post: PostResponse, changes: { title: string; content: string; mediaUrl: string; mediaFile: File | null }): void {
-    const user = this.userService.getUser()();
-
-    if (!user?.username) {
+    if (!this.userService.getUser()()) {
       this.router.navigate(['/login']);
       return;
     }
@@ -124,7 +120,6 @@ export class Posts {
     body.append('title', changes.title.trim());
     body.append('content', changes.content.trim());
     body.append('mediaUrl', changes.mediaFile ? '' : changes.mediaUrl.trim());
-    body.append('authorUsername', user.username);
 
     if (changes.mediaFile) {
       body.append('mediaFile', changes.mediaFile);
