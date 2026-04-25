@@ -43,4 +43,12 @@ interface LikeResponse {
   userId: number;
   username: string;
 }
-export type { RegisterPayload, LoginPayload, AuthResponse, PostResponse, UserProfileResponse, LikeResponse };
+interface NotificationResponse {
+  id: number;
+  type: string;
+  message: string;
+  senderUsername: string;
+  read: boolean;
+  createdAt: string;
+}
+export type { RegisterPayload, LoginPayload, AuthResponse, PostResponse, UserProfileResponse, LikeResponse, NotificationResponse };

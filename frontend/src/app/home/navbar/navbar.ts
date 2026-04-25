@@ -3,10 +3,12 @@ import { Component, inject, signal } from '@angular/core';
 import type { UserProfileResponse } from '../../models/user';
 import { UserService } from '../../Service/UserService';
 import { Router, RouterLink } from '@angular/router';
+import { Notificationbar } from './notificationbar/notificationbar';
+import { NgIf } from '@angular/common';
 
 @Component({
   selector: 'app-navbar',
-  imports: [RouterLink],
+  imports: [RouterLink, Notificationbar,NgIf],
   templateUrl: './navbar.html',
   styleUrl: './navbar.css',
 })
@@ -15,6 +17,7 @@ export class Navbar {
   protected userProfile = signal<UserProfileResponse | null>(null);
   protected error = signal<string | null>(null);
   private readonly router = inject(Router);
+  showNotifications = signal(false);
 
   private userService = inject(UserService);
   ngOnInit() {
@@ -40,7 +43,11 @@ export class Navbar {
       console.error('Error:', error);
     }
   }
-
+  showNotificationBar() {
+    console.log("test");
+    
+    this.showNotifications.set(!this.showNotifications());
+  }
   private hasToken(): boolean {
     return typeof window !== 'undefined'
       && !!(window.localStorage.getItem('auth_token') || window.localStorage.getItem('token'));

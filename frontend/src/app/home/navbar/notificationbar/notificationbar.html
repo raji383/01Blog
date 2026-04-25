@@ -1,0 +1,37 @@
+<section class="notification-panel">
+    <div class="notification-panel-header">
+        <h2>Notifications</h2>
+        <span class="notification-count">{{ notifications.length }}</span>
+    </div>
+
+    <div class="notification-empty" *ngIf="notifications.length==0">
+        No notifications yet.
+    </div>
+
+    <div class="notification-list" *ngIf="notifications.length!=1">
+        <button
+            type="button"
+            class="notification-item"
+            *ngFor="let notification of notifications"
+            [class.unread]="!notification.read"
+            (click)="markAsRead(notification)">
+            <div class="notification-avatar">
+                {{ notification.senderUsername.charAt(0).toUpperCase() }}
+            </div>
+
+            <div class="notification-body">
+                <div class="notification-meta">
+                    <span class="notification-type">{{ notification.type.replace('_', ' ') }}</span>
+                    <span class="notification-time">{{ notification.createdAt | date:'short' }}</span>
+                </div>
+
+                <p class="notification-message">
+                    <strong>{{ notification.senderUsername || 'System' }}</strong>
+                    {{ notification.message }}
+                </p>
+            </div>
+
+            <span class="notification-dot" *ngIf="!notification.read"></span>
+        </button>
+    </div>
+</section>
