@@ -88,7 +88,7 @@ public class PostController {
 
     @GetMapping("/admin")
     public ResponseEntity<List<PostResponse>> getAllPostsForAdmin() {
-        return ResponseEntity.ok(postService.getFeed());
+        return ResponseEntity.ok(postService.getAllPostsForAdmin());
     }
 
     @DeleteMapping("/admin/{postId}")

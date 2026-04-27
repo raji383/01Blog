@@ -1,0 +1,39 @@
+<section class="admin-section">
+    <div class="section-header">
+        <div>
+            <p class="eyebrow">Reports</p>
+            <h2>Flag queue</h2>
+            <p class="section-copy">Track reporter-to-reported relationships in one queue so moderation work has its own dedicated screen.</p>
+        </div>
+        <div class="summary-chip">{{ reports().length }} reports</div>
+    </div>
+
+    <div *ngIf="loading()" class="empty-state">
+        <span class="empty-icon">⏳</span>
+        <p>Loading reports...</p>
+    </div>
+
+    <div *ngIf="!loading() && reports().length" class="report-list">
+        <article *ngFor="let report of reports()" class="report-card">
+            <div class="report-pill">Report #{{ report.id }}</div>
+            <div class="report-people">
+                <div>
+                    <span class="person-label">Reporter</span>
+                    <strong>{{ report.reporterUsername }}</strong>
+                    <span>{{ report.reporterEmail }}</span>
+                </div>
+                <div>
+                    <span class="person-label">Reported user</span>
+                    <strong>{{ report.reportedUsername }}</strong>
+                    <span>{{ report.reportedEmail }}</span>
+                </div>
+            </div>
+            <button type="button" class="action-button secondary" (click)="dismissReport(report)">Dismiss</button>
+        </article>
+    </div>
+
+    <div *ngIf="!loading() && !reports().length" class="empty-state">
+        <span class="empty-icon">🚩</span>
+        <p>No reports found.</p>
+    </div>
+</section>

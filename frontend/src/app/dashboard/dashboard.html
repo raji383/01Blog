@@ -1,72 +1,28 @@
 <app-navbar></app-navbar>
 
 <div class="dashboard-wrapper">
-
-    <!-- Page Header -->
     <div class="dashboard-header">
         <div class="dashboard-header-content">
             <h1 class="dashboard-title">
                 <span class="dashboard-icon">🛡️</span>
                 Admin Dashboard
             </h1>
-            <p class="dashboard-subtitle">Manage users and monitor platform activity</p>
-        </div>
-        <div class="dashboard-stats">
-            <div class="stat-chip">
-                <span class="stat-number">{{ users.length }}</span>
-                <span class="stat-label">Total Users</span>
-            </div>
-            <!--  <div class="stat-chip accent">
-        <span class="stat-number">{{ users | banned }}</span>
-        <span class="stat-label">Banned</span>
-      </div> -->
+            <p class="dashboard-subtitle">Dedicated moderation screens for users, posts, and reports.</p>
         </div>
     </div>
 
-    <!-- Users Table Card -->
-    <div class="card users-card">
-        <div class="card-header">
-            <h2 class="card-title">All Users</h2>
-            <span class="badge">{{ users.length }} members</span>
-        </div>
-
-        <div class="table-wrapper">
-            <table class="users-table">
-                <thead>
-                    <tr>
-                        <th>User</th>
-                        <th>Email</th>
-                        <th>Role</th>
-                        <th>Status</th>
-                    </tr>
-                </thead>
-                <tbody>
-
-                    <tr *ngFor="let u of users" class="user-row">
-                        <td>
-                            <div class="user-cell">
-                                <div class="user-avatar">{{ u.username?.charAt(0)?.toUpperCase() }}</div>
-                                <span class="user-name">{{ u.username }}</span>
-                            </div>
-                        </td>
-                        <td class="email-cell">{{ u.email }}</td>
-                        <td>
-                            <span class="role-badge" [class.admin]="u.role === 'ADMIN'">{{ u.role }}</span>
-                        </td>
-                        <td>
-                            <span class="status-badge" [class.banned]="u.banned">
-                                {{ u.banned ? 'Banned' : 'Active' }}
-                            </span>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-
-        <div *ngIf="!users?.length" class="empty-state">
-            <span class="empty-icon">👥</span>
-            <p>No users found</p>
-        </div>
+    <div class="section-nav" aria-label="Admin sections">
+        <a
+            *ngFor="let section of sections"
+            [routerLink]="section.path"
+            routerLinkActive="active"
+            class="section-link">
+            <span class="section-label">{{ section.label }}</span>
+            <span class="section-description">{{ section.description }}</span>
+        </a>
     </div>
 
+    <div class="section-panel">
+        <router-outlet></router-outlet>
+    </div>
 </div>

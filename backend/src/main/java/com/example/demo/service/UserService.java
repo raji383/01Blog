@@ -25,6 +25,7 @@ import com.example.demo.repository.CommentRepository;
 import com.example.demo.repository.NotificationRepository;
 import com.example.demo.repository.PostLikeRepository;
 import com.example.demo.repository.PostRepository;
+import com.example.demo.repository.ReportRepository;
 import com.example.demo.repository.SubscriptionRepository;
 import com.example.demo.repository.UserRepository;
 import com.example.demo.security.JwtUtil;
@@ -40,6 +41,7 @@ public class UserService {
     private final CommentRepository commentRepository;
     private final SubscriptionRepository subscriptionRepository;
     private final NotificationRepository notificationRepository;
+    private final ReportRepository reportRepository;
 
     public UserService(
             UserRepository userRepository,
@@ -49,7 +51,8 @@ public class UserService {
             PostLikeRepository postLikeRepository,
             CommentRepository commentRepository,
             SubscriptionRepository subscriptionRepository,
-            NotificationRepository notificationRepository) {
+            NotificationRepository notificationRepository,
+            ReportRepository reportRepository) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.jwtUtil = jwtUtil;
@@ -58,6 +61,7 @@ public class UserService {
         this.commentRepository = commentRepository;
         this.subscriptionRepository = subscriptionRepository;
         this.notificationRepository = notificationRepository;
+        this.reportRepository = reportRepository;
     }
 
     public RegisterResponse register(RegisterRequest request) {
@@ -168,6 +172,7 @@ public class UserService {
         commentRepository.deleteByAuthorId(targetUser.getId());
         postLikeRepository.deleteByUserId(targetUser.getId());
         notificationRepository.deleteBySenderIdOrReceiverId(targetUser.getId(), targetUser.getId());
+        reportRepository.deleteByReporterIdOrReportedId(targetUser.getId(), targetUser.getId());
         userRepository.delete(targetUser);
     }
 

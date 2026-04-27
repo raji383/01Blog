@@ -91,6 +91,14 @@ public class PostService {
                 .toList();
     }
 
+    public List<PostResponse> getAllPostsForAdmin() {
+        requireAdmin();
+        return postRepository.findAllByOrderByCreatedAtDesc()
+                .stream()
+                .map(this::toResponse)
+                .toList();
+    }
+
     public List<PostResponse> getPostsByUsername(String username) {
         return postRepository.findByAuthorUsernameOrderByCreatedAtDesc(username)
                 .stream()
@@ -203,6 +211,19 @@ public class PostService {
         }
 
         return getUser(username);
+    }
+
+    private User requireAdmin() {
+        User currentUser = getCurrentUser();
+        if (currentUser.getRole() == null || !currentUser.getRole().name().equals("ADMIN")) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Admin access required");
+        }
+
+        if (currentUser.isBanned()) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Banned admin cannot perform this action");
+        }
+
+        return currentUser;
     }
 
     private Post getPost(Long postId) {

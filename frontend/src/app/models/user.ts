@@ -37,6 +37,23 @@ interface UserProfileResponse {
   followerCount: number;
   followingCount: number;
 }
+interface UserAdminResponse {
+  id: number;
+  username: string;
+  email: string;
+  role: string;
+  banned: boolean;
+}
+interface AdminPostResponse extends PostResponse {}
+interface AdminReportResponse {
+  id: number;
+  reporterId: number;
+  reporterUsername: string;
+  reporterEmail: string;
+  reportedId: number;
+  reportedUsername: string;
+  reportedEmail: string;
+}
 interface LikeResponse {
   likeCount: number;
   liked: boolean;
@@ -53,4 +70,15 @@ interface NotificationResponse {
   read: boolean;
   createdAt: string;
 }
-export type { RegisterPayload, LoginPayload, AuthResponse, PostResponse, UserProfileResponse, LikeResponse, NotificationResponse };
+export type {
+  RegisterPayload,
+  LoginPayload,
+  AuthResponse,
+  PostResponse,
+  UserProfileResponse,
+  UserAdminResponse,
+  AdminPostResponse,
+  AdminReportResponse,
+  LikeResponse,
+  NotificationResponse
+};
