@@ -28,7 +28,7 @@
                 <tr *ngFor="let user of users()" class="user-row">
                     <td>
                         <div class="user-cell">
-                            <div class="user-avatar">{{ user.username?.charAt(0)?.toUpperCase() }}</div>
+                            <div class="user-avatar">{{ user.username.charAt(0).toUpperCase() }}</div>
                             <div>
                                 <div class="user-name">{{ user.username }}</div>
                                 <a [routerLink]="['/profile', user.id]" class="profile-link">Open profile</a>

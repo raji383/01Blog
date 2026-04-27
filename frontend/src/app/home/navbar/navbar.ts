@@ -22,6 +22,7 @@ export class Navbar {
   private userService = inject(UserService);
   ngOnInit() {
     if (!this.hasToken()) {
+      this.router.navigate(['/login']);
       this.error.set('No authentication token found');
       return;
     }

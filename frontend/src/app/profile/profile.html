@@ -19,18 +19,22 @@
 
                             <div class="identity-actions">
                                 <a class="secondary-btn action-link" *ngIf="myProfile()" routerLink="/">Back to Home</a>
-                                <a class="secondary-btn action-link" *ngIf="canManageSubscription()" (click)="subscribe()">
+                                <a class="secondary-btn action-link" *ngIf="!myProfile()" (click)="reportUser()">Report</a>
+                                <a class="secondary-btn action-link" *ngIf="canManageSubscription()"
+                                    (click)="subscribe()">
                                     {{ profile.subscribed ? 'Unsubscribe' : 'Subscribe' }}
                                 </a>
-                                <a class="secondary-btn action-link" *ngIf="isAdmin() && !myProfile()" (click)="banUser()">
+                                <a class="secondary-btn action-link" *ngIf="isAdmin() && !myProfile()"
+                                    (click)="banUser()">
                                     {{ profile.banned ? 'Unban User' : 'Ban User' }}
                                 </a>
-                                <a class="delete-btn action-link" *ngIf="isAdmin() && !myProfile()" (click)="deleteUser()">Delete User</a>
+                                <a class="delete-btn action-link" *ngIf="isAdmin() && !myProfile()"
+                                    (click)="deleteUser()">Delete User</a>
                             </div>
                         </div>
 
                         <div class="stats-grid">
-                           <!--  <article class="stat-card">
+                            <!--  <article class="stat-card">
                                 <span class="stat-label">Role</span>
                                 <strong>{{ profile.role }}</strong>
                             </article> -->
@@ -63,7 +67,8 @@
                                 <span class="posts-eyebrow">Recent activity</span>
                                 <h2>Posts</h2>
                             </div>
-                            <p *ngIf="myposts().length">{{ myposts().length }} post{{ myposts().length === 1 ? '' : 's' }}</p>
+                            <p *ngIf="myposts().length">{{ myposts().length }} post{{ myposts().length === 1 ? '' : 's'
+                                }}</p>
                         </div>
 
                         <div class="posts-empty" *ngIf="!myposts().length">
@@ -71,12 +76,8 @@
                         </div>
 
                         <div class="posts-list">
-                            <app-posts
-                                *ngFor="let post of myposts()"
-                                [post]="post"
-                                (liked)="onLiked($event)"
-                                (edited)="onEdited($event)"
-                                (deleted)="onDeleted($event)"></app-posts>
+                            <app-posts *ngFor="let post of myposts()" [post]="post" (liked)="onLiked($event)"
+                                (edited)="onEdited($event)" (deleted)="onDeleted($event)"></app-posts>
                         </div>
                     </div>
                 </section>
@@ -114,7 +115,8 @@
                         </div>
                         <div class="summary-item">
                             <span>Subscription</span>
-                            <strong>{{ myProfile() ? 'This is you' : (profile.subscribed ? 'Subscribed' : 'Not subscribed') }}</strong>
+                            <strong>{{ myProfile() ? 'This is you' : (profile.subscribed ? 'Subscribed' : 'Not
+                                subscribed') }}</strong>
                         </div>
                     </div>
                 </div>

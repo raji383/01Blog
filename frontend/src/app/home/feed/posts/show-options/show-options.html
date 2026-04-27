@@ -1,4 +1,13 @@
-<div class="show-options-menu" >
-  <button type="button" class="menu-action" (click)="onEdit()" *ngIf="MYpost('Edit')">Edit post</button>
-  <button type="button" class="menu-action danger" (click)="onDelete()" *ngIf="MYpost('Delete')">Delete post</button>
+<div class="show-options-menu">
+  <button type="button" class="menu-action" (click)="onReport()" *ngIf="!MYpost('report')">
+    🚩 Report
+  </button>
+
+  <button type="button" class="menu-action" (click)="onEdit()" *ngIf="MYpost('Edit')">
+    ✏️ Edit post
+  </button>
+
+  <button type="button" class="menu-action danger" (click)="onDelete()" *ngIf="MYpost('Delete')">
+    🗑️ Delete post
+  </button>
 </div>

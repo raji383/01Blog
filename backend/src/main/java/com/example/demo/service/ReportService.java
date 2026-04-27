@@ -40,6 +40,32 @@ public class ReportService {
         reportRepository.delete(report);
     }
 
+    public void reportUser(Long reportedUserId) {
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        if (username == null) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "User not authenticated");
+        }
+
+        User reporter = userRepository.findByUsername(username)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
+
+        if (reporter.isBanned()) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Banned users cannot report others");
+        }
+
+        User reported = userRepository.findById(reportedUserId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Reported user not found"));
+
+        if (reported.isBanned()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Cannot report a banned user");
+        }
+
+        Report report = new Report();
+        report.setReporter(reporter);
+        report.setReported(reported);
+        reportRepository.save(report);
+    }
+
     private User requireAdmin() {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         if (username == null) {

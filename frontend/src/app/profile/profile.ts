@@ -50,7 +50,7 @@ export class Profile {
         console.error('Error fetching user profile:', err);
       }
     });
-    
+
   }
 
   fetchUserPosts(username: string) {
@@ -192,7 +192,26 @@ export class Profile {
   onDeleted(postId: number) {
     this.myposts.update(posts => posts.filter(post => post.id !== postId));
   }
+  reportUser() {
+    if (!this.user()) {
+      return;
+    }
 
+    if (!confirm('Are you sure you want to report this user?')) {
+      return;
+    }
+    console.log("11111111", this.user()?.id);
+
+    this.http.post(`http://localhost:8080/api/reports/user/${this.user()?.id}`, {}).subscribe({
+      next: () => {
+        alert('User has been reported');
+      },
+      error: (err) => {
+        console.error('Error reporting user:', err);
+        alert('Failed to report user');
+      }
+    });
+  }
   private getToken(): string | null {
     return typeof window !== 'undefined'
       ? window.localStorage.getItem('auth_token') || window.localStorage.getItem('token')

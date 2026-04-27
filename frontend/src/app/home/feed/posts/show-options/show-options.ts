@@ -14,6 +14,7 @@ export class ShowOptions {
   @Output() closeMenu = new EventEmitter<void>();
   @Output() edit = new EventEmitter<PostResponse>();
   @Output() delete = new EventEmitter<number>();
+  @Output() report = new EventEmitter<number>();
   private readonly userService = inject(UserService);
 
 
@@ -24,6 +25,10 @@ export class ShowOptions {
 
   protected onDelete(): void {
     this.delete.emit(this.post.id);
+    this.closeMenu.emit();
+  }
+  protected onReport(): void {
+    this.report.emit(this.post.id);
     this.closeMenu.emit();
   }
 
