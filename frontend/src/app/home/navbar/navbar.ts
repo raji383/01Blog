@@ -59,4 +59,8 @@ export class Navbar {
     // Assuming userProfile has a property 'notificationCount'
     return this.userProfile()?.notificationCount || 0;
   }
+  isUserAdmin(): boolean {
+    
+    return this.userProfile()?.role === 'ADMIN';
+  }
 }
