@@ -1,5 +1,9 @@
 package com.example.demo.entities;
 
+import java.time.Instant;
+
+import org.springframework.security.core.parameters.P;
+
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -22,4 +26,15 @@ public class Report {
     @ManyToOne
     @JoinColumn(name = "reported_id", nullable = false)
     private User reported;
+
+    @Column(nullable = false)
+    private String type; // "user" or "post"
+
+    @Column(nullable = false)
+    private String reason;
+
+    @Column(nullable = false)
+    private Instant createdAt;
+
+
 }

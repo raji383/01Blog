@@ -8,9 +8,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import com.example.demo.dto.ReportAdminResponse;
+import com.example.demo.entities.Post;
 import com.example.demo.entities.Report;
 import com.example.demo.entities.Role;
 import com.example.demo.entities.User;
+import com.example.demo.repository.PostRepository;
 import com.example.demo.repository.ReportRepository;
 import com.example.demo.repository.UserRepository;
 
@@ -19,10 +21,13 @@ public class ReportService {
 
     private final ReportRepository reportRepository;
     private final UserRepository userRepository;
+    private final PostRepository postRepository;
 
-    public ReportService(ReportRepository reportRepository, UserRepository userRepository) {
+    public ReportService(ReportRepository reportRepository, UserRepository userRepository,
+            PostRepository postRepository) {
         this.reportRepository = reportRepository;
         this.userRepository = userRepository;
+        this.postRepository = postRepository;
     }
 
     public List<ReportAdminResponse> getAllReportsForAdmin() {
@@ -40,7 +45,36 @@ public class ReportService {
         reportRepository.delete(report);
     }
 
-    public void reportUser(Long reportedUserId) {
+    public void reportUser(Long reportedUserId, String reason) {
+        System.out.println(1);
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        
+        if (username == null) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "User not authenticated");
+        }
+        
+        User reporter = userRepository.findByUsername(username)
+        .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
+        
+        if (reporter.isBanned()) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Banned users cannot report others");
+        }
+        
+        User reported = userRepository.findById(reportedUserId)
+        .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Reported user not found"));
+        
+        System.out.println(2);
+       
+        Report report = new Report();
+        report.setReporter(reporter);
+        report.setReported(reported);
+        report.setType("user");
+        report.setReason(reason);
+        report.setCreatedAt(java.time.Instant.now());
+        reportRepository.save(report);
+    }
+
+    public void reportPost(Long reportedPostId, String reason) {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         if (username == null) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "User not authenticated");
@@ -52,18 +86,18 @@ public class ReportService {
         if (reporter.isBanned()) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Banned users cannot report others");
         }
-
-        User reported = userRepository.findById(reportedUserId)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Reported user not found"));
-
-        if (reported.isBanned()) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Cannot report a banned user");
+        Post post = postRepository.findById(reportedPostId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Reported post not found"));
+        if (post.getAuthor().isBanned()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Cannot report a post by a banned user");
         }
-
         Report report = new Report();
         report.setReporter(reporter);
-        report.setReported(reported);
+        report.setReported(post.getAuthor());
+        report.setType("post");
+        report.setReason(reason);
         reportRepository.save(report);
+
     }
 
     private User requireAdmin() {

@@ -44,7 +44,7 @@ interface UserAdminResponse {
   role: string;
   banned: boolean;
 }
-interface AdminPostResponse extends PostResponse {}
+interface AdminPostResponse extends PostResponse { }
 interface AdminReportResponse {
   id: number;
   reporterId: number;
@@ -70,6 +70,12 @@ interface NotificationResponse {
   read: boolean;
   createdAt: string;
 }
+interface ReportAdminRequest {
+  type: string;
+  reason: string;
+  createdAt: string;
+}
+
 export type {
   RegisterPayload,
   LoginPayload,
@@ -80,5 +86,6 @@ export type {
   AdminPostResponse,
   AdminReportResponse,
   LikeResponse,
-  NotificationResponse
+  NotificationResponse,
+  ReportAdminRequest
 };

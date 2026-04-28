@@ -3,7 +3,7 @@ import { NgFor, NgIf } from '@angular/common';
 import { Component, computed, inject, signal } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { Navbar } from '../home/navbar/navbar';
-import { PostResponse, UserProfileResponse } from '../models/user';
+import { PostResponse, ReportAdminRequest, UserProfileResponse } from '../models/user';
 import { Posts } from '../home/feed/posts/posts';
 
 @Component({
@@ -200,9 +200,18 @@ export class Profile {
     if (!confirm('Are you sure you want to report this user?')) {
       return;
     }
-    console.log("11111111", this.user()?.id);
+    let reason = prompt('Please provide a reason for reporting this user:');
 
-    this.http.post(`http://localhost:8080/api/reports/user/${this.user()?.id}`, {}).subscribe({
+    if (!reason) {
+      alert('Report reason is required');
+      return;
+    }
+    const reportRequest: ReportAdminRequest = {
+      type: 'user',
+      reason,
+      createdAt: new Date().toISOString()
+    };
+    this.http.post(`http://localhost:8080/api/reports/user/${this.user()?.id}`, reportRequest).subscribe({
       next: () => {
         alert('User has been reported');
       },
