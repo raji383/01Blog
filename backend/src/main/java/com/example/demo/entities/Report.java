@@ -2,7 +2,6 @@ package com.example.demo.entities;
 
 import java.time.Instant;
 
-import org.springframework.security.core.parameters.P;
 
 import jakarta.persistence.*;
 import lombok.*;

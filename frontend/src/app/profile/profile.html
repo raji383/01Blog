@@ -19,7 +19,7 @@
 
                             <div class="identity-actions">
                                 <a class="secondary-btn action-link" *ngIf="myProfile()" routerLink="/">Back to Home</a>
-                                <a class="secondary-btn action-link" *ngIf="!myProfile()" (click)="reportUser()">Report</a>
+                                <a class="secondary-btn action-link" *ngIf="!myProfile() && profile.role !== 'ADMIN'" (click)="reportUser()">Report</a>
                                 <a class="secondary-btn action-link" *ngIf="canManageSubscription()"
                                     (click)="subscribe()">
                                     {{ profile.subscribed ? 'Unsubscribe' : 'Subscribe' }}
