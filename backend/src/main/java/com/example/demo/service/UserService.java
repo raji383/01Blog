@@ -166,6 +166,7 @@ public class UserService {
         for (Post post : posts) {
             commentRepository.deleteByPostId(post.getId());
             postLikeRepository.deleteByPostId(post.getId());
+            reportRepository.deleteByReportedPostId(post.getId());
             postRepository.delete(post);
         }
 

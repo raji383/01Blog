@@ -15,7 +15,7 @@
 
     <div *ngIf="!loading() && reports().length" class="report-list">
         <article *ngFor="let report of reports()" class="report-card">
-            <div class="report-pill">Report #{{ report.id }}</div>
+            <div class="report-pill">{{ report.type | titlecase }} report #{{ report.id }}</div>
             <div class="report-people">
                 <div>
                     <span class="person-label">Reporter</span>
@@ -26,6 +26,31 @@
                     <span class="person-label">Reported user</span>
                     <strong>{{ report.reportedUsername }}</strong>
                     <span>{{ report.reportedEmail }}</span>
+                </div>
+            </div>
+            <div class="report-meta">
+                <div>
+                    <span class="person-label">Reason</span>
+                    <strong>{{ report.reason }}</strong>
+                </div>
+                <div>
+                    <span class="person-label">Created</span>
+                    <strong>{{ report.createdAt | date:'medium' }}</strong>
+                </div>
+            </div>
+            <div class="reported-post-preview" *ngIf="report.reportedPostId">
+                <span class="person-label">Reported post</span>
+                <strong class="reported-post-title">#{{ report.reportedPostId }} {{ report.reportedPostTitle }}</strong>
+                <p class="reported-post-content" *ngIf="report.reportedPostContent">{{ report.reportedPostContent }}</p>
+                <div class="reported-post-media" *ngIf="report.reportedPostMediaUrl">
+                    <img *ngIf="!isVideoMedia(report.reportedPostMediaUrl)"
+                        [src]="'http://localhost:8080' + report.reportedPostMediaUrl"
+                        alt="Reported post media" />
+                    <video *ngIf="isVideoMedia(report.reportedPostMediaUrl)"
+                        [src]="'http://localhost:8080' + report.reportedPostMediaUrl"
+                        controls
+                        playsinline
+                        preload="metadata"></video>
                 </div>
             </div>
             <button type="button" class="action-button secondary" (click)="dismissReport(report)">Dismiss</button>

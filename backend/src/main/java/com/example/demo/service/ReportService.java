@@ -1,5 +1,6 @@
 package com.example.demo.service;
 
+import java.time.Instant;
 import java.util.List;
 
 import org.springframework.http.HttpStatus;
@@ -46,68 +47,70 @@ public class ReportService {
     }
 
     public void reportUser(Long reportedUserId, String reason) {
-        System.out.println(1);
-        String username = SecurityContextHolder.getContext().getAuthentication().getName();
-        
-        if (username == null) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "User not authenticated");
-        }
-        
-        User reporter = userRepository.findByUsername(username)
-        .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
-        
+        User reporter = getCurrentUser();
         if (reporter.isBanned()) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Banned users cannot report others");
         }
-        
+
         User reported = userRepository.findById(reportedUserId)
-        .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Reported user not found"));
-        
-        System.out.println(2);
-       
-        Report report = new Report();
-        report.setReporter(reporter);
-        report.setReported(reported);
-        report.setType("user");
-        report.setReason(reason);
-        report.setCreatedAt(java.time.Instant.now());
-        reportRepository.save(report);
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Reported user not found"));
+
+        if (reporter.getId().equals(reported.getId())) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "You cannot report your own account");
+        }
+
+        reportRepository.save(buildReport(reporter, reported, null, "user", reason));
     }
 
     public void reportPost(Long reportedPostId, String reason) {
-        String username = SecurityContextHolder.getContext().getAuthentication().getName();
-        if (username == null) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "User not authenticated");
-        }
-
-        User reporter = userRepository.findByUsername(username)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
+        User reporter = getCurrentUser();
 
         if (reporter.isBanned()) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Banned users cannot report others");
         }
+
         Post post = postRepository.findById(reportedPostId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Reported post not found"));
-        if (post.getAuthor().isBanned()) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Cannot report a post by a banned user");
-        }
-        Report report = new Report();
-        report.setReporter(reporter);
-        report.setReported(post.getAuthor());
-        report.setType("post");
-        report.setReason(reason);
-        reportRepository.save(report);
 
+        if (reporter.getId().equals(post.getAuthor().getId())) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "You cannot report your own post");
+        }
+
+        reportRepository.save(buildReport(reporter, post.getAuthor(), post, "post", reason));
     }
 
-    private User requireAdmin() {
+    private Report buildReport(User reporter, User reported, Post reportedPost, String type, String reason) {
+        String normalizedReason = normalizeReason(reason);
+        Report report = new Report();
+        report.setReporter(reporter);
+        report.setReported(reported);
+        report.setReportedPost(reportedPost);
+        report.setType(type);
+        report.setReason(normalizedReason);
+        report.setCreatedAt(Instant.now());
+        return report;
+    }
+
+    private String normalizeReason(String reason) {
+        if (reason == null || reason.isBlank()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Report reason is required");
+        }
+
+        return reason.trim();
+    }
+
+    private User getCurrentUser() {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         if (username == null) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "User not authenticated");
         }
 
-        User user = userRepository.findByUsername(username)
+        return userRepository.findByUsername(username)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
+    }
+
+    private User requireAdmin() {
+        User user = getCurrentUser();
 
         if (user.getRole() != Role.ADMIN) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Admin access required");
@@ -123,12 +126,21 @@ public class ReportService {
     private ReportAdminResponse toAdminResponse(Report report) {
         ReportAdminResponse response = new ReportAdminResponse();
         response.setId(report.getId());
+        response.setType(report.getType());
+        response.setReason(report.getReason());
+        response.setCreatedAt(report.getCreatedAt() != null ? report.getCreatedAt().toString() : null);
         response.setReporterId(report.getReporter().getId());
         response.setReporterUsername(report.getReporter().getUsername());
         response.setReporterEmail(report.getReporter().getEmail());
         response.setReportedId(report.getReported().getId());
         response.setReportedUsername(report.getReported().getUsername());
         response.setReportedEmail(report.getReported().getEmail());
+        if (report.getReportedPost() != null) {
+            response.setReportedPostId(report.getReportedPost().getId());
+            response.setReportedPostTitle(report.getReportedPost().getTitle());
+            response.setReportedPostContent(report.getReportedPost().getContent());
+            response.setReportedPostMediaUrl(report.getReportedPost().getMediaUrl());
+        }
         return response;
     }
 }

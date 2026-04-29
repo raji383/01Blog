@@ -1,6 +1,6 @@
 import { Component, EventEmitter, inject, Input, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import type { LikeResponse, PostResponse } from '../../../models/user';
+import type { LikeResponse, PostResponse, ReportAdminRequest } from '../../../models/user';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { UserService } from '../../../Service/UserService';
@@ -159,6 +159,52 @@ export class Posts {
         }
 
         console.error('Error deleting post:', err);
+      }
+    });
+  }
+
+  reportPost(postId: number): void {
+    const post = this.post;
+    const currentUser = this.userService.getUser()();
+
+    if (!post || !currentUser) {
+      this.router.navigate(['/login']);
+      return;
+    }
+
+    if (currentUser.id === post.authorId) {
+      window.alert('You cannot report your own post');
+      return;
+    }
+
+    if (!window.confirm('Are you sure you want to report this post?')) {
+      return;
+    }
+
+    const reason = window.prompt('Please provide a reason for reporting this post:')?.trim();
+    if (!reason) {
+      window.alert('Report reason is required');
+      return;
+    }
+
+    const reportRequest: ReportAdminRequest = {
+      type: 'post',
+      reason,
+      createdAt: new Date().toISOString()
+    };
+
+    this.http.post(`http://localhost:8080/api/reports/post/${postId}`, reportRequest).subscribe({
+      next: () => {
+        window.alert('Post has been reported');
+      },
+      error: (err) => {
+        if (err.status === 401 || err.status === 403) {
+          this.router.navigate(['/login']);
+          return;
+        }
+
+        console.error('Error reporting post:', err);
+        window.alert('Failed to report post');
       }
     });
   }

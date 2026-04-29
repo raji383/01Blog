@@ -193,14 +193,16 @@ export class Profile {
     this.myposts.update(posts => posts.filter(post => post.id !== postId));
   }
   reportUser() {
-    if (!this.user()) {
+    const currentUser = this.user();
+
+    if (!currentUser) {
       return;
     }
 
     if (!confirm('Are you sure you want to report this user?')) {
       return;
     }
-    let reason = prompt('Please provide a reason for reporting this user:');
+    const reason = prompt('Please provide a reason for reporting this user:')?.trim();
 
     if (!reason) {
       alert('Report reason is required');
@@ -211,7 +213,7 @@ export class Profile {
       reason,
       createdAt: new Date().toISOString()
     };
-    this.http.post(`http://localhost:8080/api/reports/user/${this.user()?.id}`, reportRequest).subscribe({
+    this.http.post(`http://localhost:8080/api/reports/user/${currentUser.id}`, reportRequest).subscribe({
       next: () => {
         alert('User has been reported');
       },

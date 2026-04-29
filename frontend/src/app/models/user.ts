@@ -16,6 +16,7 @@ interface AuthResponse {
 }
 
 interface PostResponse {
+  authorId: number;
   title: string;
   content: string;
   mediaUrl: string;
@@ -47,12 +48,19 @@ interface UserAdminResponse {
 interface AdminPostResponse extends PostResponse { }
 interface AdminReportResponse {
   id: number;
+  type: string;
+  reason: string;
+  createdAt: string;
   reporterId: number;
   reporterUsername: string;
   reporterEmail: string;
   reportedId: number;
   reportedUsername: string;
   reportedEmail: string;
+  reportedPostId: number | null;
+  reportedPostTitle: string | null;
+  reportedPostContent: string | null;
+  reportedPostMediaUrl: string | null;
 }
 interface LikeResponse {
   likeCount: number;

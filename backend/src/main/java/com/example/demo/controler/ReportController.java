@@ -41,16 +41,22 @@ public class ReportController {
     @PostMapping("/user/{reportedUserId}")
     public ResponseEntity<Void> reportUser(@Valid @RequestBody ReportAdminRequest request,
             @PathVariable Long reportedUserId) {
-        if (request.getType().equals("user")) {
-
-            reportService.reportUser(reportedUserId, request.getReason());
-        } else if (request.getType().equals("post")) {
-            reportService.reportPost(reportedUserId, request.getReason());
-        }else{
-
+        if (!"user".equalsIgnoreCase(request.getType())) {
             return ResponseEntity.badRequest().build();
         }
 
+        reportService.reportUser(reportedUserId, request.getReason());
+        return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/post/{reportedPostId}")
+    public ResponseEntity<Void> reportPost(@Valid @RequestBody ReportAdminRequest request,
+            @PathVariable Long reportedPostId) {
+        if (!"post".equalsIgnoreCase(request.getType())) {
+            return ResponseEntity.badRequest().build();
+        }
+
+        reportService.reportPost(reportedPostId, request.getReason());
         return ResponseEntity.ok().build();
     }
 }

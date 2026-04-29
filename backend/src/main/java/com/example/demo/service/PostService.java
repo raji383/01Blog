@@ -26,6 +26,7 @@ import com.example.demo.repository.CommentRepository;
 import com.example.demo.repository.NotificationRepository;
 import com.example.demo.repository.PostLikeRepository;
 import com.example.demo.repository.PostRepository;
+import com.example.demo.repository.ReportRepository;
 import com.example.demo.repository.SubscriptionRepository;
 import com.example.demo.repository.UserRepository;
 
@@ -39,6 +40,7 @@ public class PostService {
     private final SubscriptionRepository subscriptionRepository;
     private final NotificationRepository notificationRepository;
     private final MediaStorageService mediaStorageService;
+    private final ReportRepository reportRepository;
 
     public PostService(
             PostRepository postRepository,
@@ -47,7 +49,8 @@ public class PostService {
             UserRepository userRepository,
             SubscriptionRepository subscriptionRepository,
             NotificationRepository notificationRepository,
-            MediaStorageService mediaStorageService) {
+            MediaStorageService mediaStorageService,
+            ReportRepository reportRepository) {
         this.postRepository = postRepository;
         this.postLikeRepository = postLikeRepository;
         this.commentRepository = commentRepository;
@@ -55,6 +58,7 @@ public class PostService {
         this.subscriptionRepository = subscriptionRepository;
         this.notificationRepository = notificationRepository;
         this.mediaStorageService = mediaStorageService;
+        this.reportRepository = reportRepository;
     }
 
     @Transactional
@@ -138,6 +142,7 @@ public class PostService {
 
         commentRepository.deleteByPostId(postId);
         postLikeRepository.deleteByPostId(postId);
+        reportRepository.deleteByReportedPostId(postId);
         postRepository.delete(post);
     }
 

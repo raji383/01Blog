@@ -26,6 +26,10 @@ public class Report {
     @JoinColumn(name = "reported_id", nullable = false)
     private User reported;
 
+    @ManyToOne
+    @JoinColumn(name = "reported_post_id")
+    private Post reportedPost;
+
     @Column(nullable = false)
     private String type; // "user" or "post"
 
