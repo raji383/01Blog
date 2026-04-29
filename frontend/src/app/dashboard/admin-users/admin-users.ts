@@ -28,7 +28,7 @@ export class AdminUsers {
       return;
     }
 
-    this.http.put<UserAdminResponse>(`http://localhost:8080/api/users/admin/${user.id}/ban`, {
+    this.http.put<UserAdminResponse>(`/api/users/admin/${user.id}/ban`, {
       banned: nextBanned,
     }).subscribe({
       next: (updatedUser) => {
@@ -46,7 +46,7 @@ export class AdminUsers {
       return;
     }
 
-    this.http.delete(`http://localhost:8080/api/users/admin/${user.id}`).subscribe({
+    this.http.delete(`/api/users/admin/${user.id}`).subscribe({
       next: () => {
         this.users.update(users => users.filter(current => current.id !== user.id));
       },
@@ -59,7 +59,7 @@ export class AdminUsers {
 
   private loadUsers(): void {
     this.loading.set(true);
-    this.http.get<UserAdminResponse[]>('http://localhost:8080/api/users/admin').subscribe({
+    this.http.get<UserAdminResponse[]>('/api/users/admin').subscribe({
       next: (users) => {
         this.users.set(users ?? []);
         this.loading.set(false);

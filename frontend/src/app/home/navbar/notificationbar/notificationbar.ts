@@ -16,7 +16,7 @@ export class Notificationbar {
   private cdr = inject(ChangeDetectorRef);
 
   ngOnInit() {
-    this.http.get<NotificationResponse[]>('http://localhost:8080/api/notifications').subscribe({
+    this.http.get<NotificationResponse[]>('/api/notifications').subscribe({
       next: (response) => {
         
         this.notifications = response;
@@ -36,7 +36,7 @@ export class Notificationbar {
       return;
     }
 
-    this.http.put<NotificationResponse>(`http://localhost:8080/api/notifications/${notification.id}/read`, {}).subscribe({
+    this.http.put<NotificationResponse>(`/api/notifications/${notification.id}/read`, {}).subscribe({
       next: (updated) => {
         this.notifications = this.notifications.map(item =>
           item.id === updated.id ? updated : item

@@ -39,7 +39,7 @@ export class Comments {
     try {
 
       try {
-        this.http.get<any[]>(`http://localhost:8080/api/posts/${this.post.id}/comments`).subscribe({
+        this.http.get<any[]>(`/api/posts/${this.post.id}/comments`).subscribe({
           next: (res) => {
             console.log(res);
             this.comments.set(res);
@@ -58,7 +58,7 @@ export class Comments {
   }
   submitComment() {
     try {
-      this.http.post(`http://localhost:8080/api/posts/${this.post.id}/comments`, { content: this.commentContent }).subscribe({
+      this.http.post(`/api/posts/${this.post.id}/comments`, { content: this.commentContent }).subscribe({
         next: (res) => {
           // Handle successful comment submission
           console.log(res);

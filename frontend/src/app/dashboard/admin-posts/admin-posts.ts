@@ -24,7 +24,7 @@ export class AdminPosts {
       return;
     }
 
-    this.http.delete(`http://localhost:8080/api/posts/admin/${post.id}`).subscribe({
+    this.http.delete(`/api/posts/admin/${post.id}`).subscribe({
       next: () => {
         this.posts.update(posts => posts.filter(current => current.id !== post.id));
       },
@@ -45,7 +45,7 @@ export class AdminPosts {
 
   private loadPosts(): void {
     this.loading.set(true);
-    this.http.get<AdminPostResponse[]>('http://localhost:8080/api/posts/admin').subscribe({
+    this.http.get<AdminPostResponse[]>('/api/posts/admin').subscribe({
       next: (posts) => {
         this.posts.set(posts ?? []);
         this.loading.set(false);

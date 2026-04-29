@@ -63,7 +63,7 @@ export class Addpost {
       formData.append('mediaFile', this.selectedFile);
     }
 
-    this.http.post('http://localhost:8080/api/posts', formData)
+    this.http.post('/api/posts', formData)
       .subscribe({
         next: (res: any) => {
           this.postContent.set('');

@@ -37,7 +37,7 @@ export class Profile {
       return;
     }
 
-    this.http.get<UserProfileResponse>(`http://localhost:8080/api/users/${id}`).subscribe({
+    this.http.get<UserProfileResponse>(`/api/users/${id}`).subscribe({
       next: (user) => {
         this.user.set(user);
         this.fetchUserPosts(user.username);
@@ -54,7 +54,7 @@ export class Profile {
   }
 
   fetchUserPosts(username: string) {
-    this.http.get<PostResponse[]>(`http://localhost:8080/api/posts/user/${username}`).subscribe({
+    this.http.get<PostResponse[]>(`/api/posts/user/${username}`).subscribe({
       next: (posts) => {
         this.myposts.set(posts ?? []);
       },
@@ -81,7 +81,7 @@ export class Profile {
     const requestBody = { banned: nextBannedState };
 
     this.http.put<UserProfileResponse>(
-      `http://localhost:8080/api/users/admin/${currentUser.id}/ban`,
+      `/api/users/admin/${currentUser.id}/ban`,
       requestBody
     ).subscribe({
       next: (updatedUser) => {
@@ -104,7 +104,7 @@ export class Profile {
     if (!confirm('Are you sure you want to delete this user? This action cannot be undone.')) {
       return;
     }
-    this.http.delete(`http://localhost:8080/api/users/admin/${this.user()?.id}`).subscribe({
+    this.http.delete(`/api/users/admin/${this.user()?.id}`).subscribe({
       next: () => {
         alert('User has been deleted');
         window.location.href = '/';
@@ -141,8 +141,8 @@ export class Profile {
     }
 
     const request = currentUser.subscribed
-      ? this.http.delete(`http://localhost:8080/api/users/${currentUser.id}/subscribe`)
-      : this.http.post(`http://localhost:8080/api/users/${currentUser.id}/subscribe`, {});
+      ? this.http.delete(`/api/users/${currentUser.id}/subscribe`)
+      : this.http.post(`/api/users/${currentUser.id}/subscribe`, {});
 
     request.subscribe({
       next: () => {
@@ -213,7 +213,7 @@ export class Profile {
       reason,
       createdAt: new Date().toISOString()
     };
-    this.http.post(`http://localhost:8080/api/reports/user/${currentUser.id}`, reportRequest).subscribe({
+    this.http.post(`/api/reports/user/${currentUser.id}`, reportRequest).subscribe({
       next: () => {
         alert('User has been reported');
       },

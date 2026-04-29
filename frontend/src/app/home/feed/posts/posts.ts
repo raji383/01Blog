@@ -44,7 +44,7 @@ export class Posts {
     });
   }
   addLike(post: PostResponse): void {
-    this.http.post<LikeResponse>(`http://localhost:8080/api/posts/${post.id}/like`, {}).subscribe({
+    this.http.post<LikeResponse>(`/api/posts/${post.id}/like`, {}).subscribe({
       next: (res) => {
         if (res) {
           /* if (res.liked) {
@@ -125,7 +125,7 @@ export class Posts {
       body.append('mediaFile', changes.mediaFile);
     }
 
-    this.http.put<PostResponse>(`http://localhost:8080/api/posts/${post.id}`, body).subscribe({
+    this.http.put<PostResponse>(`/api/posts/${post.id}`, body).subscribe({
       next: (updatedPost) => {
         this.edited.emit(updatedPost);
         this.closeEditModal();
@@ -147,7 +147,7 @@ export class Posts {
       return;
     }
 
-    this.http.delete(`http://localhost:8080/api/posts/${postId}`).subscribe({
+    this.http.delete(`/api/posts/${postId}`).subscribe({
       next: () => {
         this.deleted.emit(postId);
         this.showOptions = false;
@@ -193,7 +193,7 @@ export class Posts {
       createdAt: new Date().toISOString()
     };
 
-    this.http.post(`http://localhost:8080/api/reports/post/${postId}`, reportRequest).subscribe({
+    this.http.post(`/api/reports/post/${postId}`, reportRequest).subscribe({
       next: () => {
         window.alert('Post has been reported');
       },

@@ -19,7 +19,7 @@ export class Feed {
 
   fetchPosts() {
     try {
-      this.http.get<PostResponse[]>('http://localhost:8080/api/posts/feed').subscribe({
+      this.http.get<PostResponse[]>('/api/posts/feed').subscribe({
         next: (res) => {
           if (res) {
             this.posts.set(res);

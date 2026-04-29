@@ -44,10 +44,10 @@
                 <p class="reported-post-content" *ngIf="report.reportedPostContent">{{ report.reportedPostContent }}</p>
                 <div class="reported-post-media" *ngIf="report.reportedPostMediaUrl">
                     <img *ngIf="!isVideoMedia(report.reportedPostMediaUrl)"
-                        [src]="'http://localhost:8080' + report.reportedPostMediaUrl"
+                        [src]="report.reportedPostMediaUrl"
                         alt="Reported post media" />
                     <video *ngIf="isVideoMedia(report.reportedPostMediaUrl)"
-                        [src]="'http://localhost:8080' + report.reportedPostMediaUrl"
+                        [src]="report.reportedPostMediaUrl"
                         controls
                         playsinline
                         preload="metadata"></video>

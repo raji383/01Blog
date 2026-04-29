@@ -30,7 +30,7 @@ export class Auth {
       : null;
 
     if (token) {
-      this.http.get<PostResponse[]>('http://localhost:8080/api/posts/feed').subscribe({
+      this.http.get<PostResponse[]>('/api/posts/feed').subscribe({
         next: (res) => {
           this.router.navigate(['/']);
 
@@ -57,7 +57,7 @@ export class Auth {
   protected submitLogin() {
 
     try {
-      this.http.post<AuthResponse>('http://localhost:8080/api/auth/login', this.loginForm).subscribe({
+      this.http.post<AuthResponse>('/api/auth/login', this.loginForm).subscribe({
         next: (res) => {
           if (res.jwt) {
             if (typeof window !== 'undefined') {
@@ -76,7 +76,7 @@ export class Auth {
 
   protected submitRegister() {
     try {
-      this.http.post<AuthResponse>('http://localhost:8080/api/auth/register', this.registerForm).subscribe({
+      this.http.post<AuthResponse>('/api/auth/register', this.registerForm).subscribe({
         next: (res) => {
           if (res.jwt) {
             if (typeof window !== 'undefined') {

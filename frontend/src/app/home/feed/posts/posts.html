@@ -30,8 +30,8 @@
 
     <!-- Post Media -->
     <div class="post-media" *ngIf="post.mediaUrl">
-        <img *ngIf="!isVideoMedia(post.mediaUrl)" [src]="'http://localhost:8080' + post.mediaUrl" alt="Post media" />
-        <video *ngIf="isVideoMedia(post.mediaUrl)" [src]="'http://localhost:8080' + post.mediaUrl" controls playsinline preload="metadata"></video>
+        <img *ngIf="!isVideoMedia(post.mediaUrl)" [src]="post.mediaUrl" alt="Post media" />
+        <video *ngIf="isVideoMedia(post.mediaUrl)" [src]="post.mediaUrl" controls playsinline preload="metadata"></video>
     </div>
 
     <!-- Post Stats -->

@@ -24,7 +24,7 @@ export class AdminReports {
       return;
     }
 
-    this.http.delete(`http://localhost:8080/api/reports/admin/${report.id}`).subscribe({
+    this.http.delete(`/api/reports/admin/${report.id}`).subscribe({
       next: () => {
         this.reports.update(reports => reports.filter(current => current.id !== report.id));
       },
@@ -48,7 +48,7 @@ export class AdminReports {
 
   private loadReports(): void {
     this.loading.set(true);
-    this.http.get<AdminReportResponse[]>('http://localhost:8080/api/reports/admin').subscribe({
+    this.http.get<AdminReportResponse[]>('/api/reports/admin').subscribe({
       next: (reports) => {
         this.reports.set(reports ?? []);
         this.loading.set(false);

@@ -6,8 +6,10 @@ import {
 } from '@angular/ssr/node';
 import express from 'express';
 import { join } from 'node:path';
+import { Readable } from 'node:stream';
 
 const browserDistFolder = join(import.meta.dirname, '../browser');
+const apiProxyTarget = process.env['API_PROXY_TARGET'] ?? 'http://localhost:8080';
 
 const app = express();
 const angularApp = new AngularNodeAppEngine();
@@ -23,6 +25,51 @@ const angularApp = new AngularNodeAppEngine();
  * });
  * ```
  */
+
+app.use(['/api', '/uploads'], async (req, res, next) => {
+  try {
+    const targetUrl = new URL(req.originalUrl, apiProxyTarget);
+    const headers = new Headers();
+
+    for (const [key, value] of Object.entries(req.headers)) {
+      if (!value || key.toLowerCase() === 'host') {
+        continue;
+      }
+
+      if (Array.isArray(value)) {
+        for (const entry of value) {
+          headers.append(key, entry);
+        }
+      } else {
+        headers.set(key, value);
+      }
+    }
+
+    const response = await fetch(targetUrl, {
+      method: req.method,
+      headers,
+      body: req.method === 'GET' || req.method === 'HEAD'
+        ? undefined
+        : (Readable.toWeb(req) as BodyInit),
+      duplex: 'half',
+    } as RequestInit & { duplex: 'half' });
+
+    res.status(response.status);
+    response.headers.forEach((value, key) => {
+      res.setHeader(key, value);
+    });
+
+    if (!response.body) {
+      res.end();
+      return;
+    }
+
+    const arrayBuffer = await response.arrayBuffer();
+    res.send(Buffer.from(arrayBuffer));
+  } catch (error) {
+    next(error);
+  }
+});
 
 /**
  * Serve static files from /browser
