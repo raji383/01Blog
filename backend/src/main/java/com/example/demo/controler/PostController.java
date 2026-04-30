@@ -18,6 +18,7 @@ import com.example.demo.dto.CommentRequest;
 import com.example.demo.dto.CommentResponse;
 import com.example.demo.dto.PostRequest;
 import com.example.demo.dto.PostResponse;
+import com.example.demo.dto.PostVisibilityRequest;
 import com.example.demo.dto.ToggleLikeRequest;
 import com.example.demo.dto.ToggleLikeResponse;
 import com.example.demo.service.MediaStorageService;
@@ -95,5 +96,12 @@ public class PostController {
     public ResponseEntity<Void> deletePostAsAdmin(@PathVariable Long postId) {
         postService.delete(postId);
         return ResponseEntity.noContent().build();
+    }
+
+    @PutMapping("/admin/{postId}/visibility")
+    public ResponseEntity<PostResponse> updatePostVisibility(
+            @PathVariable Long postId,
+            @RequestBody PostVisibilityRequest request) {
+        return ResponseEntity.ok(postService.updateVisibility(postId, request.isHidden()));
     }
 }

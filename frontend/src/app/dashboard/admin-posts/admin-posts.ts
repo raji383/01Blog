@@ -45,6 +45,42 @@ export class AdminPosts {
     });
   }
 
+  protected async toggleVisibility(post: AdminPostResponse): Promise<void> {
+    const nextHidden = !post.hidden;
+    const actionLabel = nextHidden ? 'hide' : 'unhide';
+
+    const confirmed = await this.dialogService.confirm(
+      `${nextHidden ? 'Hide' : 'Unhide'} "${post.title}" by ${post.authorUsername}?`,
+      {
+        title: `${nextHidden ? 'Hide' : 'Unhide'} post`,
+        confirmLabel: nextHidden ? 'Hide post' : 'Unhide post',
+        tone: nextHidden ? 'danger' : 'default'
+      }
+    );
+
+    if (!confirmed) {
+      return;
+    }
+
+    this.http.put<AdminPostResponse>(`/api/posts/admin/${post.id}/visibility`, {
+      hidden: nextHidden
+    }).subscribe({
+      next: (updatedPost) => {
+        this.posts.update(posts =>
+          posts.map(current => current.id === updatedPost.id ? updatedPost : current)
+        );
+        this.toastService.show(
+          `Post ${nextHidden ? 'hidden' : 'visible again'}`,
+          'success'
+        );
+      },
+      error: (error) => {
+        console.error(`Error trying to ${actionLabel} post:`, error);
+        this.toastService.show(`Failed to ${actionLabel} "${post.title}"`, 'error');
+      }
+    });
+  }
+
   protected shorten(content: string): string {
     if (!content) {
       return '';

@@ -16,4 +16,5 @@ public class PostResponse {
     private long commentCount;
     private Instant createdAt;
     private Instant updatedAt;
+    private boolean hidden;
 }

@@ -50,11 +50,15 @@ public class Post {
     @Column(nullable = false)
     private Instant updatedAt;
 
+    @Column(nullable = false)
+    private boolean hidden;
+
     @PrePersist
     void onCreate() {
         Instant now = Instant.now();
         createdAt = now;
         updatedAt = now;
+        hidden = false;
     }
 
     @PreUpdate

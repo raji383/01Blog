@@ -25,6 +25,7 @@ interface PostResponse {
   commentCount: number;
   createdAt: string;
   id: number;
+  hidden: boolean;
 }
 
 interface UserProfileResponse {

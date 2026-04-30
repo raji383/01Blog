@@ -89,7 +89,7 @@ public class PostService {
             authorIds.add(currentUser.getId());
         }
 
-        return postRepository.findByAuthorIdInOrderByCreatedAtDesc(authorIds)
+        return postRepository.findByAuthorIdInAndHiddenFalseOrderByCreatedAtDesc(authorIds)
                 .stream()
                 .map(this::toResponse)
                 .toList();
@@ -104,10 +104,17 @@ public class PostService {
     }
 
     public List<PostResponse> getPostsByUsername(String username) {
-        return postRepository.findByAuthorUsernameOrderByCreatedAtDesc(username)
+        return postRepository.findByAuthorUsernameAndHiddenFalseOrderByCreatedAtDesc(username)
                 .stream()
                 .map(this::toResponse)
                 .toList();
+    }
+
+    public PostResponse updateVisibility(Long postId, boolean hidden) {
+        requireAdmin();
+        Post post = getPost(postId);
+        post.setHidden(hidden);
+        return toResponse(postRepository.save(post));
     }
 
     public PostResponse update(Long postId, PostRequest request) {
@@ -269,6 +276,7 @@ public class PostService {
         response.setCommentCount(commentRepository.countByPostId(post.getId()));
         response.setCreatedAt(post.getCreatedAt());
         response.setUpdatedAt(post.getUpdatedAt());
+        response.setHidden(post.isHidden());
         return response;
     }
 
