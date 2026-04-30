@@ -29,8 +29,6 @@ export class Feed {
           if (err.status === 401) {
             this.router.navigate(['/login']);
 
-          } else if (err.status === 403) {
-            this.router.navigate(['/login']);
           } else {
             console.error('Error fetching posts:', err);
           }

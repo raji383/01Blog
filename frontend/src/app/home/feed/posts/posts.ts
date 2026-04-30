@@ -63,8 +63,6 @@ export class Posts {
       error: (err) => {
         if (err.status === 401) {
           this.router.navigate(['/login']);
-        } else if (err.status === 403) {
-          this.router.navigate(['/login']);
         } else {
           console.error('Error liking post:', err);
         }
@@ -131,7 +129,7 @@ export class Posts {
         this.closeEditModal();
       },
       error: (err) => {
-        if (err.status === 401 || err.status === 403) {
+        if (err.status === 401 ) {
           this.router.navigate(['/login']);
           return;
         }
@@ -153,7 +151,7 @@ export class Posts {
         this.showOptions = false;
       },
       error: (err) => {
-        if (err.status === 401 || err.status === 403) {
+        if (err.status === 401 ) {
           this.router.navigate(['/login']);
           return;
         }
@@ -198,7 +196,7 @@ export class Posts {
         window.alert('Post has been reported');
       },
       error: (err) => {
-        if (err.status === 401 || err.status === 403) {
+        if (err.status === 401 ) {
           this.router.navigate(['/login']);
           return;
         }
