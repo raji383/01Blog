@@ -5,6 +5,7 @@ import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import type { AuthResponse } from '../models/user';
 import { UserService } from '../Service/UserService';
+import { ToastService } from '../shared/ui/toast/toast.service';
 
 @Component({
   selector: 'app-auth',
@@ -16,6 +17,7 @@ import { UserService } from '../Service/UserService';
 export class Auth {
   private readonly http = inject(HttpClient);
   private readonly userService = inject(UserService);
+  private readonly toastService = inject(ToastService);
   protected mode = signal<'login' | 'register'>('login');
   protected isSubmitting = signal(false);
   protected errorMessage = signal<string | null>(null);
@@ -49,7 +51,7 @@ export class Auth {
 
           }else if (err.status===403) {
             this.userService.clearSession();
-            window.alert('Your account is banned. Please contact support for more information.');
+            this.toastService.show('Your account is banned. Please contact support for more information.', 'error');
             this.router.navigate(['/login']);
           } else {
             console.error('Error to login:', err);

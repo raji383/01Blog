@@ -1,0 +1,34 @@
+<div class="dialog-backdrop" *ngIf="dialogService.activeDialog() as dialog" (click)="onBackdropClick($event)">
+  <section class="dialog-panel" [class.danger]="dialog.tone === 'danger'" aria-modal="true" role="dialog">
+    <p class="dialog-kicker">{{ dialog.type === 'prompt' ? 'Required input' : 'Action check' }}</p>
+    <h2>{{ dialog.title }}</h2>
+    <p class="dialog-message">{{ dialog.message }}</p>
+
+    <label class="dialog-field" *ngIf="dialog.type === 'prompt'">
+      <span>Reason</span>
+      <textarea
+        [ngModel]="dialog.value"
+        (ngModelChange)="dialogService.updateValue($event)"
+        [placeholder]="dialog.placeholder ?? ''"
+        rows="4"></textarea>
+    </label>
+
+    <div class="dialog-actions">
+      <button
+        *ngIf="dialog.type !== 'alert'"
+        type="button"
+        class="dialog-btn secondary"
+        (click)="dialogService.cancel()">
+        {{ dialog.cancelLabel ?? 'Cancel' }}
+      </button>
+
+      <button
+        type="button"
+        class="dialog-btn primary"
+        [class.danger]="dialog.tone === 'danger'"
+        (click)="dialogService.submit()">
+        {{ dialog.confirmLabel ?? 'OK' }}
+      </button>
+    </div>
+  </section>
+</div>

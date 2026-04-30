@@ -2,6 +2,8 @@ import { Component, inject, signal } from '@angular/core';
 import { DatePipe, NgFor, NgIf, TitleCasePipe } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { AdminReportResponse } from '../../models/user';
+import { DialogService } from '../../shared/ui/dialog/dialog.service';
+import { ToastService } from '../../shared/ui/toast/toast.service';
 
 @Component({
   selector: 'app-admin-reports',
@@ -11,6 +13,8 @@ import { AdminReportResponse } from '../../models/user';
 })
 export class AdminReports {
   private readonly http = inject(HttpClient);
+  private readonly dialogService = inject(DialogService);
+  private readonly toastService = inject(ToastService);
 
   protected readonly reports = signal<AdminReportResponse[]>([]);
   protected readonly loading = signal(true);
@@ -19,8 +23,13 @@ export class AdminReports {
     this.loadReports();
   }
 
-  protected dismissReport(report: AdminReportResponse): void {
-    if (!window.confirm(`Dismiss report #${report.id}?`)) {
+  protected async dismissReport(report: AdminReportResponse): Promise<void> {
+    const confirmed = await this.dialogService.confirm(`Dismiss report #${report.id}?`, {
+      title: 'Dismiss report',
+      confirmLabel: 'Dismiss'
+    });
+
+    if (!confirmed) {
       return;
     }
 
@@ -30,7 +39,7 @@ export class AdminReports {
       },
       error: (error) => {
         console.error('Error dismissing report:', error);
-        window.alert(`Failed to dismiss report #${report.id}`);
+        this.toastService.show(`Failed to dismiss report #${report.id}`, 'error');
       }
     });
   }

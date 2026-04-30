@@ -1,9 +1,11 @@
 import { Component, signal } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
+import { DialogHost } from './shared/ui/dialog/dialog-host';
+import { ToastHost } from './shared/ui/toast/toast-host';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet],
+  imports: [RouterOutlet, DialogHost, ToastHost],
   templateUrl: './app.html',
   styleUrls: ['./app.css']
 })

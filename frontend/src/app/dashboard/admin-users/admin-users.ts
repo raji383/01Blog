@@ -3,6 +3,8 @@ import { NgFor, NgIf } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { RouterLink } from '@angular/router';
 import { UserAdminResponse } from '../../models/user';
+import { DialogService } from '../../shared/ui/dialog/dialog.service';
+import { ToastService } from '../../shared/ui/toast/toast.service';
 
 @Component({
   selector: 'app-admin-users',
@@ -12,6 +14,8 @@ import { UserAdminResponse } from '../../models/user';
 })
 export class AdminUsers {
   private readonly http = inject(HttpClient);
+  private readonly dialogService = inject(DialogService);
+  private readonly toastService = inject(ToastService);
 
   protected readonly users = signal<UserAdminResponse[]>([]);
   protected readonly loading = signal(true);
@@ -20,11 +24,17 @@ export class AdminUsers {
     this.loadUsers();
   }
 
-  protected toggleBan(user: UserAdminResponse): void {
+  protected async toggleBan(user: UserAdminResponse): Promise<void> {
     const nextBanned = !user.banned;
     const action = nextBanned ? 'ban' : 'unban';
 
-    if (!window.confirm(`Do you want to ${action} ${user.username}?`)) {
+    const confirmed = await this.dialogService.confirm(`Do you want to ${action} ${user.username}?`, {
+      title: `${nextBanned ? 'Ban' : 'Unban'} user`,
+      confirmLabel: nextBanned ? 'Ban user' : 'Unban user',
+      tone: nextBanned ? 'danger' : 'default'
+    });
+
+    if (!confirmed) {
       return;
     }
 
@@ -36,13 +46,19 @@ export class AdminUsers {
       },
       error: (error) => {
         console.error(`Error trying to ${action} user:`, error);
-        window.alert(`Failed to ${action} ${user.username}`);
+        this.toastService.show(`Failed to ${action} ${user.username}`, 'error');
       }
     });
   }
 
-  protected deleteUser(user: UserAdminResponse): void {
-    if (!window.confirm(`Delete ${user.username}? This action cannot be undone.`)) {
+  protected async deleteUser(user: UserAdminResponse): Promise<void> {
+    const confirmed = await this.dialogService.confirm(`Delete ${user.username}? This action cannot be undone.`, {
+      title: 'Delete user',
+      confirmLabel: 'Delete user',
+      tone: 'danger'
+    });
+
+    if (!confirmed) {
       return;
     }
 
@@ -52,7 +68,7 @@ export class AdminUsers {
       },
       error: (error) => {
         console.error('Error deleting user:', error);
-        window.alert(`Failed to delete ${user.username}`);
+        this.toastService.show(`Failed to delete ${user.username}`, 'error');
       }
     });
   }

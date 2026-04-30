@@ -1,0 +1,10 @@
+<section class="toast-stack" *ngIf="toastService.toasts().length">
+  <article
+    class="toast"
+    *ngFor="let toast of toastService.toasts()"
+    [class.success]="toast.tone === 'success'"
+    [class.error]="toast.tone === 'error'">
+    <p>{{ toast.message }}</p>
+    <button type="button" (click)="toastService.dismiss(toast.id)" aria-label="Dismiss notification">×</button>
+  </article>
+</section>

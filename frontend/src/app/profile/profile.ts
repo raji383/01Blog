@@ -1,10 +1,12 @@
 import { HttpClient } from '@angular/common/http';
 import { NgFor, NgIf } from '@angular/common';
 import { Component, computed, inject, signal } from '@angular/core';
-import { ActivatedRoute, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { Navbar } from '../home/navbar/navbar';
 import { PostResponse, ReportAdminRequest, UserProfileResponse } from '../models/user';
 import { Posts } from '../home/feed/posts/posts';
+import { DialogService } from '../shared/ui/dialog/dialog.service';
+import { ToastService } from '../shared/ui/toast/toast.service';
 
 @Component({
   selector: 'app-profile',
@@ -16,6 +18,9 @@ export class Profile {
   constructor(private route: ActivatedRoute) { }
 
   private readonly http = inject(HttpClient);
+  private readonly router = inject(Router);
+  private readonly dialogService = inject(DialogService);
+  private readonly toastService = inject(ToastService);
   protected user = signal<UserProfileResponse | null>(null);
   protected myposts = signal<PostResponse[]>([]);
   protected error = signal<string | null>(null);
@@ -64,7 +69,7 @@ export class Profile {
       }
     });
   }
-  banUser() {
+  async banUser(): Promise<void> {
     const currentUser = this.user();
 
     if (!currentUser) {
@@ -74,7 +79,13 @@ export class Profile {
     const nextBannedState = !currentUser.banned;
     const actionLabel = nextBannedState ? 'ban' : 'unban';
 
-    if (!confirm(`Do you want to ${actionLabel} this user?`)) {
+    const confirmed = await this.dialogService.confirm(`Do you want to ${actionLabel} this user?`, {
+      title: `${nextBannedState ? 'Ban' : 'Unban'} user`,
+      confirmLabel: nextBannedState ? 'Ban user' : 'Unban user',
+      tone: nextBannedState ? 'danger' : 'default'
+    });
+
+    if (!confirmed) {
       return;
     }
 
@@ -86,32 +97,38 @@ export class Profile {
     ).subscribe({
       next: (updatedUser) => {
         this.user.update(user => user ? { ...user, banned: updatedUser.banned } : user);
-        alert(`User has been ${nextBannedState ? 'banned' : 'unbanned'}`);
+        this.toastService.show(`User has been ${nextBannedState ? 'banned' : 'unbanned'}`, 'success');
       },
       error: (err) => {
         console.error(`Error trying to ${actionLabel} user:`, err);
-        alert(`Failed to ${actionLabel} user`);
+        this.toastService.show(`Failed to ${actionLabel} user`, 'error');
       }
     });
 
 
   }
-  deleteUser() {
+  async deleteUser(): Promise<void> {
     if (!this.user()) {
       return;
     }
 
-    if (!confirm('Are you sure you want to delete this user? This action cannot be undone.')) {
+    const confirmed = await this.dialogService.confirm('Are you sure you want to delete this user? This action cannot be undone.', {
+      title: 'Delete user',
+      confirmLabel: 'Delete user',
+      tone: 'danger'
+    });
+
+    if (!confirmed) {
       return;
     }
     this.http.delete(`/api/users/admin/${this.user()?.id}`).subscribe({
       next: () => {
-        alert('User has been deleted');
-        window.location.href = '/';
+        this.toastService.show('User has been deleted', 'success');
+        this.router.navigate(['/']);
       },
       error: (err) => {
         console.error('Error deleting user:', err);
-        alert('Failed to delete user');
+        this.toastService.show('Failed to delete user', 'error');
       }
     });
   }
@@ -161,7 +178,7 @@ export class Profile {
       },
       error: (err) => {
         console.error('Error updating subscription:', err);
-        alert(`Failed to ${currentUser.subscribed ? 'unsubscribe from' : 'subscribe to'} user`);
+        this.toastService.show(`Failed to ${currentUser.subscribed ? 'unsubscribe from' : 'subscribe to'} user`, 'error');
       }
     });
   }
@@ -192,20 +209,29 @@ export class Profile {
   onDeleted(postId: number) {
     this.myposts.update(posts => posts.filter(post => post.id !== postId));
   }
-  reportUser() {
+  async reportUser(): Promise<void> {
     const currentUser = this.user();
 
     if (!currentUser) {
       return;
     }
 
-    if (!confirm('Are you sure you want to report this user?')) {
+    const confirmed = await this.dialogService.confirm('Are you sure you want to report this user?', {
+      title: 'Report user',
+      confirmLabel: 'Continue'
+    });
+
+    if (!confirmed) {
       return;
     }
-    const reason = prompt('Please provide a reason for reporting this user:')?.trim();
+    const reason = await this.dialogService.prompt('Please provide a reason for reporting this user.', {
+      title: 'Why are you reporting this user?',
+      confirmLabel: 'Submit report',
+      placeholder: 'Add a short explanation'
+    });
 
     if (!reason) {
-      alert('Report reason is required');
+      this.toastService.show('Report reason is required', 'error');
       return;
     }
     const reportRequest: ReportAdminRequest = {
@@ -215,11 +241,11 @@ export class Profile {
     };
     this.http.post(`/api/reports/user/${currentUser.id}`, reportRequest).subscribe({
       next: () => {
-        alert('User has been reported');
+        this.toastService.show('User has been reported', 'success');
       },
       error: (err) => {
         console.error('Error reporting user:', err);
-        alert('Failed to report user');
+        this.toastService.show('Failed to report user', 'error');
       }
     });
   }

@@ -1,0 +1,104 @@
+.dialog-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 1200;
+  display: grid;
+  place-items: center;
+  padding: 1.5rem;
+  background: rgba(15, 23, 42, 0.58);
+  backdrop-filter: blur(8px);
+}
+
+.dialog-panel {
+  width: min(100%, 31rem);
+  padding: 1.5rem;
+  border: 1px solid rgba(148, 163, 184, 0.24);
+  border-radius: 24px;
+  background: linear-gradient(180deg, #fffdf8 0%, #fff 100%);
+  box-shadow: 0 24px 80px rgba(15, 23, 42, 0.22);
+}
+
+.dialog-panel.danger {
+  border-color: rgba(239, 68, 68, 0.24);
+}
+
+.dialog-kicker {
+  margin: 0 0 0.4rem;
+  color: #b45309;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.dialog-panel h2 {
+  margin: 0;
+  color: #0f172a;
+  font-size: 1.4rem;
+}
+
+.dialog-message {
+  margin: 0.85rem 0 0;
+  color: #475569;
+  line-height: 1.6;
+}
+
+.dialog-field {
+  display: grid;
+  gap: 0.55rem;
+  margin-top: 1.15rem;
+}
+
+.dialog-field span {
+  color: #334155;
+  font-size: 0.92rem;
+  font-weight: 600;
+}
+
+.dialog-field textarea {
+  width: 100%;
+  min-height: 7rem;
+  padding: 0.95rem 1rem;
+  border: 1px solid #cbd5e1;
+  border-radius: 16px;
+  background: #fff;
+  color: #0f172a;
+  font: inherit;
+  resize: vertical;
+  box-sizing: border-box;
+}
+
+.dialog-field textarea:focus {
+  outline: 2px solid rgba(14, 116, 144, 0.18);
+  border-color: #0891b2;
+}
+
+.dialog-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  margin-top: 1.4rem;
+}
+
+.dialog-btn {
+  border: 0;
+  border-radius: 999px;
+  padding: 0.85rem 1.25rem;
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.dialog-btn.secondary {
+  background: #e2e8f0;
+  color: #0f172a;
+}
+
+.dialog-btn.primary {
+  background: #0f766e;
+  color: #fff;
+}
+
+.dialog-btn.primary.danger {
+  background: #dc2626;
+}

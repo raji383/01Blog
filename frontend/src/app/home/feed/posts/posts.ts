@@ -7,6 +7,8 @@ import { UserService } from '../../../Service/UserService';
 import { Comments } from './comments/comments';
 import { ShowOptions } from './show-options/show-options';
 import { EditPost } from './edit-post/edit-post';
+import { DialogService } from '../../../shared/ui/dialog/dialog.service';
+import { ToastService } from '../../../shared/ui/toast/toast.service';
 
 @Component({
   selector: 'app-posts',
@@ -22,6 +24,8 @@ export class Posts {
   private readonly router = inject(Router);
   private readonly http = inject(HttpClient);
   private userService = inject(UserService);
+  private readonly dialogService = inject(DialogService);
+  private readonly toastService = inject(ToastService);
   seemore: boolean = false;
   showOptions: boolean = false;
   editingPost: PostResponse | null = null;
@@ -139,8 +143,14 @@ export class Posts {
     });
   }
 
-  deletePost(postId: number): void {
-    if (!window.confirm('Delete this post?')) {
+  async deletePost(postId: number): Promise<void> {
+    const confirmed = await this.dialogService.confirm('Delete this post?', {
+      title: 'Delete post',
+      confirmLabel: 'Delete',
+      tone: 'danger'
+    });
+
+    if (!confirmed) {
       this.showOptions = false;
       return;
     }
@@ -161,7 +171,7 @@ export class Posts {
     });
   }
 
-  reportPost(postId: number): void {
+  async reportPost(postId: number): Promise<void> {
     const post = this.post;
     const currentUser = this.userService.getUser()();
 
@@ -171,17 +181,27 @@ export class Posts {
     }
 
     if (currentUser.id === post.authorId) {
-      window.alert('You cannot report your own post');
+      this.toastService.show('You cannot report your own post', 'error');
       return;
     }
 
-    if (!window.confirm('Are you sure you want to report this post?')) {
+    const confirmed = await this.dialogService.confirm('Are you sure you want to report this post?', {
+      title: 'Report post',
+      confirmLabel: 'Continue'
+    });
+
+    if (!confirmed) {
       return;
     }
 
-    const reason = window.prompt('Please provide a reason for reporting this post:')?.trim();
+    const reason = await this.dialogService.prompt('Please provide a reason for reporting this post.', {
+      title: 'Why are you reporting this post?',
+      confirmLabel: 'Submit report',
+      placeholder: 'Add a short explanation'
+    });
+
     if (!reason) {
-      window.alert('Report reason is required');
+      this.toastService.show('Report reason is required', 'error');
       return;
     }
 
@@ -193,7 +213,7 @@ export class Posts {
 
     this.http.post(`/api/reports/post/${postId}`, reportRequest).subscribe({
       next: () => {
-        window.alert('Post has been reported');
+        this.toastService.show('Post has been reported', 'success');
       },
       error: (err) => {
         if (err.status === 401 ) {
@@ -202,7 +222,7 @@ export class Posts {
         }
 
         console.error('Error reporting post:', err);
-        window.alert('Failed to report post');
+        this.toastService.show('Failed to report post', 'error');
       }
     });
   }

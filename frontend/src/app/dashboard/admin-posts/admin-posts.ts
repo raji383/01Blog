@@ -2,6 +2,8 @@ import { Component, inject, signal } from '@angular/core';
 import { DatePipe, NgFor, NgIf } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { AdminPostResponse } from '../../models/user';
+import { DialogService } from '../../shared/ui/dialog/dialog.service';
+import { ToastService } from '../../shared/ui/toast/toast.service';
 
 @Component({
   selector: 'app-admin-posts',
@@ -11,6 +13,8 @@ import { AdminPostResponse } from '../../models/user';
 })
 export class AdminPosts {
   private readonly http = inject(HttpClient);
+  private readonly dialogService = inject(DialogService);
+  private readonly toastService = inject(ToastService);
 
   protected readonly posts = signal<AdminPostResponse[]>([]);
   protected readonly loading = signal(true);
@@ -19,8 +23,14 @@ export class AdminPosts {
     this.loadPosts();
   }
 
-  protected deletePost(post: AdminPostResponse): void {
-    if (!window.confirm(`Delete "${post.title}" by ${post.authorUsername}?`)) {
+  protected async deletePost(post: AdminPostResponse): Promise<void> {
+    const confirmed = await this.dialogService.confirm(`Delete "${post.title}" by ${post.authorUsername}?`, {
+      title: 'Delete post',
+      confirmLabel: 'Delete',
+      tone: 'danger'
+    });
+
+    if (!confirmed) {
       return;
     }
 
@@ -30,7 +40,7 @@ export class AdminPosts {
       },
       error: (error) => {
         console.error('Error deleting post:', error);
-        window.alert(`Failed to delete "${post.title}"`);
+        this.toastService.show(`Failed to delete "${post.title}"`, 'error');
       }
     });
   }
