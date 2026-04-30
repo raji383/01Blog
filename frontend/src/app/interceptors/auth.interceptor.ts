@@ -1,17 +1,35 @@
 import { HttpInterceptorFn } from '@angular/common/http';
+import { inject } from '@angular/core';
+import { catchError, throwError } from 'rxjs';
+import { UserService } from '../Service/UserService';
 
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
-  const token = typeof window !== 'undefined'
-    ? window.localStorage.getItem('auth_token') || window.localStorage.getItem('token')
-    : null;
+  const userService = inject(UserService);
+  const token = userService.getToken();
 
   if (!token || req.url.includes('/api/auth/')) {
-    return next(req);
+    return next(req).pipe(
+      catchError((error) => {
+        if (error.status === 401) {
+          userService.clearSession();
+        }
+
+        return throwError(() => error);
+      })
+    );
   }
 
   return next(req.clone({
     setHeaders: {
       Authorization: `Bearer ${token}`,
     },
-  }));
+  })).pipe(
+    catchError((error) => {
+      if (error.status === 401) {
+        userService.clearSession();
+      }
+
+      return throwError(() => error);
+    })
+  );
 };

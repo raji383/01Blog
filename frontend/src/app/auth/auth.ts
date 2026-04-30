@@ -1,10 +1,10 @@
-import { Component, inject, PLATFORM_ID, signal } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { isPlatformBrowser } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
-import type { AuthResponse, PostResponse } from '../models/user';
+import type { AuthResponse } from '../models/user';
+import { UserService } from '../Service/UserService';
 
 @Component({
   selector: 'app-auth',
@@ -15,7 +15,7 @@ import type { AuthResponse, PostResponse } from '../models/user';
 })
 export class Auth {
   private readonly http = inject(HttpClient);
-  private readonly platformId = inject(PLATFORM_ID);
+  private readonly userService = inject(UserService);
   protected mode = signal<'login' | 'register'>('login');
   protected isSubmitting = signal(false);
   protected errorMessage = signal<string | null>(null);
@@ -24,35 +24,6 @@ export class Auth {
 
   protected loginForm = { username: '', password: '' };
   protected registerForm = { username: '', email: '', password: '' };
-
-
-  ngOnInit() {
-    if (!isPlatformBrowser(this.platformId)) return;
-    const token = window.localStorage.getItem('auth_token');
-
-    if (token) {
-      this.http.get<PostResponse[]>('/api/posts/feed').subscribe({
-        next: (res) => {
-          console.log(res);
-          
-          this.router.navigate(['/']);
-
-        },
-        error: (err) => {
-          if (err.status === 401) {
-            this.router.navigate(['/login']);
-
-          }else if (err.status===403) {
-            window.alert('Your account is banned. Please contact support for more information.');
-            this.router.navigate(['/login']);
-          } else {
-            console.error('Error fetching posts:', err);
-          }
-        }
-      });
-      return;
-    }
-  }
 
   protected setMode(m: 'login' | 'register') {
     this.mode.set(m);
@@ -66,18 +37,18 @@ export class Auth {
       this.http.post<AuthResponse>('/api/auth/login', this.loginForm).subscribe({
         next: (res) => {
           if (res.jwt) {
-            if (typeof window !== 'undefined') {
-              window.localStorage.setItem('auth_token', res.jwt);
-            }
+            window.localStorage.setItem('auth_token', res.jwt);
             this.successMessage.set('Login successful!');
             this.router.navigate(['/']);
           }
         },
         error: (err) => {
            if (err.status === 401) {
+            this.userService.clearSession();
             this.router.navigate(['/login']);
 
           }else if (err.status===403) {
+            this.userService.clearSession();
             window.alert('Your account is banned. Please contact support for more information.');
             this.router.navigate(['/login']);
           } else {
@@ -96,9 +67,7 @@ export class Auth {
       this.http.post<AuthResponse>('/api/auth/register', this.registerForm).subscribe({
         next: (res) => {
           if (res.jwt) {
-            if (typeof window !== 'undefined') {
-              window.localStorage.setItem('auth_token', res.jwt);
-            }
+            window.localStorage.setItem('auth_token', res.jwt);
             this.successMessage.set('Registration successful!');
             this.router.navigate(['/']);
           }

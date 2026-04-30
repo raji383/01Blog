@@ -1,4 +1,3 @@
-Strengthen route and role protection.
 Prevent banned users from interacting with the platform.
 Complete the moderation flow in the reports page.
 Replace alert, confirm, and prompt with proper UI components.

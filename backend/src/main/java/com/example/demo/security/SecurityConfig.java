@@ -35,6 +35,14 @@ public class SecurityConfig {
                                 "/uploads/**",
                                 "/h2-console/**")
                         .permitAll()
+                        .requestMatchers(
+                                "/api/users/admin",
+                                "/api/users/admin/**",
+                                "/api/posts/admin",
+                                "/api/posts/admin/**",
+                                "/api/reports/admin",
+                                "/api/reports/admin/**")
+                        .hasRole("ADMIN")
                         .anyRequest().authenticated())
 
                 .headers(headers -> headers.frameOptions(frame -> frame.disable()))
