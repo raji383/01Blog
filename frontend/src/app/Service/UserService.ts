@@ -10,6 +10,10 @@ export class UserService {
     this.user.set(u);
   }
 
+  updateUser(updater: (user: UserProfileResponse | null) => UserProfileResponse | null) {
+    this.user.update(updater);
+  }
+
   getUser() {
     return this.user;
   }

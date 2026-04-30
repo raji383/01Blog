@@ -115,6 +115,10 @@ a {
   align-items: center;
 }
 
+.notification-shell {
+  position: relative;
+}
+
 .nav-icon-btn {
   background: none;
   border: none;
@@ -133,6 +137,11 @@ a {
 .nav-icon-btn:hover {
   background-color: #f0f2f5;
   color: #1877f2;
+}
+
+.nav-icon-btn.active {
+  background: #e0f2fe;
+  color: #0369a1;
 }
 
 .nav-icon-btn svg {

@@ -34,6 +34,12 @@ public class NotificationService {
     }
 
     @Transactional
+    public void markAllAsRead() {
+        User currentUser = getCurrentUser();
+        notificationRepository.markAllAsReadByReceiverId(currentUser.getId());
+    }
+
+    @Transactional
     public NotificationResponse markAsRead(Long notificationId) {
         User currentUser = getCurrentUser();
         Notification notification = notificationRepository.findByIdAndReceiverId(notificationId, currentUser.getId())

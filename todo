@@ -1,5 +1,4 @@
 Complete the moderation flow in the reports page.
-Replace alert, confirm, and prompt with proper UI components.
 Clean up the frontend architecture.
 Improve the notifications UX.
 Improve the profile/block page to better match the spec.

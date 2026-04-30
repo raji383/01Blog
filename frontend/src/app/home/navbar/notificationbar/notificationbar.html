@@ -1,32 +1,54 @@
 <section class="notification-panel">
     <div class="notification-panel-header">
-        <h2>Notifications</h2>
-        <span class="notification-count">{{ notifications.length }}</span>
+        <div>
+            <p class="notification-eyebrow">Inbox</p>
+            <h2>Notifications</h2>
+        </div>
+        <div class="notification-header-actions">
+            <span class="notification-count">{{ notificationsService.unreadCount() }}</span>
+            <button
+                type="button"
+                class="mark-all-btn"
+                *ngIf="notificationsService.unreadCount()"
+                (click)="markAllAsRead()">
+                Mark all read
+            </button>
+        </div>
     </div>
 
-    <div class="notification-empty" *ngIf="notifications&&notifications.length==0">
-        No notifications yet.
+    <div class="notification-state" *ngIf="notificationsService.isLoading()">
+        <p>Loading notifications...</p>
     </div>
 
-    <div class="notification-list" *ngIf="notifications&&notifications.length!=0">
-        <button type="button" class="notification-item" *ngFor="let notification of notifications"
-            [class.unread]="!notification.read" (click)="markAsRead(notification)"
-            [routerLink]="['/profile', notification.senderId]"
-             >
+    <div class="notification-state error" *ngIf="notificationsService.error() && !notificationsService.isLoading()">
+        <p>{{ notificationsService.error() }}</p>
+        <button type="button" class="retry-btn" (click)="notificationsService.load(true)">Try again</button>
+    </div>
+
+    <div class="notification-empty" *ngIf="!notificationsService.isLoading() && !notificationsService.error() && !notificationsService.notifications().length">
+        <strong>All quiet for now.</strong>
+        <p>New posts and activity updates will show up here.</p>
+    </div>
+
+    <div class="notification-list" *ngIf="!notificationsService.isLoading() && notificationsService.notifications().length">
+        <button type="button" class="notification-item" *ngFor="let notification of notificationsService.notifications()"
+            [class.unread]="!notification.read" (click)="openNotification(notification)">
             <div class="notification-avatar">
-                {{ notification.senderUsername.charAt(0).toUpperCase() }}
+                {{ getInitial(notification) }}
             </div>
 
             <div class="notification-body">
                 <div class="notification-meta">
-                    <span class="notification-type">{{ notification.type.replace('_', ' ') }}</span>
-                    <span class="notification-time">{{ notification.createdAt | date:'short' }}</span>
+                    <span class="notification-type">{{ formatType(notification.type) }}</span>
+                    <span class="notification-time">{{ getRelativeTime(notification.createdAt) }}</span>
                 </div>
 
                 <p class="notification-message">
                     <strong>{{ notification.senderUsername || 'System' }}</strong>
                     {{ notification.message }}
                 </p>
+
+                <span class="notification-subtle">{{ notification.createdAt | date:'medium' }}</span>
             </div>
 
             <span class="notification-dot" *ngIf="!notification.read"></span>
