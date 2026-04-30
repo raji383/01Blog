@@ -7,6 +7,7 @@ import { PostResponse, ReportAdminRequest, UserProfileResponse } from '../models
 import { Posts } from '../home/feed/posts/posts';
 import { DialogService } from '../shared/ui/dialog/dialog.service';
 import { ToastService } from '../shared/ui/toast/toast.service';
+import { UserService } from '../Service/UserService';
 
 @Component({
   selector: 'app-profile',
@@ -21,11 +22,30 @@ export class Profile {
   private readonly router = inject(Router);
   private readonly dialogService = inject(DialogService);
   private readonly toastService = inject(ToastService);
+  private readonly userService = inject(UserService);
   protected user = signal<UserProfileResponse | null>(null);
   protected myposts = signal<PostResponse[]>([]);
   protected error = signal<string | null>(null);
   protected isLoading = signal(true);
   protected userInitial = computed(() => this.user()?.username?.charAt(0)?.toUpperCase() ?? '?');
+  protected relationshipLabel = computed(() => {
+    const profile = this.user();
+
+    if (!profile) {
+      return 'Profile';
+    }
+
+    if (this.myProfile()) {
+      return 'This is you';
+    }
+
+    return profile.subscribed ? 'Following' : 'Not following';
+  });
+  protected statusLabel = computed(() => this.user()?.banned ? 'Restricted account' : 'Active member');
+  protected canReport = computed(() => {
+    const profile = this.user();
+    return !!profile && !this.myProfile() && profile.role !== 'ADMIN';
+  });
 
   ngOnInit() {
     const id = this.route.snapshot.paramMap.get('id');
@@ -36,7 +56,7 @@ export class Profile {
       return;
     }
 
-    if (!this.getToken()) {
+    if (!this.userService.getToken()) {
       this.error.set('No authentication token found');
       this.isLoading.set(false);
       return;
@@ -133,22 +153,10 @@ export class Profile {
     });
   }
   myProfile(): boolean {
-    const payload = this.getTokenPayload();
-
-    if (!payload) {
-      return false;
-    }
-
-    return payload.id === this.user()?.id;
-
+    return this.userService.getCurrentUserId() === this.user()?.id;
   }
   isAdmin(): boolean {
-    const payload = this.getTokenPayload();
-
-    if (!payload) {
-      return false;
-    }
-    return payload.role === "ADMIN";
+    return this.userService.getCurrentUserRole() === 'ADMIN';
   }
   subscribe() {
     const currentUser = this.user();
@@ -248,25 +256,5 @@ export class Profile {
         this.toastService.show('Failed to report user', 'error');
       }
     });
-  }
-  private getToken(): string | null {
-    return typeof window !== 'undefined'
-      ? window.localStorage.getItem('auth_token') || window.localStorage.getItem('token')
-      : null;
-  }
-
-  private getTokenPayload(): { id?: number; role?: string; sub?: string } | null {
-    const token = this.getToken();
-
-    if (!token) {
-      return null;
-    }
-
-    try {
-      return JSON.parse(atob(token.split('.')[1]));
-    } catch (e) {
-      console.error('Error parsing token:', e);
-      return null;
-    }
   }
 }

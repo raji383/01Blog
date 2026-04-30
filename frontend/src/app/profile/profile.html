@@ -5,7 +5,10 @@
         <div class="profile-layout">
             <div class="profile-main-column">
                 <section class="profile-main card">
-                    <div class="profile-banner"></div>
+                    <div class="profile-banner">
+                        <div class="banner-orbit orbit-one"></div>
+                        <div class="banner-orbit orbit-two"></div>
+                    </div>
 
                     <div class="profile-body" *ngIf="user() as profile">
                         <div class="identity-row">
@@ -15,11 +18,16 @@
                                 <span class="eyebrow">Member profile</span>
                                 <h1>{{ profile.username }}</h1>
                                 <p class="identity-meta">{{ profile.email }}</p>
+                                <div class="identity-pills">
+                                    <span class="pill">{{ profile.role }}</span>
+                                    <span class="pill" [class.danger]="profile.banned">{{ statusLabel() }}</span>
+                                    <span class="pill muted">{{ relationshipLabel() }}</span>
+                                </div>
                             </div>
 
-                            <div class="identity-actions">
+                            <!-- <div class="identity-actions">
                                 <a class="secondary-btn action-link" *ngIf="myProfile()" routerLink="/">Back to Home</a>
-                                <a class="secondary-btn action-link" *ngIf="!myProfile() && profile.role !== 'ADMIN'" (click)="reportUser()">Report</a>
+                                <a class="secondary-btn action-link" *ngIf="canReport()" (click)="reportUser()">Report</a>
                                 <a class="secondary-btn action-link" *ngIf="canManageSubscription()"
                                     (click)="subscribe()">
                                     {{ profile.subscribed ? 'Unsubscribe' : 'Subscribe' }}
@@ -30,15 +38,18 @@
                                 </a>
                                 <a class="delete-btn action-link" *ngIf="isAdmin() && !myProfile()"
                                     (click)="deleteUser()">Delete User</a>
+                            </div> -->
+                        </div>
+
+                        <div class="moderation-banner" *ngIf="profile.banned">
+                            <div>
+                                <p class="moderation-kicker">Moderation status</p>
+                                <h2>This account is currently restricted.</h2>
+                                <p>Admins can still review this profile and reverse the ban from this page.</p>
                             </div>
                         </div>
 
                         <div class="stats-grid">
-                            <!--  <article class="stat-card">
-                                <span class="stat-label">Role</span>
-                                <strong>{{ profile.role }}</strong>
-                            </article> -->
-
                             <article class="stat-card">
                                 <span class="stat-label">Status</span>
                                 <strong [class.is-banned]="profile.banned">
@@ -55,6 +66,11 @@
                                 <span class="stat-label">Following</span>
                                 <strong>{{ profile.followingCount }}</strong>
                             </article>
+
+                            <article class="stat-card accent">
+                                <span class="stat-label">Role</span>
+                                <strong>{{ profile.role }}</strong>
+                            </article>
                         </div>
                     </div>
 
@@ -66,6 +82,7 @@
                             <div>
                                 <span class="posts-eyebrow">Recent activity</span>
                                 <h2>Posts</h2>
+                                <p class="posts-subcopy">Latest published posts from this profile.</p>
                             </div>
                             <p *ngIf="myposts().length">{{ myposts().length }} post{{ myposts().length === 1 ? '' : 's'
                                 }}</p>
@@ -98,7 +115,7 @@
             <aside class="profile-side">
                 <div class="card side-card">
                     <h3>Profile summary</h3>
-                    <p>Compact details styled to stay visually consistent with the home page sidebar cards.</p>
+                    <p>A compact snapshot of who this account is and how it relates to your feed.</p>
 
                     <div class="summary-list" *ngIf="user() as profile">
                         <div class="summary-item">
@@ -114,10 +131,29 @@
                             <strong>{{ profile.role }}</strong>
                         </div>
                         <div class="summary-item">
-                            <span>Subscription</span>
-                            <strong>{{ myProfile() ? 'This is you' : (profile.subscribed ? 'Subscribed' : 'Not
-                                subscribed') }}</strong>
+                            <span>Relationship</span>
+                            <strong>{{ relationshipLabel() }}</strong>
                         </div>
+                        <div class="summary-item">
+                            <span>Account status</span>
+                            <strong [class.is-banned]="profile.banned">{{ profile.banned ? 'Restricted' : 'Healthy' }}</strong>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card side-card side-card-soft" *ngIf="user() as profile">
+                    <h3>Quick actions</h3>
+                    <p>Shortcuts that reflect the current viewer and moderation context.</p>
+
+                    <div class="quick-actions">
+                        <a class="secondary-btn quick-action" *ngIf="myProfile()" routerLink="/">Open home feed</a>
+                        <button class="secondary-btn quick-action" *ngIf="canManageSubscription()" type="button" (click)="subscribe()">
+                            {{ profile.subscribed ? 'Stop following' : 'Follow account' }}
+                        </button>
+                        <button class="secondary-btn quick-action" *ngIf="canReport()" type="button" (click)="reportUser()">Report account</button>
+                        <button class="delete-btn quick-action" *ngIf="isAdmin() && !myProfile()" type="button" (click)="banUser()">
+                            {{ profile.banned ? 'Restore account' : 'Restrict account' }}
+                        </button>
                     </div>
                 </div>
             </aside>

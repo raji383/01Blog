@@ -2,7 +2,7 @@ import { Component, computed, inject, signal } from '@angular/core';
 import { UserProfileResponse } from '../../models/user';
 import { HttpClient } from '@angular/common/http';
 import { NgFor, NgIf } from '@angular/common';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { UserService } from '../../Service/UserService';
 
 @Component({
@@ -14,7 +14,8 @@ import { UserService } from '../../Service/UserService';
 export class Rightbar {
   private readonly http = inject(HttpClient);
   private readonly userService = inject(UserService);
-  protected userProfile = signal<UserProfileResponse | null>(null);
+  private readonly router = inject(Router);
+  protected userProfile = this.userService.getUser();
   protected profileError = signal<string | null>(null);
   protected suggestionsError = signal<string | null>(null);
   protected isLoadingUsers = signal(false);
@@ -22,26 +23,8 @@ export class Rightbar {
   protected hasSuggestions = computed(() => this.users().length > 0);
 
   ngOnInit() {
-   
-    const cachedUser = this.userService.getUser()();
-    if (cachedUser) {
-      this.userProfile.set(cachedUser);
-    }
-
-   
-
-    if (!this.userProfile()) {
-      this.http.get<UserProfileResponse>('/api/users/me').subscribe({
-        next: (user) => {
-          this.userProfile.set(user);
-          this.userService.setUser(user);
-        },
-        error: (err) => {
-          this.profileError.set('Failed to load user profile');
-          console.error('Error fetching user profile:', err);
-        }
-      });
-    }
+    this.userService.loadCurrentUser();
+    this.profileError.set(this.userService.currentUserError());
 
     this.isLoadingUsers.set(true);
     this.http.get<UserProfileResponse[]>('/api/users').subscribe({
@@ -59,10 +42,7 @@ export class Rightbar {
   }
 
   protected logout() {
-    if (typeof window !== 'undefined') {
-      window.localStorage.removeItem('auth_token');
-      window.localStorage.removeItem('token');
-      window.location.href = '/login';
-    }
+    this.userService.clearSession();
+    this.router.navigate(['/login']);
   }
 }

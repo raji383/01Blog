@@ -39,6 +39,6 @@ export class ShowOptions {
   protected  MYpost(ev: string): boolean {
     const currentUser = this.userService.getUser()();
 
-    return (currentUser?.username === this.post.authorUsername || (currentUser?.role === 'ADMIN' && ev === 'Delete'));
+    return currentUser?.id === this.post.authorId || (this.userService.hasRole('ADMIN') && ev === 'Delete');
   }
 }

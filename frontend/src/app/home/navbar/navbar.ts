@@ -14,9 +14,8 @@ import { NotificationsService } from '../../shared/data/notifications.service';
   styleUrl: './navbar.css',
 })
 export class Navbar {
-  private readonly http = inject(HttpClient);
   private readonly notificationsService = inject(NotificationsService);
-  protected userProfile = signal<UserProfileResponse | null>(null);
+  protected userProfile = inject(UserService).getUser();
   protected error = signal<string | null>(null);
   private readonly router = inject(Router);
   showNotifications = signal(false);
@@ -30,23 +29,8 @@ export class Navbar {
       return;
     }
 
-    try {
-      this.http.get<UserProfileResponse>('/api/users/me').subscribe({
-        next: (user) => {
-          this.userProfile.set(user);
-          this.userService.setUser(user);
-          this.notificationsService.load(true);
-        },
-        error: (err) => {
-          this.error.set('Failed to load user profile');
-          console.error('Error fetching user profile:', err);
-          this.router.navigate(['/login']);
-
-        }
-      });
-    } catch (error) {
-      console.error('Error:', error);
-    }
+    this.userService.loadCurrentUser();
+    this.notificationsService.load(true);
   }
   showNotificationBar() {
     this.showNotifications.set(!this.showNotifications());
@@ -56,8 +40,7 @@ export class Navbar {
     }
   }
   private hasToken(): boolean {
-    return typeof window !== 'undefined'
-      && !!(window.localStorage.getItem('auth_token') || window.localStorage.getItem('token'));
+    return !!this.userService.getToken();
   }
   getnotificationCount(): number {
     return this.notificationsService.hasLoaded()

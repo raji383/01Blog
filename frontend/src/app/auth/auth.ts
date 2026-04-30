@@ -39,7 +39,8 @@ export class Auth {
       this.http.post<AuthResponse>('/api/auth/login', this.loginForm).subscribe({
         next: (res) => {
           if (res.jwt) {
-            window.localStorage.setItem('auth_token', res.jwt);
+            this.userService.setSession(res.jwt);
+            this.userService.loadCurrentUser(true);
             this.successMessage.set('Login successful!');
             this.router.navigate(['/']);
           }
@@ -69,7 +70,8 @@ export class Auth {
       this.http.post<AuthResponse>('/api/auth/register', this.registerForm).subscribe({
         next: (res) => {
           if (res.jwt) {
-            window.localStorage.setItem('auth_token', res.jwt);
+            this.userService.setSession(res.jwt);
+            this.userService.loadCurrentUser(true);
             this.successMessage.set('Registration successful!');
             this.router.navigate(['/']);
           }
