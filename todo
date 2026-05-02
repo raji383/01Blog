@@ -1,7 +1,3 @@
-Complete the moderation flow in the reports page.
-Clean up the frontend architecture.
 Complete comment management.
-Add clearer validation for registration and duplicate users.
 Add a unique constraint for subscriptions.
-Write real tests.
 Fix and update the README.

@@ -48,20 +48,35 @@
                 <label class="field">
                     <span>Username</span>
                     <input type="text" name="registerUsername" [(ngModel)]="registerForm.username"
+                        minlength="3"
+                        maxlength="15"
+                        pattern="^[A-Za-z0-9_]+$"
+                        autocomplete="username"
                         placeholder="Choose a username" />
                 </label>
 
                 <label class="field">
                     <span>Email</span>
                     <input type="email" name="registerEmail" [(ngModel)]="registerForm.email"
+                        autocomplete="email"
                         placeholder="Enter your email" />
                 </label>
 
                 <label class="field">
                     <span>Password</span>
                     <input type="password" name="registerPassword" [(ngModel)]="registerForm.password"
+                        minlength="6"
+                        autocomplete="new-password"
                         placeholder="Create a password" />
                 </label>
+
+                @if (registerValidationErrors().length) {
+                <ul class="feedback-list feedback-list--error">
+                    @for (error of registerValidationErrors(); track error) {
+                    <li>{{ error }}</li>
+                    }
+                </ul>
+                }
 
                 <button type="submit" class="primary-action" [disabled]="isSubmitting()">
                     {{ isSubmitting() ? 'Creating account...' : 'Create account' }}
