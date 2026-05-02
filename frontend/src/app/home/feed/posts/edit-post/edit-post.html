@@ -29,11 +29,7 @@
 
       <label class="field">
         <span>Current media path</span>
-        <input
-          type="text"
-          [ngModel]="mediaUrl()"
-          readonly
-          placeholder="Stored media path" />
+        <img *ngIf="mediaUrl()" [src]="mediaUrl()" alt="Current media" class="current-media-preview" />
       </label>
 
       <label class="field">

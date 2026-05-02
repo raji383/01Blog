@@ -6,7 +6,6 @@ import type { UserProfileResponse } from '../models/user';
 export class UserService {
   private readonly http = inject(HttpClient);
   private readonly storageKey = 'auth_token';
-  private readonly legacyStorageKey = 'token';
   private currentUserRequestInFlight = false;
 
   private readonly user = signal<UserProfileResponse | null>(null);
@@ -31,7 +30,6 @@ export class UserService {
     }
 
     window.localStorage.setItem(this.storageKey, token);
-    window.localStorage.removeItem(this.legacyStorageKey);
   }
 
   getToken(): string | null {
@@ -39,7 +37,7 @@ export class UserService {
       return null;
     }
 
-    return window.localStorage.getItem(this.storageKey) || window.localStorage.getItem(this.legacyStorageKey);
+    return window.localStorage.getItem(this.storageKey);
   }
 
   hasValidSession(): boolean {
@@ -107,7 +105,6 @@ export class UserService {
     }
 
     window.localStorage.removeItem(this.storageKey);
-    window.localStorage.removeItem(this.legacyStorageKey);
   }
 
   private getTokenPayload(): { exp?: number; role?: string; id?: number; sub?: string } | null {
