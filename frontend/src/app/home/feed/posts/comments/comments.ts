@@ -3,6 +3,7 @@ import { Component, inject, Input, signal } from '@angular/core';
 import { UserService } from '../../../../Service/UserService';
 import { FormsModule } from '@angular/forms';
 import { NgIf } from '@angular/common';
+import { DialogService } from '../../../../shared/ui/dialog/dialog.service';
 
 @Component({
   selector: 'app-comments',
@@ -18,6 +19,8 @@ export class Comments {
   protected commentContent: string = '';
   userService = inject(UserService);
   currentUser: any = this.userService.getUser()();
+    private readonly dialogService = inject(DialogService);
+  
   getRelativeTime(dateString: string): string {
     const date = new Date(dateString);
     const now = new Date();
@@ -75,7 +78,16 @@ export class Comments {
   ngOnInit() {
     this.getComments();
   }
-  deleteComment(commentId: number) {
+  async deleteComment(commentId: number) {
+    const confirmed = await this.dialogService.confirm(`Are you sure you want to delete this comment?`, {
+      title: 'Delete comment',
+      confirmLabel: 'Delete',
+      tone: 'danger'
+    });
+
+    if (!confirmed) {
+      return;
+    }
     try {
       this.http.delete(`/api/posts/comments/${commentId}`).subscribe({
         next: (res) => {
