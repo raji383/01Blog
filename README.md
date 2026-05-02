@@ -1,3 +1,6 @@
+# ⴰⵣⵓⵍ
+
+
 # Student Blog Platform
 
 A fullstack blogging platform for students to document their learning journey. Features user registration, posts with media, subscriptions, likes, comments, and admin moderation tools.

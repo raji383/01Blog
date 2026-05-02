@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { PostResponse } from '../../../models/user';
+import { ToastService } from '../../../shared/ui/toast/toast.service';
 
 @Component({
   selector: 'app-addpost',
@@ -14,6 +15,8 @@ import { PostResponse } from '../../../models/user';
 export class Addpost {
   private readonly http = inject(HttpClient);
   @Output() postPublished = new EventEmitter<PostResponse>();
+  private readonly toastService = inject(ToastService);
+
   protected postContent = signal('');
   protected previewUrl = signal<string | null>(null);
   protected previewType = signal<'image' | 'video' | null>(null);
@@ -57,7 +60,7 @@ export class Addpost {
     const formData = new FormData();
     formData.append('title', content.split('\n')[0]);
     formData.append('content', content);
-    
+
     if (this.selectedFile) {
       formData.append('mediaFile', this.selectedFile);
     }
@@ -69,6 +72,7 @@ export class Addpost {
           this.removeImage();
           this.isPosting.set(false);
           this.postPublished.emit(res);
+          this.toastService.show('Post published successfully!', 'success');
         },
         error: (err) => {
           this.error.set('Failed to publish post. Please try again.');
