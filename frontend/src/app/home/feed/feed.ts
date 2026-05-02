@@ -30,12 +30,10 @@ export class Feed {
             this.router.navigate(['/login']);
 
           } else {
-            console.error('Error fetching posts:', err);
           }
         }
       });
     } catch (error) {
-      console.error('Error:', error);
     }
   }
   ngOnInit() {

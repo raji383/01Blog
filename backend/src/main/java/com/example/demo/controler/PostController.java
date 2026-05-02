@@ -38,7 +38,6 @@ public class PostController {
 
     @PostMapping
     public ResponseEntity<PostResponse> createPost(@Valid @ModelAttribute PostRequest request) {
-        System.out.println("Received post creation request: " + request);
         return ResponseEntity.ok(postService.create(request));
     }
 
@@ -67,7 +66,6 @@ public class PostController {
 
     @PostMapping("/{postId}/like")
     public ResponseEntity<ToggleLikeResponse> toggleLike(@PathVariable Long postId, @Valid @RequestBody ToggleLikeRequest request) {
-        System.out.println("Toggling like for postId: " + postId );
         return ResponseEntity.ok(postService.toggleLike(postId, request));
     }
 

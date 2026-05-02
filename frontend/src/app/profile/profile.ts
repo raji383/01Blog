@@ -72,7 +72,6 @@ export class Profile {
       error: (err) => {
         this.error.set('Failed to load user profile');
         this.isLoading.set(false);
-        console.error('Error fetching user profile:', err);
       }
     });
 
@@ -84,7 +83,6 @@ export class Profile {
         this.myposts.set(posts ?? []);
       },
       error: (err) => {
-        console.error('Error fetching user posts:', err);
         this.myposts.set([]);
       }
     });
@@ -120,7 +118,6 @@ export class Profile {
         this.toastService.show(`User has been ${nextBannedState ? 'banned' : 'unbanned'}`, 'success');
       },
       error: (err) => {
-        console.error(`Error trying to ${actionLabel} user:`, err);
         this.toastService.show(`Failed to ${actionLabel} user`, 'error');
       }
     });
@@ -147,7 +144,6 @@ export class Profile {
         this.router.navigate(['/']);
       },
       error: (err) => {
-        console.error('Error deleting user:', err);
         this.toastService.show('Failed to delete user', 'error');
       }
     });
@@ -185,7 +181,6 @@ export class Profile {
         });
       },
       error: (err) => {
-        console.error('Error updating subscription:', err);
         this.toastService.show(`Failed to ${currentUser.subscribed ? 'unsubscribe from' : 'subscribe to'} user`, 'error');
       }
     });
@@ -252,7 +247,6 @@ export class Profile {
         this.toastService.show('User has been reported', 'success');
       },
       error: (err) => {
-        console.error('Error reporting user:', err);
         this.toastService.show('Failed to report user', 'error');
       }
     });

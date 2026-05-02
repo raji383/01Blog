@@ -59,7 +59,6 @@ export class Addpost {
     formData.append('content', content);
     
     if (this.selectedFile) {
-      console.log('dgf'+this.selectedFile);
       formData.append('mediaFile', this.selectedFile);
     }
 
@@ -74,7 +73,6 @@ export class Addpost {
         error: (err) => {
           this.error.set('Failed to publish post. Please try again.');
           this.isPosting.set(false);
-          console.error(err);
         }
       });
   }

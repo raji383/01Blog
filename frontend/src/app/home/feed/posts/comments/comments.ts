@@ -41,11 +41,9 @@ export class Comments {
       try {
         this.http.get<any[]>(`/api/posts/${this.post.id}/comments`).subscribe({
           next: (res) => {
-            console.log(res);
             this.comments.set(res);
           },
           error: (err) => {
-            console.error('Error submitting comment:', err);
           }
         });
 
@@ -61,13 +59,11 @@ export class Comments {
       this.http.post(`/api/posts/${this.post.id}/comments`, { content: this.commentContent }).subscribe({
         next: (res) => {
           // Handle successful comment submission
-          console.log(res);
           this.commentContent = ''; 
           this.getComments(); 
 
         },
         error: (err) => {
-          console.error('Error submitting comment:', err);
         }
       });
 

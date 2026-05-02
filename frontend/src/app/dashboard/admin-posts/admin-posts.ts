@@ -39,7 +39,6 @@ export class AdminPosts {
         this.posts.update(posts => posts.filter(current => current.id !== post.id));
       },
       error: (error) => {
-        console.error('Error deleting post:', error);
         this.toastService.show(`Failed to delete "${post.title}"`, 'error');
       }
     });
@@ -75,7 +74,6 @@ export class AdminPosts {
         );
       },
       error: (error) => {
-        console.error(`Error trying to ${actionLabel} post:`, error);
         this.toastService.show(`Failed to ${actionLabel} "${post.title}"`, 'error');
       }
     });
@@ -97,7 +95,6 @@ export class AdminPosts {
         this.loading.set(false);
       },
       error: (error) => {
-        console.error('Error fetching admin posts:', error);
         this.posts.set([]);
         this.loading.set(false);
       }

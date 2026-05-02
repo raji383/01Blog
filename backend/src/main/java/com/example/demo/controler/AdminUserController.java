@@ -46,7 +46,6 @@ public class AdminUserController {
     public ResponseEntity<UserAdminResponse> updateBanStatus(
             @PathVariable Long userId,
             @Valid @RequestBody BanUserRequest request) {
-        System.out.println("Admin " );
         return ResponseEntity.ok(userService.updateBanStatus(userId, request));
     }
 

@@ -70,7 +70,6 @@ public class PostService {
         post.setContent(request.getContent());
         if (request.getMediaFile() != null && !request.getMediaFile().isEmpty()) {
             MediaUploadResponse mediaUrl = mediaStorageService.store(request.getMediaFile());
-            System.out.println("Stored media for post: " + mediaUrl.getMediaUrl());
             post.setMediaUrl(mediaUrl.getMediaUrl());
             
         }

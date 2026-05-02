@@ -45,7 +45,6 @@ export class AdminUsers {
         this.users.update(users => users.map(current => current.id === updatedUser.id ? updatedUser : current));
       },
       error: (error) => {
-        console.error(`Error trying to ${action} user:`, error);
         this.toastService.show(`Failed to ${action} ${user.username}`, 'error');
       }
     });
@@ -67,7 +66,6 @@ export class AdminUsers {
         this.users.update(users => users.filter(current => current.id !== user.id));
       },
       error: (error) => {
-        console.error('Error deleting user:', error);
         this.toastService.show(`Failed to delete ${user.username}`, 'error');
       }
     });
@@ -81,7 +79,6 @@ export class AdminUsers {
         this.loading.set(false);
       },
       error: (error) => {
-        console.error('Error fetching admin users:', error);
         this.users.set([]);
         this.loading.set(false);
       }

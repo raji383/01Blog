@@ -38,7 +38,6 @@ export class AdminReports {
         this.reports.update(reports => reports.filter(current => current.id !== report.id));
       },
       error: (error) => {
-        console.error('Error dismissing report:', error);
         this.toastService.show(`Failed to dismiss report #${report.id}`, 'error');
       }
     });
@@ -63,7 +62,6 @@ export class AdminReports {
         this.loading.set(false);
       },
       error: (error) => {
-        console.error('Error fetching reports:', error);
         this.reports.set([]);
         this.loading.set(false);
       }

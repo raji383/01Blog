@@ -68,7 +68,6 @@ export class Posts {
         if (err.status === 401) {
           this.router.navigate(['/login']);
         } else {
-          console.error('Error liking post:', err);
         }
       }
     });
@@ -138,7 +137,6 @@ export class Posts {
           return;
         }
 
-        console.error('Error editing post:', err);
       }
     });
   }
@@ -166,7 +164,6 @@ export class Posts {
           return;
         }
 
-        console.error('Error deleting post:', err);
       }
     });
   }
@@ -221,7 +218,6 @@ export class Posts {
           return;
         }
 
-        console.error('Error reporting post:', err);
         this.toastService.show('Failed to report post', 'error');
       }
     });

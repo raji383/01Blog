@@ -36,7 +36,6 @@ export class Rightbar {
       error: (err) => {
         this.suggestionsError.set('Failed to load people suggestions');
         this.isLoadingUsers.set(false);
-        console.error('Error fetching users:', err);
       }
     });
   }

@@ -32,7 +32,6 @@ export class NotificationsService {
         this.syncUserUnreadCount();
       },
       error: (err) => {
-        console.error('Error fetching notifications:', err);
         this.error.set('Failed to load notifications');
         this.isLoading.set(false);
       }
@@ -53,7 +52,6 @@ export class NotificationsService {
         this.syncUserUnreadCount();
       },
       error: (err) => {
-        console.error('Error marking notification as read:', err);
         this.error.set('Failed to update notification');
       }
     });
@@ -72,7 +70,6 @@ export class NotificationsService {
         this.syncUserUnreadCount();
       },
       error: (err) => {
-        console.error('Error marking all notifications as read:', err);
         this.error.set('Failed to mark all notifications as read');
       }
     });

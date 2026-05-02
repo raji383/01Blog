@@ -85,7 +85,6 @@ export class UserService {
         this.currentUserRequestInFlight = false;
       },
       error: (err) => {
-        console.error('Error fetching current user:', err);
         this.currentUserError.set('Failed to load current user');
         this.isLoadingCurrentUser.set(false);
         this.currentUserRequestInFlight = false;

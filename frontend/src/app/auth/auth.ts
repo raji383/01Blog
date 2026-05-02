@@ -66,7 +66,6 @@ export class Auth {
           this.toastService.show('Your account is banned. Please contact support for more information.', 'error');
           this.router.navigate(['/login']);
         } else {
-          console.error('Error to login:', err);
           this.errorMessage.set(this.readServerMessage(err) ?? 'Unable to sign in right now.');
         }
       }
