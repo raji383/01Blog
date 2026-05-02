@@ -2,10 +2,11 @@ import { HttpClient } from '@angular/common/http';
 import { Component, inject, Input, signal } from '@angular/core';
 import { UserService } from '../../../../Service/UserService';
 import { FormsModule } from '@angular/forms';
+import { NgIf } from '@angular/common';
 
 @Component({
   selector: 'app-comments',
-  imports: [FormsModule],
+  imports: [FormsModule,NgIf],
   standalone: true,
   templateUrl: './comments.html',
   styleUrl: './comments.css',
@@ -73,5 +74,19 @@ export class Comments {
   }
   ngOnInit() {
     this.getComments();
+  }
+  deleteComment(commentId: number) {
+    try {
+      this.http.delete(`/api/posts/comments/${commentId}`).subscribe({
+        next: (res) => {
+          this.getComments(); 
+        },
+        error: (err) => {
+        }
+      });
+
+    } catch (error) {
+
+    }
   }
 }

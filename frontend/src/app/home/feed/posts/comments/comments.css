@@ -30,6 +30,22 @@
     margin-bottom: 10px;
 }
 
+.comment-actions {
+    margin-left: auto;
+    display: flex;
+    gap: 5px;
+}
+
+.delete-button {
+    background: none;
+    border: none;
+    color: #ff0000;
+    font-size: 12px;
+    cursor: pointer;
+    padding: 0;
+    transition: color 0.2s;
+}
+
 .comment-author-avatar {
     width: 34px;
     height: 34px;
