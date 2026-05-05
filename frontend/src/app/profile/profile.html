@@ -25,20 +25,7 @@
                                 </div>
                             </div>
 
-                            <!-- <div class="identity-actions">
-                                <a class="secondary-btn action-link" *ngIf="myProfile()" routerLink="/">Back to Home</a>
-                                <a class="secondary-btn action-link" *ngIf="canReport()" (click)="reportUser()">Report</a>
-                                <a class="secondary-btn action-link" *ngIf="canManageSubscription()"
-                                    (click)="subscribe()">
-                                    {{ profile.subscribed ? 'Unsubscribe' : 'Subscribe' }}
-                                </a>
-                                <a class="secondary-btn action-link" *ngIf="isAdmin() && !myProfile()"
-                                    (click)="banUser()">
-                                    {{ profile.banned ? 'Unban User' : 'Ban User' }}
-                                </a>
-                                <a class="delete-btn action-link" *ngIf="isAdmin() && !myProfile()"
-                                    (click)="deleteUser()">Delete User</a>
-                            </div> -->
+                          
                         </div>
 
                         <div class="moderation-banner" *ngIf="profile.banned">

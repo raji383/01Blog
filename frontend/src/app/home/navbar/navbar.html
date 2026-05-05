@@ -1,56 +1,69 @@
-<nav class="navbar">
-  <!-- Logo/Brand -->
-  <div class="navbar-container">
-    <a [routerLink]="['/']">
-      <div class="navbar-left">
-        <div class="navbar-logo">📘 Blog</div>
+<nav class="navbar navbar-expand-lg bg-white border-bottom sticky-top py-2">
+  <div class="container-fluid px-4 gap-3">
+
+    <!-- Logo -->
+    <a class="navbar-brand d-flex align-items-center gap-2 fw-semibold text-dark" [routerLink]="['/']">
+      <div class="bg-primary rounded-2 d-flex align-items-center justify-content-center"
+        style="width:28px;height:28px;">
+        <i class="bi bi-journal-text text-white"></i>
       </div>
+      Blog
     </a>
 
-    <!-- Search Bar -->
-    <div class="navbar-center">
-      <div class="search-box">
-        <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <circle cx="11" cy="11" r="8"></circle>
-          <path d="m21 21-4.35-4.35"></path>
-        </svg>
-        <input type="text" placeholder="Search..." class="search-input">
-      </div>
-    </div>
+    <!-- Mobile toggle -->
+    <button class="navbar-toggler border ms-auto" type="button" data-bs-toggle="collapse"
+      data-bs-target="#navbarContent">
+      <span class="navbar-toggler-icon"></span>
+    </button>
 
-    <!-- Right Menu -->
-    <div class="navbar-right">
-      <div class="nav-icons">
-        <button class="nav-icon-btn" *ngIf="isUserAdmin()" title="Dashboard" [routerLink]="['/admin']">
-          <svg viewBox="0 0 24 24" fill="currentColor">
-            <path
-              d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z" />
-          </svg>
-        </button>
+    <!-- Content -->
+    <div class="collapse navbar-collapse" id="navbarContent">
 
-        <div class="notification-shell" #notificationShell>
-        <button class="nav-icon-btn" title="Notifications" (click)="showNotificationBar()" [class.active]="showNotifications()">
-          <svg viewBox="0 0 24 24" fill="currentColor" >
-            <path
-              d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.89 2 2 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.64 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z" />
-          </svg>
-          <span class="notification-badge" *ngIf="getnotificationCount()">{{ getnotificationCount() }}</span>
-        </button>
-        <app-notificationbar *ngIf="showNotifications()" (closed)="closeNotifications()"></app-notificationbar>
-        </div>
-
-
+      <!-- Search (centered) -->
+      <div class="mx-auto">
 
       </div>
 
-      <!-- User Profile -->
-      <a [routerLink]="['/profile', userProfile()?.id]">
-        <div class="user-profile">
-          <div class="author-avatar">{{ userProfile()?.username?.charAt(0)?.toUpperCase() }}</div>
-          <span class="username">{{userProfile()?.username}} </span>
+      <!-- Right side -->
+      <div class="d-flex align-items-center gap-2">
 
+        <!-- Admin -->
+        <button *ngIf="isUserAdmin()"
+          class="btn btn-light rounded-circle p-0 d-flex align-items-center justify-content-center"
+          style="width:36px;height:36px;" [routerLink]="['/admin']" title="Dashboard">
+          <i class="bi bi-people"></i>
+        </button>
+
+        <!-- Notifications -->
+        <div class="position-relative">
+          <button class="btn btn-light rounded-circle p-0 d-flex align-items-center justify-content-center"
+            style="width:36px;height:36px;" (click)="showNotificationBar()">
+            <i class="bi bi-bell"></i>
+            <span *ngIf="getnotificationCount()"
+              class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
+              style="font-size:10px;">
+              {{ getnotificationCount() }}
+            </span>
+          </button>
+
+          <app-notificationbar *ngIf="showNotifications()" (closed)="closeNotifications()">
+          </app-notificationbar>
         </div>
-      </a>
+
+        <!-- Profile -->
+        <a class="d-flex align-items-center gap-2 text-decoration-none" [routerLink]="['/profile', userProfile()?.id]">
+
+          <div class="rounded-circle bg-primary text-white fw-medium
+                      d-flex align-items-center justify-content-center" style="width:32px;height:32px;font-size:13px;">
+            {{ userProfile()?.username?.charAt(0)?.toUpperCase() }}
+          </div>
+
+          <span class="fw-medium text-dark d-none d-md-inline" style="font-size:14px;">
+            {{ userProfile()?.username }}
+          </span>
+        </a>
+
+      </div>
     </div>
   </div>
 </nav>

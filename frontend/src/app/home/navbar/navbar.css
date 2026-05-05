@@ -1,26 +1,9 @@
-/* Navbar Container */
-.navbar {
-  background-color: #fff;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1), 0 8px 16px rgba(0, 0, 0, 0.1);
-  position: sticky;
-  top: 0;
-  z-index: 100;
-  height: 56px;
-}
 
+@import 'bootstrap/dist/css/bootstrap.min.css';
 a {
   text-decoration: none;
 }
 
-.navbar-container {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  max-width: 1400px;
-  margin: 0 auto;
-  height: 100%;
-  padding: 0 16px;
-}
 
 .author-avatar {
   width: 40px;
@@ -36,11 +19,7 @@ a {
 }
 
 /* Left Section - Logo */
-.navbar-left {
-  flex: 0 0 auto;
-  display: flex;
-  align-items: center;
-}
+
 
 .navbar-logo {
   font-size: 28px;
@@ -69,51 +48,10 @@ a {
   max-width: 100%;
 }
 
-.search-icon {
-  position: absolute;
-  left: 12px;
-  top: 50%;
-  transform: translateY(-50%);
-  width: 16px;
-  height: 16px;
-  color: #65676b;
-  pointer-events: none;
-}
 
-.search-input {
-  width: 100%;
-  padding: 8px 12px 8px 36px;
-  background-color: #f0f2f5;
-  border: none;
-  border-radius: 20px;
-  font-size: 14px;
-  color: #000;
-  outline: none;
-  transition: background-color 0.2s;
-}
 
-.search-input::placeholder {
-  color: #65676b;
-}
 
-.search-input:focus {
-  background-color: #e4e6eb;
-}
 
-/* Right Section */
-.navbar-right {
-  flex: 0 0 auto;
-  display: flex;
-  align-items: center;
-  gap: 16px;
-}
-
-/* Navigation Icons */
-.nav-icons {
-  display: flex;
-  gap: 8px;
-  align-items: center;
-}
 
 .notification-shell {
   position: relative;
