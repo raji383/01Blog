@@ -1,4 +1,33 @@
-//ⴰⵣⵓⵍ
-Add a unique constraint for subscriptions.
- UI responsive and mobile-friendly
-Fix and update the README.
+
+Sessions/tokens securely managed: NO
+Token is stored in localStorage in UserService.ts (line 24), and the JWT secret in application.properties (line 10) is a placeholder string.
+
+All actions properly validated: NO
+Some are validated well via DTO annotations, e.g. RegisterRequest.java (line 1), PostRequest.java (line 1). But not all: ToggleLikeRequest.java (line 1) is empty, ReportAdminRequest.java (line 1) has no bean validation annotations.
+
+Media upload/storage secure: NO
+There is MIME allowlisting in MediaStorageService.java (line 1), but it trusts contentType, writes directly to a public uploads folder, and has no deeper file validation/scanning.
+
+
+All input sanitized against SQL injection/XSS: NO
+JPA reduces SQL injection risk, but there is no explicit sanitization/escaping layer for all user content on the backend.
+
+
+All actions confirmed with visual feedback: NO
+Reporting/deleting/admin actions do, but like/subscribe/comment are not consistently confirmed with dialogs or success feedback.
+
+Angular Material or Bootstrap used: NO
+frontend/package.json (line 1) does not include either, despite the README claim.
+Post Interactions
+
+
+Uploaded files retrievable without corruption: NO
+Retrieval path exists via WebConfig.java (line 15), but I could not verify this at runtime.
+Admin Functionality
+
+
+
+Functional under multiple users: NO
+No test evidence for concurrency/load; no backend tests found under backend/src/test.
+Browser console free of errors: NO
+Not verifiable here.
