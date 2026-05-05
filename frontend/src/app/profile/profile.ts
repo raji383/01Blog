@@ -20,7 +20,7 @@ export class Profile {
 
   private readonly http = inject(HttpClient);
   private readonly router = inject(Router);
-  
+
   private readonly dialogService = inject(DialogService);
   private readonly toastService = inject(ToastService);
   private readonly userService = inject(UserService);
@@ -56,7 +56,7 @@ export class Profile {
       this.isLoading.set(false);
       return;
     }
-
+   this.router.routeReuseStrategy.shouldReuseRoute = () => false;
     if (!this.userService.getToken()) {
       this.error.set('No authentication token found');
       this.isLoading.set(false);

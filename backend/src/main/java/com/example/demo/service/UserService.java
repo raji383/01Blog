@@ -115,6 +115,17 @@ public class UserService {
         return res;
     }
 
+    public List<UserProfileResponse> searchUsers(String query) {
+        String currentUsername = SecurityContextHolder.getContext().getAuthentication().getName();
+
+        List<User> users = userRepository.findTop5ByUsernameContainingIgnoreCase(query);
+        users.removeIf(user -> user.getUsername().equals(currentUsername));
+
+        return users.stream()
+                .map(this::toProfileResponse)
+                .toList();
+    }
+
     public UserProfileResponse getProfile() {
         return toProfileResponse(getCurrentUser());
     }

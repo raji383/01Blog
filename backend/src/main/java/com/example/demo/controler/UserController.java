@@ -39,7 +39,11 @@ public class UserController {
         List<UserProfileResponse> res = userService.getUsers();
         return ResponseEntity.ok(res);
     }
-
+    @GetMapping("/search")
+    public ResponseEntity<List<UserProfileResponse>> searchUsers(@RequestParam String q) {
+        List<UserProfileResponse> res = userService.searchUsers(q);
+        return ResponseEntity.ok(res);
+    }
     @PostMapping("/users/{userId}/subscribe")
     public ResponseEntity<Void> subscribeToUser(@PathVariable Long userId) {
         userService.subscribeToUser(userId);
