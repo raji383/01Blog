@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.demo.dto.CommentRequest;
@@ -41,11 +42,11 @@ public class PostController {
         return ResponseEntity.ok(postService.create(request));
     }
 
-   
-
     @GetMapping("/feed")
-    public ResponseEntity<List<PostResponse>> getFeed() {
-        return ResponseEntity.ok(postService.getFeed());
+    public ResponseEntity<?> getFeed(
+            @RequestParam(defaultValue = "1") int page,
+            @RequestParam(defaultValue = "10") int limit) {
+        return ResponseEntity.ok(postService.getFeed(page, limit));
     }
 
     @GetMapping("/user/{username}")
@@ -54,7 +55,8 @@ public class PostController {
     }
 
     @PutMapping(value = "/{postId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<PostResponse> updatePost(@PathVariable Long postId, @Valid @ModelAttribute PostRequest request) {
+    public ResponseEntity<PostResponse> updatePost(@PathVariable Long postId,
+            @Valid @ModelAttribute PostRequest request) {
         return ResponseEntity.ok(postService.update(postId, request));
     }
 
@@ -65,7 +67,8 @@ public class PostController {
     }
 
     @PostMapping("/{postId}/like")
-    public ResponseEntity<ToggleLikeResponse> toggleLike(@PathVariable Long postId, @Valid @RequestBody ToggleLikeRequest request) {
+    public ResponseEntity<ToggleLikeResponse> toggleLike(@PathVariable Long postId,
+            @Valid @RequestBody ToggleLikeRequest request) {
         return ResponseEntity.ok(postService.toggleLike(postId, request));
     }
 
@@ -75,7 +78,8 @@ public class PostController {
     }
 
     @PostMapping("/{postId}/comments")
-    public ResponseEntity<CommentResponse> addComment(@PathVariable Long postId, @Valid @RequestBody CommentRequest request) {
+    public ResponseEntity<CommentResponse> addComment(@PathVariable Long postId,
+            @Valid @RequestBody CommentRequest request) {
         return ResponseEntity.ok(postService.addComment(postId, request));
     }
 

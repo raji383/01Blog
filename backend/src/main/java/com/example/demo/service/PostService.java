@@ -1,9 +1,12 @@
 package com.example.demo.service;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -29,6 +32,9 @@ import com.example.demo.repository.PostRepository;
 import com.example.demo.repository.ReportRepository;
 import com.example.demo.repository.SubscriptionRepository;
 import com.example.demo.repository.UserRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 
 @Service
 public class PostService {
@@ -71,7 +77,7 @@ public class PostService {
         if (request.getMediaFile() != null && !request.getMediaFile().isEmpty()) {
             MediaUploadResponse mediaUrl = mediaStorageService.store(request.getMediaFile());
             post.setMediaUrl(mediaUrl.getMediaUrl());
-            
+
         }
         post.setAuthor(author);
 
@@ -81,17 +87,32 @@ public class PostService {
         return toResponse(savedPost);
     }
 
-    public List<PostResponse> getFeed() {
+    public Map<String, Object> getFeed(int page, int limit) {
         User currentUser = getCurrentUser();
-        List<Long> authorIds = new ArrayList<>(subscriptionRepository.findFollowingIdsByFollowerId(currentUser.getId()));
+
+        List<Long> authorIds = new ArrayList<>(
+                subscriptionRepository.findFollowingIdsByFollowerId(currentUser.getId()));
+
         if (!authorIds.contains(currentUser.getId())) {
             authorIds.add(currentUser.getId());
         }
 
-        return postRepository.findByAuthorIdInAndHiddenFalseOrderByCreatedAtDesc(authorIds)
+        Pageable pageable = PageRequest.of(page - 1, limit, Sort.by("createdAt").descending());
+
+        Page<Post> postsPage = postRepository
+                .findByAuthorIdInAndHiddenFalse(authorIds, pageable);
+
+        List<PostResponse> posts = postsPage.getContent()
                 .stream()
                 .map(this::toResponse)
                 .toList();
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("posts", posts);
+        response.put("total", postsPage.getTotalElements());
+        response.put("page", page);
+
+        return response;
     }
 
     public List<PostResponse> getAllPostsForAdmin() {

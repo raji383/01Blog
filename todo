@@ -16,9 +16,7 @@ JPA reduces SQL injection risk, but there is no explicit sanitization/escaping l
 All actions confirmed with visual feedback: NO
 Reporting/deleting/admin actions do, but like/subscribe/comment are not consistently confirmed with dialogs or success feedback.
 
-Angular Material or Bootstrap used: NO
-frontend/package.json (line 1) does not include either, despite the README claim.
-Post Interactions
+
 
 
 Uploaded files retrievable without corruption: NO
@@ -27,7 +25,4 @@ Admin Functionality
 
 
 
-Functional under multiple users: NO
-No test evidence for concurrency/load; no backend tests found under backend/src/test.
-Browser console free of errors: NO
-Not verifiable here.
+

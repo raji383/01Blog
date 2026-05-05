@@ -1,9 +1,18 @@
 <section id="postcontainer">
     <app-addpost (postPublished)="addPost($event)"></app-addpost>
-    <app-posts
-        *ngFor="let post of posts()"
-        [post]="post"
-        (liked)="onLiked($event)"
-        (edited)="onEdited($event)"
+    <app-posts *ngFor="let post of posts()" [post]="post" (liked)="onLiked($event)" (edited)="onEdited($event)"
         (deleted)="onDeleted($event)"></app-posts>
+    <div class="d-flex justify-content-between mt-3">
+
+        <button class="btn btn-outline-secondary" (click)="prevPage()" [disabled]="page === 1">
+            ⬅ Previous
+        </button>
+
+        <span>Page {{ page }}</span>
+
+        <button class="btn btn-primary" (click)="nextPage()" [disabled]="page * limit >= total">
+            Next ➡
+        </button>
+
+    </div>
 </section>

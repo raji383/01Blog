@@ -15,14 +15,35 @@ import { Router } from '@angular/router';
 export class Feed {
   private readonly http = inject(HttpClient);
   protected posts = signal<PostResponse[]>([]);
+  page = 1;
+  limit = 10;
+  loading = false;
+  total = 0;
   private readonly router = inject(Router);
+  nextPage() {
+    if (this.page * this.limit >= this.total) {
+      return
+    }
+    this.page++;
+    this.fetchPosts();
+  }
 
+  prevPage() {
+    if (this.page > 1) {
+      this.page--;
+      this.fetchPosts();
+    }
+  }
   fetchPosts() {
+    this.loading = true;
+
     try {
-      this.http.get<PostResponse[]>('/api/posts/feed').subscribe({
+      this.http.get<any>(`/api/posts/feed?page=${this.page}&limit=${this.limit}`).subscribe({
         next: (res) => {
           if (res) {
-            this.posts.set(res);
+            this.posts.set(res.posts);
+            this.loading = false;
+            this.total = res.total;
           }
         },
         error: (err) => {
